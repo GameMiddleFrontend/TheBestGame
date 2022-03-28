@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig.json to read more about this file */
+
+    "target": "es6",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "dist",
+    "noImplicitThis": false,
+    "jsx": "react"
+  },
+  "include": ["src/**/*", "src/**/*.spec.ts"],
+  "exclude": ["node_modules"]
+}
