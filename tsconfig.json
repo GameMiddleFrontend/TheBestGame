@@ -10,6 +10,6 @@
     "noImplicitThis": false,
     "jsx": "react"
   },
-  "include": ["src/**/*", "src/**/*.spec.ts"],
+  "include": ["src/**/*", "src/**/*.spec.ts", "src/custom.d.ts"],
   "exclude": ["node_modules"]
 }
