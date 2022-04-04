@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    /* Visit https://aka.ms/tsconfig.json to read more about this file */
-
     "target": "es6",
     "module": "commonjs",
     "esModuleInterop": true,
@@ -12,6 +10,6 @@
     "noImplicitThis": false,
     "jsx": "react"
   },
-  "include": ["src/**/*", "src/**/*.spec.ts"],
+  "include": ["src/**/*", "src/**/*.spec.ts", "src/custom.d.ts"],
   "exclude": ["node_modules"]
 }
