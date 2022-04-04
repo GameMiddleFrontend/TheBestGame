@@ -23,7 +23,6 @@
       {
         "endOfLine": "auto"
       }
-    ],
-    "@typescript-eslint/ban-ts-comment": "off"
+    ]
   }
 }
