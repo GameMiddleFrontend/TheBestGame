@@ -39,7 +39,6 @@ function LoginPage() {
                 Регистрация
               </Link>
             </div>
-
           </Form>
         )}
       </Formik>
