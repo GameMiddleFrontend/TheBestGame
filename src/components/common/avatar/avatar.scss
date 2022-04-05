@@ -1,0 +1,39 @@
+@import "../../../styles/style-variables";
+
+.avatar {
+  $size: 150px;
+
+  width: $size;
+  height: $size;
+
+  border-radius: 50%;
+
+  background-color: $altBackgroundColor;
+}
+
+.avatar-upload {
+  position: relative;
+  cursor: pointer;
+
+  >input {
+
+    display: none;
+  }
+
+  .icon-add-image {
+
+    position: absolute;
+    width: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    display: none;
+  }
+}
+
+.avatar-upload:hover {
+  .icon-add-image {
+
+    display: block;
+  }
+}
