@@ -1,4 +1,4 @@
-import React, {FormEvent} from 'react';
+import React, {useCallback} from 'react';
 
 import '../../../styles/login-page.scss';
 import {Link} from 'react-router-dom';
@@ -6,9 +6,15 @@ import LoginAPI from '../../../services/loginAPI';
 import {Field, Form, Formik, FormikValues} from 'formik';
 import {SignInSchema} from './types';
 
+const loginPageRootClass = 'login-page-container';
+
 function LoginPage() {
+  const onLoginFormSubmit = useCallback((data: FormikValues) => {
+    LoginAPI.signIn(JSON.stringify(data)).then().catch();
+  }, []);
+
   return (
-    <div className={'login-page-container'}>
+    <div className={loginPageRootClass}>
       <Formik
         initialValues={{
           login: '',
@@ -34,7 +40,7 @@ function LoginPage() {
               {errors.password && touched.password ? <div {...getValidatorConfig()}>{errors.password}</div> : null}
             </div>
             <div className={'form-container'}>
-              <input type={'submit'} value={'Войти'} className={'sign-in-button'}></input>
+              <input type={'submit'} value={'Войти'} className={'sign-in-button'} />
               <Link to={'/sign-up'} className={'sign-up-link'}>
                 Регистрация
               </Link>
@@ -50,20 +56,6 @@ function getValidatorConfig() {
   return {
     className: 'input-validator',
   };
-}
-
-function onLoginFormSubmit(data: FormikValues) {
-  LoginAPI.signIn(JSON.stringify(data)).then(onLoginSuccess).catch(onLoginFailure);
-}
-
-function onLoginSuccess(result: string) {
-  //TODO
-}
-
-function onLoginFailure(err: Promise<string>) {
-  err.then((errorText) => {
-    //TODO
-  });
 }
 
 export default LoginPage;
