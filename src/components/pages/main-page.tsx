@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
-import gameImage from '../../images/game.jpg';
+import gameImage from '../../styles/images/game.jpg';
 import '../../styles/main-page.scss';
 
 function MainPage() {
