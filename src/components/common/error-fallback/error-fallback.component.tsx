@@ -8,7 +8,7 @@ const ErrorFallbackComponent: FC<FallbackProps> = (props: FallbackProps) => {
     <div className="error-text-container">
       {/*TODO вынести в enum*/}
       <h2>{'Что-то пошло не так ^_^'}</h2>
-      <p>{'Возникла непредвиденная ошибка. Обратитесь к разработчикам'}</p>
+      <p>{'Возникла непредвиденная ошибка. Пожалуйста, попробуйте позже.'}</p>
     </div>
   );
 };

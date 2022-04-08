@@ -15,22 +15,11 @@ class ErrorBoundaryComponent extends Component<PropsWithChildren<IProps>, ErrorB
 
   state = ErrorBoundaryComponent.initialState;
 
-  componentDidCatch(error: Error, info: React.ErrorInfo) {
-    // Можно также сохранить информацию об ошибке в соответствующую службу журнала ошибок
-  }
-
   render() {
     const {error} = this.state;
     const {FallbackComponent} = this.props;
 
-    if (error !== null) {
-      const props = {
-        error,
-      };
-      return <FallbackComponent {...props} />;
-    }
-
-    return this.props.children;
+    return error ? <FallbackComponent error={error} /> : this.props.children;
   }
 }
 
