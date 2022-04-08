@@ -2,18 +2,34 @@ import React, {useCallback, useMemo, useState} from 'react';
 
 import './register-page.scss';
 import {Field, Form, Formik, FormikValues} from 'formik';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {RegisterSchema} from './types';
 import SignUpAPI from '../../../services/signUpAPI';
 import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
+import '../../../styles/modal.scss';
+import AuthAPI from '../../../services/authAPI';
 
 const registerPageRootClass = 'login-page-container';
 
 function RegisterPage() {
   const [popupMessage, setPopupMessage] = useState('');
+  const navigate = useNavigate();
+
+  const errorHandler = (err: Error) => {
+    setPopupMessage(err.message);
+  };
 
   const onRegisterFormSubmit = useCallback((values: FormikValues) => {
-    SignUpAPI.signUp(JSON.stringify(values)).then().catch();
+    SignUpAPI.signUp(JSON.stringify(values))
+      .then(() => {
+        AuthAPI.auth()
+          .then(() => {
+            navigate('/game');
+          })
+          .catch(errorHandler);
+      })
+      .catch(errorHandler);
   }, []);
 
   const signUpForm = useMemo(

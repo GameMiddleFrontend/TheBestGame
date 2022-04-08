@@ -1,8 +1,12 @@
 const baseUrl = 'https://ya-praktikum.tech/api/v2';
 
+type SignUpError = {
+  reason: string;
+};
+
 class SignUpAPI {
-  static signUp(body: string): Promise<string> {
-    return fetch(baseUrl + '/auth/signup', {
+  static async signUp(body: string): Promise<string> {
+    const response = await fetch(baseUrl + '/auth/signup', {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -10,15 +14,13 @@ class SignUpAPI {
       },
       body: body,
       keepalive: true,
-    }).then((response) => {
-      return new Promise((resolve, reject) => {
-        if (response.status !== 200) {
-          reject(response.json());
-        } else {
-          resolve(response.text());
-        }
-      });
     });
+    let result: SignUpError | string;
+    if (!response.ok) {
+      result = await response.json();
+      throw new Error((result as SignUpError).reason);
+    }
+    return response.text();
   }
 }
 

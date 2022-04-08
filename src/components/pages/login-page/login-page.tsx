@@ -17,29 +17,24 @@ const canRedirectMessage = 'user already in system';
 
 function LoginPage() {
   const [popupMessage, setPopupMessage] = useState('');
-  const [loggedIn, setLoggedIn] = useState(false);
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    AuthAPI.auth()
-      .then((user) => {
-        console.dir(user);
-        navigate('/game');
-      })
-      .catch((err: Error) => {
-        if (err.message === canRedirectMessage) {
-          setLoggedIn(true);
-        }
-      });
-  }, [loggedIn]);
 
   const onLoginFormSubmit = useCallback((data: FormikValues) => {
     LoginAPI.signIn(JSON.stringify(data))
       .then(() => {
-        setLoggedIn(true);
+        AuthAPI.auth()
+          .then(() => {
+            navigate('/game');
+          })
+          .catch((err: Error) => {
+            setPopupMessage(err.message);
+          });
       })
       .catch((err: Error) => {
+        if (err.message === canRedirectMessage) {
+          navigate('/game');
+        }
         setPopupMessage(err.message);
       });
   }, []);
