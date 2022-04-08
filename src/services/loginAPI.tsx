@@ -1,8 +1,12 @@
 const baseUrl = 'https://ya-praktikum.tech/api/v2';
 
+type LoginErrorRespone = {
+  reason?: string;
+};
+
 class LoginAPI {
-  static signIn(body: string): Promise<string> {
-    return fetch(baseUrl + '/auth/signin', {
+  static async signIn(body: string): Promise<string> {
+    const response = await fetch(baseUrl + '/auth/signin', {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -10,15 +14,12 @@ class LoginAPI {
       },
       body: body,
       keepalive: true,
-    }).then((response) => {
-      return new Promise((resolve, reject) => {
-        if (response.status !== 200) {
-          reject(response.json());
-        } else {
-          resolve(response.text());
-        }
-      });
     });
+    if (response.ok) {
+      return response.text();
+    }
+    const result: LoginErrorRespone = await response.json();
+    throw new Error(result?.reason || 'Ошибка входа');
   }
 }
 

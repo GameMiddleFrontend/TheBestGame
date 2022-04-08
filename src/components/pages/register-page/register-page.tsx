@@ -1,20 +1,23 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 
-import '../../../styles/register-page.scss';
+import './register-page.scss';
 import {Field, Form, Formik, FormikValues} from 'formik';
 import {Link} from 'react-router-dom';
 import {RegisterSchema} from './types';
 import SignUpAPI from '../../../services/signUpAPI';
+import Popup from 'reactjs-popup';
 
 const registerPageRootClass = 'login-page-container';
 
 function RegisterPage() {
+  const [popupMessage, setPopupMessage] = useState('');
+
   const onRegisterFormSubmit = useCallback((values: FormikValues) => {
     SignUpAPI.signUp(JSON.stringify(values)).then().catch();
   }, []);
 
-  return (
-    <div className={registerPageRootClass}>
+  const signUpForm = useMemo(
+    () => (
       <Formik
         initialValues={{
           email: '',
@@ -32,7 +35,7 @@ function RegisterPage() {
         {({errors, touched}) => (
           <Form className={'login-form'}>
             <div className={'form-name'}>Регистрация</div>
-            <div className={'form-container fields-container'}>
+            <div className={'auth-input-container fields-container'}>
               <Field name={'email'} placeholder={'Email'} type={'text'} className={'login-page-input login-input'} />
               {errors.email && touched.email ? <div {...getValidatorConfig()}>{errors.email}</div> : null}
 
@@ -65,7 +68,7 @@ function RegisterPage() {
               />
               {errors.password && touched.password ? <div {...getValidatorConfig()}>{errors.password}</div> : null}
             </div>
-            <div className={'form-container'}>
+            <div className={'auth-input-container'}>
               <input type={'submit'} value={'Зарегистрироваться'} className={'sign-in-button'} />
               <Link to={'/'} className={'sign-up-link'}>
                 На главную
@@ -74,6 +77,23 @@ function RegisterPage() {
           </Form>
         )}
       </Formik>
+    ),
+    [onRegisterFormSubmit],
+  );
+
+  return (
+    <div className={registerPageRootClass}>
+      {signUpForm}
+      <Popup open={!!popupMessage} onClose={() => setPopupMessage('')}>
+        {(close: () => void) => (
+          <div className={'modal'}>
+            <div className={'modal-content'}>{popupMessage}</div>
+            <button className={'modal-close-button'} onClick={() => close()}>
+              Закрыть
+            </button>
+          </div>
+        )}
+      </Popup>
     </div>
   );
 }
