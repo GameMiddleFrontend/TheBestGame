@@ -10,21 +10,8 @@ import NotFoundPage from '../pages/not-found-page';
 import ErrorBoundaryComponent from '../common/error-boundary';
 import ErrorFallbackComponent from '../common/error-fallback';
 import GamePage from '../pages/game-page';
-import AuthAPI from '../../services/authAPI';
 
 function App() {
-  const [loggedInProp, setLoggedInProp] = useState(false);
-  useEffect(() => {
-    AuthAPI.auth()
-      .then((user) => {
-        setLoggedInProp(true);
-        console.dir(user);
-      })
-      .catch(() => {
-        setLoggedInProp(false);
-      });
-  }, [loggedInProp]);
-
   return (
     <div className="app">
       <ErrorBoundaryComponent FallbackComponent={ErrorFallbackComponent}>

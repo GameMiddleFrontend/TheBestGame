@@ -1,4 +1,4 @@
-const baseUrl = 'https://ya-praktikum.tech/api/v2';
+import APIUtils from './APIUtils';
 
 type authError = {
   reason: string;
@@ -17,11 +17,13 @@ type authSuccess = {
 
 class AuthAPI {
   static async auth(): Promise<authSuccess> {
-    const response = await fetch(baseUrl + '/auth/user', {
-      method: 'GET',
-      credentials: 'include',
-      keepalive: true,
-    });
+    const response = await APIUtils.getFetch(
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      '/auth/user',
+    );
     const result: authError | authSuccess = await response.json();
     if (!response.ok) {
       throw new Error((result as authError).reason || 'Ошибка аутентификации');

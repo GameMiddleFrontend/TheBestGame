@@ -3,14 +3,17 @@ import React, {useCallback, useMemo, useState} from 'react';
 import './register-page.scss';
 import {Field, Form, Formik, FormikValues} from 'formik';
 import {Link, useNavigate} from 'react-router-dom';
-import {RegisterSchema} from './types';
 import SignUpAPI from '../../../services/signUpAPI';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import '../../../styles/modal.scss';
 import AuthAPI from '../../../services/authAPI';
+import FormComponent from '../../common/form';
+import {RegisterFormElementsDef} from './types';
 
 const registerPageRootClass = 'login-page-container';
+const formContainerClass = 'form-container';
+const formNameClass = 'form-name';
 
 function RegisterPage() {
   const [popupMessage, setPopupMessage] = useState('');
@@ -21,7 +24,7 @@ function RegisterPage() {
   };
 
   const onRegisterFormSubmit = useCallback((values: FormikValues) => {
-    SignUpAPI.signUp(JSON.stringify(values))
+    SignUpAPI.signUp(values)
       .then(() => {
         AuthAPI.auth()
           .then(() => {
@@ -34,65 +37,18 @@ function RegisterPage() {
 
   const signUpForm = useMemo(
     () => (
-      <Formik
-        initialValues={{
-          email: '',
-          login: '',
-          first_name: '',
-          second_name: '',
-          phone: '',
-          password: '',
-        }}
-        validationSchema={RegisterSchema}
-        onSubmit={(values) => {
-          onRegisterFormSubmit(values);
-        }}
-      >
-        {({errors, touched}) => (
-          <Form className={'login-form'}>
-            <div className={'form-name'}>Регистрация</div>
-            <div className={'auth-input-container fields-container'}>
-              <Field name={'email'} placeholder={'Email'} type={'text'} className={'login-page-input login-input'} />
-              {errors.email && touched.email ? <div {...getValidatorConfig()}>{errors.email}</div> : null}
-
-              <Field name={'login'} placeholder={'Логин'} type={'text'} className={'login-page-input login-input'} />
-              {errors.login && touched.login ? <div {...getValidatorConfig()}>{errors.login}</div> : null}
-
-              <Field name={'first_name'} placeholder={'Имя'} type={'text'} className={'login-page-input login-input'} />
-              {errors.first_name && touched.first_name ? (
-                <div {...getValidatorConfig()}>{errors.first_name}</div>
-              ) : null}
-
-              <Field
-                name={'second_name'}
-                placeholder={'Фамилия'}
-                type={'text'}
-                className={'login-page-input login-input'}
-              />
-              {errors.second_name && touched.second_name ? (
-                <div {...getValidatorConfig()}>{errors.second_name}</div>
-              ) : null}
-
-              <Field name={'phone'} placeholder={'Телефон'} type={'text'} className={'login-page-input login-input'} />
-              {errors.phone && touched.phone ? <div {...getValidatorConfig()}>{errors.phone}</div> : null}
-
-              <Field
-                name={'password'}
-                placeholder={'Пароль'}
-                type={'password'}
-                className={'login-page-input password-input'}
-              />
-              {errors.password && touched.password ? <div {...getValidatorConfig()}>{errors.password}</div> : null}
-            </div>
-            <div className={'auth-input-container'}>
-              <input type={'submit'} value={'Зарегистрироваться'} className={'sign-in-button'} />
-              <Link to={'/'} className={'sign-up-link'}>
-                На главную
-              </Link>
-            </div>
-          </Form>
-        )}
-      </Formik>
+      <div className={formContainerClass}>
+        <div className={formNameClass}>Зарегистрироваться</div>
+        <FormComponent
+          formElementsDef={RegisterFormElementsDef}
+          isEditMode={true}
+          submitText={'Зарегистрироваться'}
+          onSubmit={onRegisterFormSubmit}
+        />
+        <Link to={'/sign-in'} className={'sign-up-link'}>
+          {'Войти'}
+        </Link>
+      </div>
     ),
     [onRegisterFormSubmit],
   );
@@ -112,12 +68,6 @@ function RegisterPage() {
       </Popup>
     </div>
   );
-}
-
-function getValidatorConfig() {
-  return {
-    className: 'input-validator',
-  };
 }
 
 export default RegisterPage;

@@ -56,7 +56,7 @@ function LoginPage() {
         </Link>
       </div>
     ),
-    [],
+    [onLoginFormSubmit],
   );
 
   return (

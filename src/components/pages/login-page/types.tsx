@@ -7,7 +7,7 @@ const LoginFormElementsDef: FormElementsDef<UserLoginItem>[] = [
     name: 'login',
     label: 'Логин',
     defaultValue: '',
-    validatePattern: FORM_VALIDATE_PATTERNS.USER_NAME,
+    validatePattern: FORM_VALIDATE_PATTERNS.LOGIN,
   },
   {
     name: 'password',
