@@ -1,13 +1,20 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 
 import '../../../styles/register-page.scss';
 import {Field, Form, Formik, FormikValues} from 'formik';
 import {Link} from 'react-router-dom';
 import {RegisterSchema} from './types';
+import SignUpAPI from '../../../services/signUpAPI';
+
+const registerPageRootClass = 'login-page-container';
 
 function RegisterPage() {
+  const onRegisterFormSubmit = useCallback((values: FormikValues) => {
+    SignUpAPI.signUp(JSON.stringify(values)).then().catch();
+  }, []);
+
   return (
-    <div className={'login-page-container'}>
+    <div className={registerPageRootClass}>
       <Formik
         initialValues={{
           email: '',
@@ -59,7 +66,7 @@ function RegisterPage() {
               {errors.password && touched.password ? <div {...getValidatorConfig()}>{errors.password}</div> : null}
             </div>
             <div className={'form-container'}>
-              <input type={'submit'} value={'Зарегистрироваться'} className={'sign-in-button'}></input>
+              <input type={'submit'} value={'Зарегистрироваться'} className={'sign-in-button'} />
               <Link to={'/'} className={'sign-up-link'}>
                 На главную
               </Link>
@@ -75,10 +82,6 @@ function getValidatorConfig() {
   return {
     className: 'input-validator',
   };
-}
-
-function onRegisterFormSubmit(values: FormikValues) {
-  debugger;
 }
 
 export default RegisterPage;
