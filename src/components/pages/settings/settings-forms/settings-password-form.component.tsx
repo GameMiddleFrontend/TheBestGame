@@ -1,6 +1,6 @@
 import React, {FC, useCallback} from 'react';
 import FormComponent from '../../../common/form';
-import {settingsPasswordsFormElementsDef} from '../types';
+import {settingsPasswordsFormElementsDef} from '../settings.types';
 
 interface IProps {
   isEditPasswordMode: boolean;

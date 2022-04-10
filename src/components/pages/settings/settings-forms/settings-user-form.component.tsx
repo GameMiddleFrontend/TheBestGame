@@ -1,7 +1,7 @@
 import React, {FC, useCallback, useState} from 'react';
 import AvatarComponent from '../../../common/avatar';
 import FormComponent from '../../../common/form';
-import {settingsFormElementsDef} from '../types';
+import {settingsFormElementsDef} from '../settings.types';
 
 interface IHandlers {
   onClickEditPasswordButton?(): void;

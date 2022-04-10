@@ -2,7 +2,7 @@ import React, {useCallback, useState} from 'react';
 import SettingsUserFormComponent from './settings-forms/settings-user-form.component';
 import SettingsPasswordFormComponent from './settings-forms/settings-password-form.component';
 
-import './settings-page.scss';
+import './settings.scss';
 
 const SettingsPage = () => {
   const [isEditPasswordMode, setEditPasswordMode] = useState(false);
