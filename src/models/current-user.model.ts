@@ -14,3 +14,5 @@ export type CurrentUserPasswordItem = {
   newPassword: string;
   newPasswordCopy: string;
 };
+
+export type UserLoginItem = Pick<CurrentUserItem, 'login'> & {password: string};

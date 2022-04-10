@@ -5,14 +5,13 @@ type LoginErrorRespone = {
 };
 
 class LoginAPI {
-  static async signIn(body: string): Promise<string> {
+  static async signIn(body: Record<string, any>): Promise<string> {
     const response = await fetch(baseUrl + '/auth/signin', {
       method: 'POST',
-      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: body,
+      body: JSON.stringify(body),
       keepalive: true,
     });
     if (response.ok) {
