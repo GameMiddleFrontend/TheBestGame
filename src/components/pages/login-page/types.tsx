@@ -1,18 +1,20 @@
-import * as Yup from 'yup';
+import {FormElementsDef} from '../../common/form/types';
+import {UserLoginItem} from '../../../models/current-user.model';
+import {FORM_VALIDATE_PATTERNS} from '../../../utils/validation';
 
-const SignInSchema = Yup.object({
-  login: Yup.string()
-    .min(3, 'От 3 до 20 символов')
-    .max(20, 'От 3 до 20 символов')
-    .matches(/^[^\s'&<> ]*$/g, 'Есть спецсимволы или пробел')
-    .matches(/^[a-zA-Z]*$/g, 'Только латиница')
-    .required('Обязательное поле'),
-  password: Yup.string()
-    .min(8, 'Длина от 8 до 40 символов')
-    .max(40, 'Длина от 8 до 40 символов')
-    .matches(/[A-ZА-ЯЁ]+/g, 'Должна быть заглавная буква')
-    .matches(/\d+/, 'Должна быть цифра')
-    .required('Обязательное поле'),
-});
+const LoginFormElementsDef: FormElementsDef<UserLoginItem>[] = [
+  {
+    name: 'login',
+    label: 'Логин',
+    defaultValue: '',
+    validatePattern: FORM_VALIDATE_PATTERNS.LOGIN,
+  },
+  {
+    name: 'password',
+    label: 'Пароль',
+    defaultValue: '',
+    validatePattern: FORM_VALIDATE_PATTERNS.PASSWORD,
+  },
+];
 
-export {SignInSchema};
+export {LoginFormElementsDef};
