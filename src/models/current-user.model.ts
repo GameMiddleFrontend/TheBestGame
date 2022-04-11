@@ -14,3 +14,12 @@ export type CurrentUserPasswordItem = {
   newPassword: string;
   newPasswordCopy: string;
 };
+
+type Password = {
+  password: string;
+};
+
+export type UserLoginItem = Pick<CurrentUserItem, 'login'> & Password;
+
+export type UserRegisterItem = Pick<CurrentUserItem, 'email' | 'login' | 'first_name' | 'second_name' | 'phone'> &
+  Password;

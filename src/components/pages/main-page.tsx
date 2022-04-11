@@ -1,18 +1,36 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 
 import gameImage from '../../styles/images/game.jpg';
 import '../../styles/main-page.scss';
+import AuthAPI from '../../services/authAPI';
 
 function MainPage() {
+  const [authorized, setAutorized] = useState(false);
+  useEffect(() => {
+    AuthAPI.auth()
+      .then((user) => {
+        setAutorized(true);
+        console.dir(user);
+      })
+      .catch(() => {
+        setAutorized(false);
+      });
+  }, [authorized]);
   return (
     <div className={'main-container'}>
       <div className={'main-page-header'}>
         <h1 className={'game-name-label'}>Косынка</h1>
         <div className={'links-container'}>
-          <Link className={'link'} to={'/sign-in'}>
-            Войти
-          </Link>
+          {authorized ? (
+            <Link className={'link'} to={'/game'}>
+              Играть
+            </Link>
+          ) : (
+            <Link className={'link'} to={'/sign-in'}>
+              Войти
+            </Link>
+          )}
           <Link className={'link'} to={'/sign-up'}>
             Зарегистрироваться
           </Link>
