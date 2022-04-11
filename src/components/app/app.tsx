@@ -3,7 +3,7 @@ import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import LoginPage from '../pages/login-page/login-page';
 import RegisterPage from '../pages/register-page/register-page';
 import ForumPage from '../pages/forum-page/forum-page';
-import SettingsPage from '../pages/settings/settings-page';
+import SettingsPage from '../pages/settings/settings.page';
 import LeaderboardPage from '../pages/leaderboard/leaderboard.page';
 import MainPage from '../pages/main-page';
 import NotFoundPage from '../pages/not-found-page';
