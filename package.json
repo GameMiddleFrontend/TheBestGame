@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack serve --open --mode development",
-    "build": "webpack --mode production"
+    "dev": "webpack serve --open --mode development",
+    "build": "webpack --mode production",
+    "start": "webpack --mode production && set PORT=3000 && node server.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   "dependencies": {
     "@babel/runtime": "^7.17.8",
     "@babel/runtime-corejs2": "^7.17.8",
+    "express": "^4.17.3",
     "formik": "^2.2.9",
     "react": "~17.0.2",
     "react-dom": "~17.0.2",
