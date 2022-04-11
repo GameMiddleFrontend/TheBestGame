@@ -1,61 +1,63 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
 
-import '../../../styles/login-page.scss';
-import {Link} from 'react-router-dom';
+import './login-page.scss';
 import LoginAPI from '../../../services/loginAPI';
-import {Field, Form, Formik, FormikValues} from 'formik';
-import {SignInSchema} from './types';
+import {FormikValues} from 'formik';
+import 'reactjs-popup/dist/index.css';
+import '../../../styles/modal.scss';
+import PopupComponent from '../../common/popup';
+import FormComponent from '../../common/form';
+import {LoginFormElementsDef} from './types';
 
 const loginPageRootClass = 'login-page-container';
+const formContainerClass = 'form-container';
+const formNameClass = 'form-name';
+
+const canRedirectMessage = 'user already in system';
 
 function LoginPage() {
+  const [popupMessage, setPopupMessage] = useState('');
+
+  const navigate = useNavigate();
+
   const onLoginFormSubmit = useCallback((data: FormikValues) => {
-    LoginAPI.signIn(JSON.stringify(data)).then().catch();
+    LoginAPI.signIn(data)
+      .then((result) => {
+        navigate('/game');
+      })
+      .catch((err: Error) => {
+        if (err.message.toLowerCase() === canRedirectMessage) {
+          navigate('/game');
+        }
+        setPopupMessage(err.message);
+      });
   }, []);
+
+  const form = useMemo(
+    () => (
+      <div className={formContainerClass}>
+        <div className={formNameClass}>Войти</div>
+        <FormComponent
+          formElementsDef={LoginFormElementsDef}
+          isEditMode={true}
+          submitText={'Войти'}
+          onSubmit={onLoginFormSubmit}
+        />
+        <Link to={'/sign-up'} className={'sign-up-link'}>
+          {'Регистрация'}
+        </Link>
+      </div>
+    ),
+    [],
+  );
 
   return (
     <div className={loginPageRootClass}>
-      <Formik
-        initialValues={{
-          login: '',
-          password: '',
-        }}
-        validationSchema={SignInSchema}
-        onSubmit={(values) => {
-          onLoginFormSubmit(values);
-        }}
-      >
-        {({errors, touched}) => (
-          <Form className={'login-form'}>
-            <div className={'form-name'}>Войти</div>
-            <div className={'form-container fields-container'}>
-              <Field name={'login'} placeholder={'Имя'} type={'text'} className={'login-page-input login-input'} />
-              {errors.login && touched.login ? <div {...getValidatorConfig()}>{errors.login}</div> : null}
-              <Field
-                name={'password'}
-                placeholder={'Пароль'}
-                type={'password'}
-                className={'login-page-input password-input'}
-              />
-              {errors.password && touched.password ? <div {...getValidatorConfig()}>{errors.password}</div> : null}
-            </div>
-            <div className={'form-container'}>
-              <input type={'submit'} value={'Войти'} className={'sign-in-button'} />
-              <Link to={'/sign-up'} className={'sign-up-link'}>
-                Регистрация
-              </Link>
-            </div>
-          </Form>
-        )}
-      </Formik>
+      {form}
+      <PopupComponent message={popupMessage} onClose={() => setPopupMessage('')} />
     </div>
   );
-}
-
-function getValidatorConfig() {
-  return {
-    className: 'input-validator',
-  };
 }
 
 export default LoginPage;

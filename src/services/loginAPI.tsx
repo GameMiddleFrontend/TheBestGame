@@ -1,24 +1,19 @@
-const baseUrl = 'https://ya-praktikum.tech/api/v2';
+import APIUtils from './APIUtils';
+import {FormikValues} from 'formik';
+import AuthAPI, {authSuccess} from './authAPI';
+
+type LoginErrorRespone = {
+  reason?: string;
+};
 
 class LoginAPI {
-  static signIn(body: string): Promise<string> {
-    return fetch(baseUrl + '/auth/signin', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: body,
-      keepalive: true,
-    }).then((response) => {
-      return new Promise((resolve, reject) => {
-        if (response.status !== 200) {
-          reject(response.json());
-        } else {
-          resolve(response.text());
-        }
-      });
-    });
+  static async signIn(body: FormikValues): Promise<authSuccess> {
+    const response = await APIUtils.POST('/auth/signin', body);
+    if (!response.ok) {
+      const result: LoginErrorRespone = await response.json();
+      throw new Error(result?.reason || 'Ошибка входа');
+    }
+    return AuthAPI.auth();
   }
 }
 

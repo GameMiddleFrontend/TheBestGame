@@ -1,24 +1,28 @@
-const baseUrl = 'https://ya-praktikum.tech/api/v2';
+import {FormikValues} from 'formik';
+import APIUtils from './APIUtils';
+
+type SignUpError = {
+  reason: string;
+};
 
 class SignUpAPI {
-  static signUp(body: string): Promise<string> {
-    return fetch(baseUrl + '/auth/signup', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
+  static async signUp(body: FormikValues): Promise<string> {
+    const response = await APIUtils.getFetch(
+      {
+        method: 'POST',
+        headers: APIUtils.simpleJsonHeader,
+        body: JSON.stringify(body),
+        keepalive: true,
+        credentials: 'include',
       },
-      body: body,
-      keepalive: true,
-    }).then((response) => {
-      return new Promise((resolve, reject) => {
-        if (response.status !== 200) {
-          reject(response.json());
-        } else {
-          resolve(response.text());
-        }
-      });
-    });
+      '/auth/signup',
+    );
+    let result: SignUpError | string;
+    if (!response.ok) {
+      result = await response.json();
+      throw new Error((result as SignUpError).reason);
+    }
+    return response.text();
   }
 }
 

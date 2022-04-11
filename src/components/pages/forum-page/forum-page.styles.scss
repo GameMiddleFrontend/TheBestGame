@@ -1,0 +1,85 @@
+@import 'src/styles/style-variables.scss';
+
+.forum-page-container {
+  font-family: Helvetica, sans-serif;
+  background-color: $mainBackgroundColor;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.forum-header {
+  align-self: center;
+  justify-self: flex-start;
+  width: 100%;
+  display: flex;
+  border-bottom: $fontColor solid 2px;
+}
+
+.header-label {
+  margin: 24px 24px 24px 3%;
+  font-size: 54px;
+  color: $fontColor;
+}
+
+.main-label {
+  text-decoration: none;
+}
+
+.forum-label {
+  margin: 12px 0;
+  font-size: 36px;
+  color: $fontColor;
+}
+
+.add-theme-container {
+  width: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-theme-item {
+  height: 24px;
+  margin: 3px 15px;
+}
+
+.add-theme-input {
+  flex-grow: 2;
+}
+
+.add-theme-button {
+  width: 150px;
+}
+
+.find-theme-container {
+  width: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.find-theme-item {
+  height: 24px;
+  margin: 3px 15px;
+}
+
+.find-theme-input {
+  flex-grow: 2;
+}
+
+.find-theme-button {
+  width: 150px;
+}
+
+.forum-content {
+  flex-grow: 2;
+  width: 90%;
+  margin-top: 1%;
+  display: flex;
+  flex-direction: column;
+  background-color: #0004;
+}
