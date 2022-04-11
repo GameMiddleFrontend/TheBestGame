@@ -9,6 +9,7 @@ import MainPage from '../pages/main-page';
 import NotFoundPage from '../pages/not-found-page';
 import ErrorBoundaryComponent from '../common/error-boundary';
 import ErrorFallbackComponent from '../common/error-fallback';
+import GamePage from '../pages/game';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/forum" element={<ForumPage />} />
+            <Route path="/game" element={<GamePage />} />
             <Route path="/*" element={<NotFoundPage />} />
           </Routes>
         </Router>

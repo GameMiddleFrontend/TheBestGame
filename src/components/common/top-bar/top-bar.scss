@@ -1,0 +1,11 @@
+@import '../../../styles/style-variables';
+
+.top-bar {
+  $top-bar-height: 52px;
+
+  position: relative;
+  width: 100%;
+  height: $top-bar-height;
+
+  background-color: $top-bar-background-color;
+}
