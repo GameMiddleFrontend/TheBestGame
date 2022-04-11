@@ -1,7 +1,7 @@
 import React, {useCallback, useMemo, useState} from 'react';
 
 import './register-page.scss';
-import {Field, Form, Formik, FormikValues} from 'formik';
+import {FormikValues} from 'formik';
 import {Link, useNavigate} from 'react-router-dom';
 import SignUpAPI from '../../../services/signUpAPI';
 import Popup from 'reactjs-popup';
@@ -50,7 +50,7 @@ function RegisterPage() {
         </Link>
       </div>
     ),
-    [onRegisterFormSubmit],
+    [],
   );
 
   return (

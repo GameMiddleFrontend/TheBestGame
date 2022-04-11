@@ -3,10 +3,9 @@ import {Link, useNavigate} from 'react-router-dom';
 
 import './login-page.scss';
 import LoginAPI from '../../../services/loginAPI';
-import {Field, Form, Formik, FormikValues} from 'formik';
+import {FormikValues} from 'formik';
 import 'reactjs-popup/dist/index.css';
 import '../../../styles/modal.scss';
-import AuthAPI from '../../../services/authAPI';
 import PopupComponent from '../../common/popup';
 import FormComponent from '../../common/form';
 import {LoginFormElementsDef} from './types';
@@ -24,17 +23,11 @@ function LoginPage() {
 
   const onLoginFormSubmit = useCallback((data: FormikValues) => {
     LoginAPI.signIn(data)
-      .then(() => {
-        AuthAPI.auth()
-          .then(() => {
-            navigate('/game');
-          })
-          .catch((err: Error) => {
-            setPopupMessage(err.message);
-          });
+      .then((result) => {
+        navigate('/game');
       })
       .catch((err: Error) => {
-        if (err.message === canRedirectMessage) {
+        if (err.message.toLowerCase() === canRedirectMessage) {
           navigate('/game');
         }
         setPopupMessage(err.message);
@@ -56,7 +49,7 @@ function LoginPage() {
         </Link>
       </div>
     ),
-    [onLoginFormSubmit],
+    [],
   );
 
   return (
