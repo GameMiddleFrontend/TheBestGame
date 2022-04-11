@@ -4,11 +4,12 @@ import LoginPage from '../pages/login-page/login-page';
 import RegisterPage from '../pages/register-page/register-page';
 import SettingsPage from '../pages/settings-page';
 import LeaderboardPage from '../pages/leaderboard-page';
-import ForumPage from '../pages/forum-page';
+import ForumPage from '../pages/forum-page/forum-page';
 import MainPage from '../pages/main-page';
 import NotFoundPage from '../pages/not-found-page';
 import ErrorBoundaryComponent from '../common/error-boundary';
 import ErrorFallbackComponent from '../common/error-fallback';
+import ForumThemePage from '../pages/forum-theme-page';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/forum" element={<ForumPage />} />
+            <Route path="/forum/*" element={<ForumThemePage />} />
             <Route path="/*" element={<NotFoundPage />} />
           </Routes>
         </Router>
