@@ -11,6 +11,7 @@ import ErrorBoundaryComponent from '../common/error-boundary';
 import ErrorFallbackComponent from '../common/error-fallback';
 import ForumThemePage from '../pages/forum-theme-page';
 import GamePage from '../pages/game';
+import AppRoutes from '../../utils/app-routes';
 
 function App() {
   return (
@@ -18,14 +19,14 @@ function App() {
       <ErrorBoundaryComponent FallbackComponent={ErrorFallbackComponent}>
         <Router>
           <Routes>
-            <Route path="/" element={<MainPage />} />
-            <Route path="/sign-in" element={<LoginPage />} />
-            <Route path="/sign-up" element={<RegisterPage />} />
-            <Route path="/game" element={<GamePage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/leaderboard" element={<LeaderboardPage />} />
-            <Route path="/forum" element={<ForumPage />} />
-            <Route path="/forum/*" element={<ForumThemePage />} />
+            <Route path={AppRoutes.HOME} element={<MainPage />} />
+            <Route path={AppRoutes.LOGIN} element={<LoginPage />} />
+            <Route path={AppRoutes.REGISTER} element={<RegisterPage />} />
+            <Route path={AppRoutes.GAME} element={<GamePage />} />
+            <Route path={AppRoutes.SETTINGS} element={<SettingsPage />} />
+            <Route path={AppRoutes.LEADERBOARD} element={<LeaderboardPage />} />
+            <Route path={AppRoutes.FORUM} element={<ForumPage />} />
+            <Route path={`${AppRoutes.FORUM}/*`} element={<ForumThemePage />} />
             <Route path="/*" element={<NotFoundPage />} />
           </Routes>
         </Router>

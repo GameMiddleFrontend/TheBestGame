@@ -1,25 +1,21 @@
 $primary-color: #2a5f18;
 $secondary-color: #15300C;
 $alt-color: #f0f8ff;
+$hover-color: #e9ecef;
+
+$main-background-color: $primary-color;
+$alt-background-color: #818381a3;
+$top-bar-background-color: $secondary-color;
 
 /** buttons */
 $buttons-main-color: $secondary-color;
 $buttons-accent-color: $alt-color;
+$buttons-disabled-color: $alt-color;
 
-/************************/
-//$page-background-color: #f0f3fa;
-//$page-background-alt-color: #15300C;
-
-
-$mainBackgroundColor: #497f4a;
-$top-bar-background-color: $secondary-color;
-$altBackgroundColor: #818381a3;
-
-$fontColor: #FFF;
-
-$linksFontColor: #FFF;
-
-
+/** text */
+$font-color: #FFF;
+$font-alt-color: #000000;
+$links-font-color: #FFF;
 
 
 

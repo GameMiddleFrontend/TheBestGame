@@ -1,18 +1,33 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import TopBarComponent from '../../common/top-bar/top-bar.component';
-import ButtonComponent from '../../common/button';
+import Button from '../../common/button';
+import playImg from '../../../styles/images/play.svg';
+import replayImg from '../../../styles/images/restart.svg';
+import undoImg from '../../../styles/images/undo.svg';
 
 import './game.scss';
 
 const GamePage = () => {
+  const handleStartGame = useCallback(() => {
+    //TODO
+  }, []);
+
+  const handleReplayGame = useCallback(() => {
+    //TODO
+  }, []);
+
+  const handleUndo = useCallback(() => {
+    //TODO
+  }, []);
+
   return (
-    /*TODO общий стиль page*/
-    <div className={'game-page'}>
+    <div className={'page game-page'}>
       <TopBarComponent />
-      <div style={{margin: '200px'}}>
-        <ButtonComponent className={'button-icon-only button-rounded'}>{/*TODO Иконки*/}</ButtonComponent>
-        <ButtonComponent className={'button-icon-only button-rounded'} />
-        <ButtonComponent className={'button-icon-only button-rounded'} />
+      <div className={'game-buttons-panel'}>
+        {/*TODO тултипы для кнопок*/}
+        <Button className={'button-icon-only button-rounded'} icon={playImg} onClick={handleStartGame} />
+        <Button className={'button-icon-only button-rounded'} icon={replayImg} onClick={handleReplayGame} />
+        <Button className={'button-icon-only button-rounded'} icon={undoImg} onClick={handleUndo} />
       </div>
     </div>
   );

@@ -1,10 +1,12 @@
 import React, {ChangeEvent, FC, MouseEvent} from 'react';
 import addImage from '../../../styles/images/add-image.svg';
+import userImage from '../../../styles/images/user.svg';
 
 import './avatar.scss';
 
 interface IProps {
   imgSrc?: string;
+  className?: string;
   isEditMode?: boolean;
 }
 
@@ -13,6 +15,9 @@ interface IHandlers {
 }
 
 const AvatarComponent: FC<IProps & IHandlers> = (props: IProps & IHandlers) => {
+  const imgSrc = props.imgSrc || userImage;
+  const className = `avatar ${props.className ? props.className : ''}${props.isEditMode ? ' avatar-upload' : ''}`;
+
   const handleClickAvatar = (event: MouseEvent<HTMLElement>) => {
     if (props.isEditMode) {
       const inputElement = event.currentTarget.getElementsByTagName('input').namedItem('avatar-input');
@@ -28,8 +33,8 @@ const AvatarComponent: FC<IProps & IHandlers> = (props: IProps & IHandlers) => {
   };
 
   return (
-    <div className={`avatar${props.isEditMode ? ' avatar-upload' : ''}`} onClick={handleClickAvatar}>
-      {props.imgSrc && <img src={props.imgSrc} alt={'аватар'} />}
+    <div className={className} onClick={handleClickAvatar}>
+      <img src={imgSrc} alt={'аватар'} />
       {props.isEditMode && (
         <>
           <input name="avatar-input" type="file" accept=".jpg, .jpeg, .png" onChange={handleInputChange} />

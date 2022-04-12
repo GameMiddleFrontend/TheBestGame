@@ -4,6 +4,7 @@ import {Link, useNavigate} from 'react-router-dom';
 import {IForumTheme} from '../../common/forum-theme/forum-theme.types';
 import ForumAPI from '../../../services/forumAPI';
 import ForumThemeComponent from '../../common/forum-theme';
+import TopBarComponent from '../../common/top-bar/top-bar.component';
 
 const forumPageRootClass = 'forum-page-container';
 
@@ -41,6 +42,7 @@ function ForumPage() {
   const page = useMemo(() => {
     return (
       <>
+        <TopBarComponent />
         <div className={'forum-header'}>
           <Link to={'/'} className={'header-label main-label'}>
             Косынка
