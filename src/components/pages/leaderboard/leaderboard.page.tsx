@@ -4,6 +4,8 @@ import AvatarComponent from '../../common/avatar';
 import LeaderboardAPI from '../../../services/leaderboardAPI';
 import TopBarComponent from '../../common/top-bar/top-bar.component';
 
+import './liderboard.scss';
+
 const LeaderboardPage = () => {
   const [leaderList, setLeaderList] = useState<LeaderboardUserType[]>([]);
 
@@ -20,11 +22,12 @@ const LeaderboardPage = () => {
   return (
     <div className="page">
       <TopBarComponent />
-      <table>
-        <thead>
+      <table className="table">
+        <thead className="table-header">
           <tr>
             <th>Место</th>
-            <th colSpan={2}>Игрок</th>
+            <th className="user-avatar-column">{''}</th>
+            <th className="user-column">Игрок</th>
             <th>Счет</th>
           </tr>
         </thead>
@@ -33,12 +36,12 @@ const LeaderboardPage = () => {
             const position = index + 1;
 
             return (
-              <tr key={position}>
+              <tr key={position} className="table-row">
                 <td>{position}</td>
-                <td>
+                <td className="user-avatar-column">
                   <AvatarComponent className={'avatar-sm'} imgSrc={item.avatar} />
                 </td>
-                <td>{item.userName}</td>
+                <td className="user-column">{item.userName}</td>
                 <td>{item.points}</td>
               </tr>
             );
