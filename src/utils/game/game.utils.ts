@@ -1,43 +1,93 @@
 import {Card, CardLeftUp, CardSuit, CardValue, getStringKeys} from '../../models/game.models';
 import {SecondaryTree, TargetTree} from './types';
+import GameSuiteUtil from '../../components/pages/game/game.suite.util';
+
+const backImagePath = 'https://upload.wikimedia.org/wikipedia/commons/5/54/Card_back_06.svg';
 
 class GameEngine {
-  gameCanvas: HTMLCanvasElement | undefined;
+  private gameCanvas: HTMLCanvasElement | undefined;
 
-  animationCanvas: HTMLCanvasElement | undefined;
+  private animationCanvas: HTMLCanvasElement | undefined;
 
   private isStarted = false;
 
+  //колода
   private cardStack: Array<Card> = [];
+
+  //колода в additionalCard
+  private shortCardStack: Array<Card> = [];
 
   private startCardsPosition: CardLeftUp | undefined;
 
+  //верхние стопки с мастями
   private targetStrokes: {[p: string]: TargetTree} | undefined;
 
+  //нижние стопки с картами в игре
   private secondaryStrokes: {[p: string]: SecondaryTree} | undefined;
 
+  //дополнительная колода в левом верхнем углу
   private additionalCard: {[p: string]: TargetTree} | undefined;
 
-  private cardWidth = 20;
+  private cardWidth = 25;
 
   private cardHeight = 30;
 
+  //отступы от карт
   private targetStackMargin = 5;
 
+  //кол-во стопок вигре
   private secondaryStackCount = 7;
 
   private targetStackPositions: Array<number> = [];
 
-  public init(gameCanvas: HTMLCanvasElement, animationCanvas: HTMLCanvasElement) {
+  //рубашка
+  private backImage: any;
+
+  //класс контейнера с канвасами для их растягивания
+  private containerClass = '';
+
+  private isEmptyAdditional = false;
+
+  public init(gameCanvas: HTMLCanvasElement, animationCanvas: HTMLCanvasElement, containerClass: string) {
     this.gameCanvas = gameCanvas;
     this.animationCanvas = animationCanvas;
+    this.containerClass = containerClass;
+    this.resizeCanvas();
+    window.addEventListener('resize', () => {
+      this.resizeCanvas();
+      this.renderStartElements();
+    });
+  }
+
+  private resizeCanvas() {
+    const container = document.querySelector(`.${this.containerClass}`);
+    if (container) {
+      const {width, height} = container.getBoundingClientRect();
+      this.gameCanvas!.width = width;
+      this.gameCanvas!.height = height;
+      this.animationCanvas!.width = width;
+      this.animationCanvas!.height = height;
+      this.cardWidth = width / 15;
+      this.cardHeight = height / 5;
+      this.targetStackMargin = width / 60;
+    }
   }
 
   public renderStartElements() {
-    this.renderStartStackPosition();
-    this.renderTargetStrokes();
-    this.renderAdditionalStack();
-    this.renderStrokes();
+    this.isStarted = false;
+    this.gameCanvas!.getContext('2d')!.clearRect(0, 0, this.gameCanvas!.width, this.gameCanvas!.height);
+    this.animationCanvas!.getContext('2d')!.clearRect(0, 0, this.animationCanvas!.width, this.animationCanvas!.height);
+    const image = new Image();
+    image.src = backImagePath;
+    image.width = this.cardWidth;
+    image.height = this.cardHeight;
+    this.backImage = image;
+    image.addEventListener('load', () => {
+      this.renderStartStackPosition();
+      this.renderTargetStrokes();
+      this.renderAdditionalStack();
+      this.renderStrokes();
+    });
   }
 
   renderStartStackPosition() {
@@ -49,13 +99,18 @@ class GameEngine {
 
   private renderCard(canvas: HTMLCanvasElement, point: CardLeftUp) {
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    this.getSquareStyles(ctx);
-    ctx.fillRect(point.x + 0.5, point.y + 0.5, this.cardWidth, this.cardHeight);
+    this.getImageStyles(ctx);
+    ctx.drawImage(
+      this.backImage,
+      point.x,
+      point.y,
+      this.cardWidth * window.devicePixelRatio,
+      this.cardHeight * window.devicePixelRatio,
+    );
   }
 
-  private getSquareStyles(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = 'red';
-    ctx.strokeStyle = 'blue';
+  private getImageStyles(ctx: CanvasRenderingContext2D) {
+    ctx.imageSmoothingEnabled = false;
   }
 
   private renderTargetStrokes() {
@@ -67,7 +122,7 @@ class GameEngine {
     for (let i = 0; i < 4; i++) {
       cardX -= this.cardWidth;
       const point: CardLeftUp = {x: cardX, y: this.targetStackMargin};
-      ctx.strokeRect(point.x + 0.5, point.y + 0.5, this.cardWidth, this.cardHeight);
+      ctx.strokeRect(point.x, point.y, this.cardWidth, this.cardHeight);
       const position: TargetTree = {rootPosition: point};
       this.targetStrokes = Object.assign(this.targetStrokes || {}, {[CardSuit[i]]: position});
       this.targetStackPositions.push(cardX);
@@ -85,7 +140,7 @@ class GameEngine {
     for (let i = 0; i < this.secondaryStackCount; i++) {
       cardX -= this.cardWidth;
       const point: CardLeftUp = {x: cardX, y: secondFloorCoord};
-      ctx.strokeRect(point.x + 0.5, point.y + 0.5, this.cardWidth, this.cardHeight);
+      ctx.strokeRect(point.x, point.y, this.cardWidth, this.cardHeight);
       const position: SecondaryTree = {rootPosition: point};
       this.secondaryStrokes = Object.assign(this.secondaryStrokes || {}, {[i]: position});
       this.targetStackPositions.push(cardX);
@@ -98,12 +153,12 @@ class GameEngine {
     this.getStrokeStyle(ctx);
     let x = 6 * this.targetStackMargin;
     let point: CardLeftUp = {x, y: this.targetStackMargin};
-    ctx.strokeRect(point.x + 0.5, point.y + 0.5, this.cardWidth, this.cardHeight);
+    ctx.strokeRect(point.x, point.y, this.cardWidth, this.cardHeight);
     let position: TargetTree = {rootPosition: point};
     this.additionalCard = Object.assign({}, {0: position});
     x += this.cardWidth + 2 * this.targetStackMargin;
     point = {x, y: this.targetStackMargin};
-    ctx.strokeRect(point.x + 0.5, point.y + 0.5, this.cardWidth, this.cardHeight);
+    ctx.strokeRect(point.x, point.y, this.cardWidth, this.cardHeight);
     position = {rootPosition: point};
     this.additionalCard[1] = position;
   }
@@ -123,10 +178,6 @@ class GameEngine {
       this.fillSecondaryStacks(0, 0).then(() => {
         this.changeRemainStackPosition();
       });
-      console.log(this.cardStack);
-      console.log(this.secondaryStrokes);
-      console.log(this.targetStrokes);
-      console.log(this.additionalCard);
     }
   }
 
@@ -140,7 +191,8 @@ class GameEngine {
           value: value as CardValue,
           suit: suit as CardSuit,
           position: null,
-          canTake: false,
+          draggable: false,
+          opened: false,
           next: null,
           prev: prevCard,
         };
@@ -150,7 +202,6 @@ class GameEngine {
         result.push(newCard);
         if (value === CardValue[CardValue.Ace]) {
           this.targetStrokes![suit as string].nextCard = newCard;
-          this.targetStrokes![suit as string].count = 0;
         }
         prevCard = newCard;
       });
@@ -159,11 +210,12 @@ class GameEngine {
   }
 
   private changeCardStackPlaces() {
-    for (let i = this.cardStack.length - 1; i > 0; i--) {
+    this.shortCardStack = this.cardStack.slice();
+    for (let i = this.shortCardStack.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * i);
-      const temp = this.cardStack[i];
-      this.cardStack[i] = this.cardStack[j];
-      this.cardStack[j] = temp;
+      const temp = this.shortCardStack[i];
+      this.shortCardStack[i] = this.shortCardStack[j];
+      this.shortCardStack[j] = temp;
     }
   }
 
@@ -175,11 +227,25 @@ class GameEngine {
     return new Promise((resolve) => {
       if (stackNumber >= this.secondaryStackCount) {
         if (success) {
-          success('allIn');
+          return success('allIn');
         }
       }
       success = success || resolve;
+      const currentSecondaryStack = this.secondaryStrokes![this.secondaryStackCount - stackNumber - 1];
+      const currentCard = this.shortCardStack.pop();
+      if (!currentSecondaryStack.cards) {
+        currentSecondaryStack.cards = [];
+      }
+      const {rootPosition} = currentSecondaryStack;
+      const endPosition: CardLeftUp = {x: rootPosition.x, y: rootPosition.y + cardNumber * this.targetStackMargin};
+      if (currentCard) {
+        currentSecondaryStack.cards?.push(currentCard);
+        currentCard.opened = cardNumber === stackNumber;
+        currentCard.draggable = cardNumber === stackNumber;
+        currentCard.position = endPosition;
+      }
       const callback = () => {
+        this.showCardFront(currentCard!);
         cardNumber++;
         if (cardNumber > stackNumber) {
           stackNumber++;
@@ -187,20 +253,48 @@ class GameEngine {
         }
         this.fillSecondaryStacks(stackNumber, cardNumber, success);
       };
-      const {rootPosition} = this.secondaryStrokes![this.secondaryStackCount - stackNumber - 1];
-      this.changeCardPosition(
-        {x: rootPosition.x, y: rootPosition.y + cardNumber * this.targetStackMargin},
-        this.startCardsPosition!,
-        callback,
-      );
+      this.changeCardPosition(endPosition, this.startCardsPosition!, callback);
     });
+  }
+
+  showCardFront(card: Card) {
+    if (card && card.opened) {
+      const ctx = this.gameCanvas!.getContext('2d');
+      if (ctx) {
+        this.getRecaStyle(ctx);
+        ctx.fillRect(card.position!.x, card.position!.y, this.cardWidth, this.cardHeight);
+        this.getTextStyle(ctx);
+        const textMargin = 1.5 * this.targetStackMargin;
+        const xPos: number = card.position!.x + this.targetStackMargin / 2 + textMargin;
+        const yPos: number = card.position!.y + this.targetStackMargin / 2 + textMargin;
+        const suitName: string = card.suit as unknown as string;
+        if (suitName === CardSuit[CardSuit.Hearts]) {
+          GameSuiteUtil.renderHeart(ctx, {x: xPos, y: yPos});
+        } else {
+          ctx.fillText(suitName, xPos, yPos, this.cardWidth - 2 * this.targetStackMargin);
+        }
+        const valueName = card.value as unknown as string;
+        ctx.fillText(valueName, xPos, yPos + textMargin, this.cardWidth - 2 * this.targetStackMargin);
+      }
+    }
+  }
+
+  private getRecaStyle(ctx: CanvasRenderingContext2D) {
+    ctx.strokeStyle = 'white';
+    ctx.fillStyle = 'white';
+  }
+
+  private getTextStyle(ctx: CanvasRenderingContext2D) {
+    ctx.fillStyle = '#000';
+    ctx.font = 'bold 30px sans-serif';
+    ctx.textAlign = 'center';
   }
 
   private changeCardPosition(end: CardLeftUp, startPos: CardLeftUp, callback?: () => void) {
     this.renderCard(this.animationCanvas!, startPos);
     const ctx = this.animationCanvas!.getContext('2d') as CanvasRenderingContext2D;
 
-    const counter = 10;
+    const counter = 15;
     let count = 1;
 
     const deltaX = (end.x - startPos.x) / counter;
@@ -210,13 +304,13 @@ class GameEngine {
     let nextPoint;
 
     const step = () => {
-      nextPoint = {x: startPos.x + deltaX * count + 0.5, y: startPos.y + deltaY * count + 0.5};
+      nextPoint = {x: startPos.x + deltaX * count, y: startPos.y + deltaY * count};
       if ((nextPoint.x >= end.x && deltaX > 0) || (nextPoint.x <= end.x && deltaX < 0)) {
         nextPoint = end;
       }
       ctx.clearRect(currentPoint.x, currentPoint.y, this.cardWidth + 1, this.cardHeight + 1);
-      this.getSquareStyles(ctx);
-      ctx.fillRect(nextPoint.x + 0.5, nextPoint.y + 0.5, this.cardWidth, this.cardHeight);
+      this.getImageStyles(ctx);
+      ctx.drawImage(this.backImage, nextPoint.x, nextPoint.y, this.cardWidth, this.cardHeight);
       currentPoint = nextPoint;
       if (count <= counter) {
         count++;
@@ -233,16 +327,100 @@ class GameEngine {
   }
 
   changeRemainStackPosition() {
-    debugger
     this.clearStartCardsPosition();
     const {rootPosition} = this.additionalCard![0];
     this.changeCardPosition(rootPosition, this.startCardsPosition!);
+    if (this.additionalCard && this.additionalCard[0]) {
+      this.additionalCard[0].cards = this.shortCardStack;
+      this.additionalCard[0].cards!.forEach((card) => {
+        if (this.additionalCard && this.additionalCard[0]) {
+          card.position = this.additionalCard[0].rootPosition;
+        }
+      });
+    }
+    document.addEventListener('mousedown', (event) => this.onClick(event));
+    console.log('------------------');
+    console.log(this.cardStack);
+    console.log(this.shortCardStack);
+    console.log(this.secondaryStrokes);
+    console.log(this.targetStrokes);
+    console.log(this.additionalCard);
   }
 
   clearStartCardsPosition() {
     const ctx = this.gameCanvas?.getContext('2d');
     if (ctx) {
       ctx.clearRect(this.startCardsPosition!.x, this.startCardsPosition!.y, this.cardWidth + 1, this.cardHeight + 1);
+    }
+  }
+
+  onClick(event: MouseEvent) {
+    if (event.target === this.animationCanvas) {
+      const {offsetX, offsetY} = event;
+      const {rootPosition: additionalPosition} = this.additionalCard![0];
+      if (this.additionalCard && this.checkPosition(offsetX, offsetY, this.additionalCard[0].rootPosition)) {
+        return this.onAdditionalCardClick();
+      }
+      const draggableTargetCard = this.findDraggableTargetCard(offsetX, offsetY);
+      if (draggableTargetCard) {
+        document.addEventListener('mousemove', (event) => this.onMouseMove.bind(this));
+      }
+    }
+  }
+
+  findDraggableTargetCard(offsetX: number, offsetY: number) {
+    return this.cardStack.find((card) => {
+      return this.checkPosition(offsetX, offsetY, card.position!);
+    });
+  }
+
+  checkPosition(offsetX: number, offsetY: number, point: CardLeftUp) {
+    return (
+      offsetX >= point.x &&
+      offsetX <= point.x + this.cardWidth &&
+      offsetY >= point.y &&
+      offsetY <= point.y + this.cardHeight
+    );
+  }
+
+  onAdditionalCardClick() {
+    if (this.additionalCard && this.additionalCard[1] && this.additionalCard[0]) {
+      const currentCard = this.additionalCard[0].cards!.pop();
+      this.additionalCard[1].cards = this.additionalCard[1]!.cards || [];
+      if (currentCard) {
+        this.additionalCard[1].cards?.push(currentCard);
+        const endPosition = this.additionalCard[1].rootPosition;
+        this.changeCardPosition(endPosition, currentCard.position!, () => {
+          currentCard.opened = true;
+          currentCard.position = endPosition;
+          this.showCardFront(currentCard);
+        });
+      } else {
+        if (!this.isEmptyAdditional) {
+          this.renderAdditionalEmpty(this.additionalCard[0].rootPosition);
+          this.isEmptyAdditional = true;
+        } else {
+          this.additionalCard[0].cards = this.additionalCard[1].cards;
+          this.additionalCard[1].cards = [];
+          this.renderAdditionalEmpty(this.additionalCard[1].rootPosition);
+          this.changeCardPosition(this.additionalCard[0].rootPosition, this.additionalCard[1].rootPosition, () => {
+            this.isEmptyAdditional = false;
+          });
+        }
+      }
+    }
+  }
+
+  onMouseMove(event: MouseEvent) {
+    debugger;
+  }
+
+  renderAdditionalEmpty(start: CardLeftUp) {
+    const ctx = this.gameCanvas!.getContext('2d');
+    if (ctx) {
+      ctx.clearRect(start.x, start.y, this.cardWidth, this.cardHeight);
+      this.getStrokeStyle(ctx);
+      ctx.strokeRect(start.x, start.y, this.cardWidth, this.cardHeight);
     }
   }
 }

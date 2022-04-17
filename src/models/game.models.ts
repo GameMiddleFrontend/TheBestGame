@@ -1,8 +1,9 @@
 type Card = {
   value: CardValue;
   suit: CardSuit;
+  opened: boolean;
+  draggable: boolean;
   position: CardLeftUp | null;
-  canTake: boolean;
   next: Card | null;
   prev: Card | null;
 };

@@ -3,7 +3,7 @@ import {Card, CardLeftUp, CardSuit} from '../../models/game.models';
 type Tree = {
   rootPosition: CardLeftUp;
   finished?: boolean;
-  count?: number;
+  cards?: Card[] | null;
   nextCard?: Card | null;
 };
 

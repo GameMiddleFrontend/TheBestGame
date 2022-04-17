@@ -11,6 +11,7 @@ import './game.scss';
 
 const gameCanvasClass = 'game';
 const animationCanvasClass = 'game-animation';
+const canvasContainerClass = 'game-container';
 
 const GamePage = () => {
   const handleStartGame = useCallback(() => {
@@ -18,7 +19,7 @@ const GamePage = () => {
   }, []);
 
   const handleReplayGame = useCallback(() => {
-    //TODO
+    GameEngine.renderStartElements();
   }, []);
 
   const handleUndo = useCallback(() => {
@@ -29,6 +30,7 @@ const GamePage = () => {
     GameEngine.init(
       document.querySelector(`.${gameCanvasClass}`) as HTMLCanvasElement,
       document.querySelector(`.${animationCanvasClass}`) as HTMLCanvasElement,
+      canvasContainerClass,
     );
     GameEngine.renderStartElements();
   });
