@@ -1,15 +1,20 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import TopBarComponent from '../../common/top-bar/top-bar.component';
 import Button from '../../common/button';
 import playImg from '../../../styles/images/play.svg';
 import replayImg from '../../../styles/images/restart.svg';
 import undoImg from '../../../styles/images/undo.svg';
+import GameCanvas from '../../common/canvas';
+import GameEngine from '../../../utils/game/game.utils';
 
 import './game.scss';
 
+const gameCanvasClass = 'game';
+const animationCanvasClass = 'game-animation';
+
 const GamePage = () => {
   const handleStartGame = useCallback(() => {
-    //TODO
+    GameEngine.startGame();
   }, []);
 
   const handleReplayGame = useCallback(() => {
@@ -20,14 +25,26 @@ const GamePage = () => {
     //TODO
   }, []);
 
+  useEffect(() => {
+    GameEngine.init(
+      document.querySelector(`.${gameCanvasClass}`) as HTMLCanvasElement,
+      document.querySelector(`.${animationCanvasClass}`) as HTMLCanvasElement,
+    );
+    GameEngine.renderStartElements();
+  });
+
   return (
     <div className={'page game-page'}>
       <TopBarComponent />
-      <div className={'game-buttons-panel'}>
-        {/*TODO тултипы для кнопок*/}
-        <Button className={'button-icon-only button-rounded'} icon={playImg} onClick={handleStartGame} />
-        <Button className={'button-icon-only button-rounded'} icon={replayImg} onClick={handleReplayGame} />
-        <Button className={'button-icon-only button-rounded'} icon={undoImg} onClick={handleUndo} />
+      <div className={'game-container'}>
+        <div className={'game-buttons-panel'}>
+          {/*TODO тултипы для кнопок*/}
+          <Button className={'button-icon-only button-rounded'} icon={playImg} onClick={handleStartGame} />
+          <Button className={'button-icon-only button-rounded'} icon={replayImg} onClick={handleReplayGame} />
+          <Button className={'button-icon-only button-rounded'} icon={undoImg} onClick={handleUndo} />
+        </div>
+        <GameCanvas className={gameCanvasClass} />
+        <canvas className={animationCanvasClass} />
       </div>
     </div>
   );
