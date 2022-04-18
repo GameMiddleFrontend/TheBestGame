@@ -1,6 +1,5 @@
 import {Card, CardLeftUp, CardSuit, CardValue, getStringKeys} from '../../models/game.models';
 import {SecondaryTree, TargetTree, Tree} from './types';
-import GameSuiteUtil from '../../components/pages/game/game.suite.util';
 
 const backImagePath = 'https://upload.wikimedia.org/wikipedia/commons/5/54/Card_back_06.svg';
 
@@ -273,11 +272,7 @@ class GameEngine {
         const xPos: number = card.position!.x + this.targetStackMargin / 2 + textMargin;
         const yPos: number = card.position!.y + this.targetStackMargin / 2 + textMargin;
         const suitName: string = card.suit as unknown as string;
-        if (suitName === CardSuit[CardSuit.Hearts]) {
-          GameSuiteUtil.renderHeart(ctx, {x: xPos, y: yPos});
-        } else {
-          ctx.fillText(suitName, xPos, yPos, this.cardWidth - 2 * this.targetStackMargin);
-        }
+        ctx.fillText(suitName, xPos, yPos, this.cardWidth - 2 * this.targetStackMargin);
         const valueName = card.value as unknown as string;
         ctx.fillText(valueName, xPos, yPos + textMargin, this.cardWidth - 2 * this.targetStackMargin);
       }
