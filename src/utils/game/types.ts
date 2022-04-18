@@ -13,4 +13,4 @@ type TargetTree = {
 
 type SecondaryTree = Tree;
 
-export {TargetTree, SecondaryTree};
+export {TargetTree, SecondaryTree, Tree};
