@@ -1,10 +1,13 @@
 @import 'style-variables';
 
 .page {
-  background-color: $mainBackgroundColor;
+  background-color: $primary-color;
   width: 100vw;
   height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+  &.form-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }

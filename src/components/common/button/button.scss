@@ -1,0 +1,43 @@
+@import "../../../styles/style-variables";
+
+.button {
+  $button-border: $buttons-main-color;
+  $button-bg: $buttons-main-color;
+  $button-text: $buttons-accent-color;
+
+  display: inline-block;
+  cursor: pointer;
+  padding: calc(0.75em - 1px) 1em;
+  border-radius: 0.25em;
+  border: 1px solid $button-border;
+  background-color: $button-bg;
+  color: $button-text;
+  font-size: 1em;
+  font-weight: 500;
+  line-height: 1;
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &.button-text {
+    background-color: transparent;
+    border-color: transparent;
+  }
+
+  &.button-icon-only {
+    padding: 0.75rem 0;
+
+    &.button-rounded {
+      $size: 4rem;
+
+      border-radius: 50%;
+      height: $size;
+      width: $size;
+    }
+  }
+
+  .icon {
+    background-image: url("../../../styles/images/play.svg");
+  }
+}

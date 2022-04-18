@@ -1,9 +1,23 @@
-$mainBackgroundColor: #497f4a;
-$altBackgroundColor: #818381a3;
+$primary-color: #2a5f18;
+$secondary-color: #15300C;
+$alt-color: #f0f8ff;
+$hover-color: #e9ecef;
 
-$fontColor: #FFF;
+$main-background-color: $primary-color;
+$alt-background-color: #818381a3;
+$top-bar-background-color: $secondary-color;
 
-$linksFontColor: #FFF;
+/** buttons */
+$buttons-main-color: $secondary-color;
+$buttons-accent-color: $alt-color;
+$buttons-disabled-color: $alt-color;
+
+/** text */
+$font-color: #FFF;
+$font-alt-color: #000000;
+$links-font-color: #FFF;
+
+
 
 $fontSize: 1.45vw;
 

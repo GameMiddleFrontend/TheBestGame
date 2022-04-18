@@ -1,0 +1,62 @@
+@import '../../../styles/style-variables';
+
+.top-bar {
+  $top-bar-height: 52px;
+  $top-bar-gap: 12px;
+
+  position: relative;
+  width: 100%;
+  height: $top-bar-height;
+  padding: 5px 20px;
+
+  display: flex;
+  flex-direction: row;
+  align-content: stretch;
+  justify-content: space-between;
+  align-items: center;
+  gap: $top-bar-gap;
+
+  box-sizing: border-box;
+
+  background-color: $top-bar-background-color;
+
+  .top-bar-section {
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    gap: $top-bar-gap;
+  }
+}
+
+.menu-content{
+  width: 12.5rem;
+  border: 0 none;
+}
+[role='tooltip'].menu-content {
+  width: max-content;
+  min-height: max-content;
+  box-shadow: rgba(0, 0, 0, 0.16) 0 0 3px;
+}
+
+.menu-container {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+  .menu-item{
+    &:not(.p-disabled):hover {
+      background: $hover-color;
+    }
+  }
+
+  .menu-button-text{
+    color: $font-alt-color;
+  }
+}
+
+
+

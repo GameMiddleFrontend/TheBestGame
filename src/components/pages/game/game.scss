@@ -1,0 +1,15 @@
+@import '../../../styles/style-variables';
+
+.game-page {
+
+  .game-buttons-panel{
+    width: fit-content;
+    margin: 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    justify-content: flex-start;
+    gap: 15px;
+  }
+}

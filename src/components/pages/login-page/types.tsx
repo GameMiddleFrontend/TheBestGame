@@ -1,9 +1,20 @@
-import * as Yup from 'yup';
+import {FormElementsDef} from '../../common/form/types';
+import {UserLoginItem} from '../../../models/current-user.model';
 import {FORM_VALIDATE_PATTERNS} from '../../../utils/validation';
 
-const SignInSchema = Yup.object({
-  login: FORM_VALIDATE_PATTERNS.LOGIN,
-  password: FORM_VALIDATE_PATTERNS.PASSWORD,
-});
+const LoginFormElementsDef: FormElementsDef<UserLoginItem>[] = [
+  {
+    name: 'login',
+    label: 'Логин',
+    defaultValue: '',
+    validatePattern: FORM_VALIDATE_PATTERNS.LOGIN,
+  },
+  {
+    name: 'password',
+    label: 'Пароль',
+    defaultValue: '',
+    validatePattern: FORM_VALIDATE_PATTERNS.PASSWORD,
+  },
+];
 
-export {SignInSchema};
+export {LoginFormElementsDef};
