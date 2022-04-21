@@ -1,4 +1,4 @@
-import {CardLeftUp} from '../../../models/game.models';
+import {CardLeftUp} from '../../../models/card.models';
 
 class GameSuiteUtil {
   renderHeart(ctx: CanvasRenderingContext2D, start: CardLeftUp) {

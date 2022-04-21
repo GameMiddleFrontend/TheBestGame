@@ -6,7 +6,8 @@ function GameCanvas({className}: canvasTypes) {
   const ref = useRef(null);
 
   useEffect(() => {
-    if (ref) {}
+    if (ref) {
+    }
   }, []);
 
   return <canvas ref={ref} className={className} />;

@@ -1,4 +1,4 @@
-import {Card, CardLeftUp, CardSuit} from '../../models/game.models';
+import {Card, CardLeftUp, CardSuit} from '../../models/card.models';
 
 type Tree = {
   rootPosition: CardLeftUp;
@@ -11,6 +11,6 @@ type TargetTree = {
   suite?: CardSuit;
 } & Tree;
 
-type SecondaryTree = Tree;
+type TableauTree = Tree;
 
-export {TargetTree, SecondaryTree, Tree};
+export {TargetTree, TableauTree, Tree};

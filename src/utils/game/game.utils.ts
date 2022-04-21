@@ -1,51 +1,65 @@
-import {Card, CardLeftUp, CardSuit, CardValue, getStringKeys} from '../../models/game.models';
-import {SecondaryTree, TargetTree, Tree} from './types';
+import {
+  BLACK_CARD_COLORS,
+  Card,
+  CardLeftUp,
+  CardRank,
+  CardRankValues,
+  CardSuit,
+  CardSuitValues,
+  getStringKeys,
+} from '../../models/card.models';
+import {TableauTree, TargetTree, Tree} from './types';
+import shuffle from '../helpers/shuffle';
+import {getPileStyle} from './game-elements.style';
+import {isDraggableCardConditions} from './moving-card-conditions';
 
 const backImagePath = 'https://upload.wikimedia.org/wikipedia/commons/5/54/Card_back_06.svg';
 
 class GameEngine {
   private gameCanvas: HTMLCanvasElement | undefined;
-
   private animationCanvas: HTMLCanvasElement | undefined;
 
   private isStarted = false;
 
   //колода
-  private cardStack: Array<Card> = [];
-
-  //колода в additionalCard
-  private shortCardStack: Array<Card> = [];
+  private cardDeckSorted: Array<Card> = [];
+  private cardDeck: Array<Card> = [];
 
   private startCardsPosition: CardLeftUp | undefined;
 
-  //верхние стопки с мастями
-  private targetStrokes: {[p: string]: TargetTree} | undefined;
+  /** хранение стопок карт, по принципу:
+   * arr[0] - последняя карта в стопке
+   * arr[arr.length - 1] - верхняя, открытая карта */
 
-  //нижние стопки с картами в игре
-  private secondaryStrokes: {[p: string]: SecondaryTree} | undefined;
+  /** Базы - верхние колоды разложенные по мастям */
+  private foundations: {[p: string]: TargetTree} | undefined;
+  private foundationsCount = 4;
 
-  //дополнительная колода в левом верхнем углу
-  private additionalCard: {[p: string]: TargetTree} | undefined;
+  /** Основная часть раскладки пасьянса */
+  private tableau: {[p: string]: TableauTree} | undefined;
+
+  //кол-во стопок в раскладке
+  private tableauPilesCount = 7;
+
+  /** Дополнительная колода в левом верхнем углу:
+   * карты, оставшиеся после раскладывания пасьянса */
+  private hand: {[p: string]: TargetTree} | undefined;
+  private isEmptyHand = false;
 
   private cardWidth = 25;
-
   private cardHeight = 30;
 
-  //отступы от карт
-  private targetStackMargin = 5;
+  //TODO отступы между стопками карт?
+  private pileMargin = 5;
 
-  //кол-во стопок вигре
-  private secondaryStackCount = 7;
-
-  private targetStackPositions: Array<number> = [];
+  //TODO возможно не используется нигде
+  private foundationPositions: Array<number> = [];
 
   //рубашка
   private backImage: any;
 
   //класс контейнера с канвасами для их растягивания
   private containerClass = '';
-
-  private isEmptyAdditional = false;
 
   private draggableCard: Card | undefined;
 
@@ -56,10 +70,11 @@ class GameEngine {
     this.animationCanvas = animationCanvas;
     this.containerClass = containerClass;
     this.resizeCanvas();
-    window.addEventListener('resize', () => {
-      this.resizeCanvas();
-      this.renderStartElements();
-    });
+    //TODO при изменении размера окна в процессе анимации пол поля затирается
+    // window.addEventListener('resize', () => {
+    //   this.resizeCanvas();
+    //   this.renderStartElements();
+    // });
   }
 
   private resizeCanvas() {
@@ -70,9 +85,10 @@ class GameEngine {
       this.gameCanvas!.height = height;
       this.animationCanvas!.width = width;
       this.animationCanvas!.height = height;
+      //TODO Магические числа? Переприсваивается? Зачем тогда объявлять?
       this.cardWidth = width / 15;
       this.cardHeight = height / 5;
-      this.targetStackMargin = width / 60;
+      this.pileMargin = width / 60;
     }
   }
 
@@ -80,22 +96,26 @@ class GameEngine {
     this.isStarted = false;
     this.gameCanvas!.getContext('2d')!.clearRect(0, 0, this.gameCanvas!.width, this.gameCanvas!.height);
     this.animationCanvas!.getContext('2d')!.clearRect(0, 0, this.animationCanvas!.width, this.animationCanvas!.height);
+
     const image = new Image();
     image.src = backImagePath;
     image.width = this.cardWidth;
     image.height = this.cardHeight;
     this.backImage = image;
     image.addEventListener('load', () => {
-      this.renderStartStackPosition();
-      this.renderTargetStrokes();
-      this.renderAdditionalStack();
-      this.renderStrokes();
+      this.renderStartPilePosition();
+      this.renderFoundations();
+      this.renderHand();
+      this.renderTableau();
     });
   }
 
-  renderStartStackPosition() {
+  renderStartPilePosition() {
     const {width, height} = this.gameCanvas!;
-    const point: CardLeftUp = {x: width / 2 - this.cardWidth / 2, y: height - this.targetStackMargin - this.cardHeight};
+    const point: CardLeftUp = {
+      x: width / 2 - this.cardWidth / 2,
+      y: height - this.pileMargin - this.cardHeight,
+    };
     this.startCardsPosition = point;
     this.renderCard(this.gameCanvas!, point);
   }
@@ -107,8 +127,10 @@ class GameEngine {
       this.backImage,
       point.x,
       point.y,
-      this.cardWidth * window.devicePixelRatio,
-      this.cardHeight * window.devicePixelRatio,
+      // this.cardWidth * window.devicePixelRatio,
+      // this.cardHeight * window.devicePixelRatio,
+      this.cardWidth,
+      this.cardHeight,
     );
   }
 
@@ -116,57 +138,58 @@ class GameEngine {
     ctx.imageSmoothingEnabled = false;
   }
 
-  private renderTargetStrokes() {
-    this.targetStrokes = undefined;
-    const {width} = this.gameCanvas!;
-    const ctx = this.gameCanvas?.getContext('2d') as CanvasRenderingContext2D;
-    this.getStrokeStyle(ctx);
-    let cardX: number = width - 4 * this.targetStackMargin;
-    for (let i = 0; i < 4; i++) {
-      cardX -= this.cardWidth;
-      const point: CardLeftUp = {x: cardX, y: this.targetStackMargin};
+  private renderElementPiles(
+    element: Record<string, Tree> = {},
+    coordX = 0,
+    coordY = 0,
+    pilesCount = 1,
+    isRightMove = true,
+  ): Record<string, Tree> {
+    const sign = isRightMove ? 1 : -1;
+    const ctx = getPileStyle(this.gameCanvas?.getContext('2d') as CanvasRenderingContext2D);
+
+    for (let i = 0; i < pilesCount; i++) {
+      coordX += sign * this.cardWidth;
+
+      const point: CardLeftUp = {x: coordX, y: coordY};
       ctx.strokeRect(point.x, point.y, this.cardWidth, this.cardHeight);
-      const position: TargetTree = {rootPosition: point};
-      this.targetStrokes = Object.assign(this.targetStrokes || {}, {[CardSuit[i]]: position});
-      this.targetStackPositions.push(cardX);
-      cardX -= 2 * this.targetStackMargin;
+
+      const position: Tree = {rootPosition: point};
+      element = Object.assign(element, {[i]: position});
+
+      coordX += sign * this.pileMargin * 2;
     }
+
+    return element;
   }
 
-  renderStrokes() {
-    this.secondaryStrokes = undefined;
+  private renderFoundations() {
     const {width} = this.gameCanvas!;
-    const ctx = this.gameCanvas?.getContext('2d') as CanvasRenderingContext2D;
-    this.getStrokeStyle(ctx);
-    const secondFloorCoord = 2 * this.targetStackMargin + this.cardHeight;
-    let cardX: number = width - 4 * this.targetStackMargin;
-    for (let i = 0; i < this.secondaryStackCount; i++) {
-      cardX -= this.cardWidth;
-      const point: CardLeftUp = {x: cardX, y: secondFloorCoord};
-      ctx.strokeRect(point.x, point.y, this.cardWidth, this.cardHeight);
-      const position: SecondaryTree = {rootPosition: point};
-      this.secondaryStrokes = Object.assign(this.secondaryStrokes || {}, {[i]: position});
-      this.targetStackPositions.push(cardX);
-      cardX -= 2 * this.targetStackMargin;
-    }
+
+    const coordX: number = width - this.pileMargin * 4;
+    const coordY = this.pileMargin;
+
+    this.foundations = this.renderElementPiles(this.foundations, coordX, coordY, this.foundationsCount, false);
   }
 
-  private renderAdditionalStack() {
-    const ctx = this.gameCanvas?.getContext('2d') as CanvasRenderingContext2D;
-    this.getStrokeStyle(ctx);
-    let x = 6 * this.targetStackMargin;
-    let point: CardLeftUp = {x, y: this.targetStackMargin};
-    ctx.strokeRect(point.x, point.y, this.cardWidth, this.cardHeight);
-    let position: TargetTree = {rootPosition: point};
-    this.additionalCard = Object.assign({}, {0: position});
-    x += this.cardWidth + 2 * this.targetStackMargin;
-    point = {x, y: this.targetStackMargin};
-    ctx.strokeRect(point.x, point.y, this.cardWidth, this.cardHeight);
-    position = {rootPosition: point};
-    this.additionalCard[1] = position;
+  renderTableau() {
+    const {width} = this.gameCanvas!;
+
+    const coordX: number = width - this.pileMargin * 4;
+    const coordY = this.pileMargin * 2 + this.cardHeight;
+
+    this.tableau = this.renderElementPiles(this.tableau, coordX, coordY, this.tableauPilesCount, false);
   }
 
-  private getStrokeStyle(ctx: CanvasRenderingContext2D) {
+  private renderHand() {
+    const coordX: number = this.pileMargin * 6;
+    const coordY = this.pileMargin;
+
+    this.hand = this.renderElementPiles(this.hand, coordX, coordY, 2);
+  }
+
+  //TODO вынести в game-elements
+  private getPileStyle(ctx: CanvasRenderingContext2D) {
     ctx.strokeStyle = 'white';
     ctx.lineWidth = 1;
     ctx.shadowOffsetX = 0;
@@ -176,22 +199,30 @@ class GameEngine {
   public startGame() {
     if (!this.isStarted) {
       this.isStarted = true;
-      this.fillStack();
-      this.changeCardStackPlaces();
-      this.fillSecondaryStacks(0, 0).then(() => {
+      this.fillCardDeckSorted();
+      this.shuffleCardDeck();
+      this.fillTableauPile().then(() => {
         this.changeRemainStackPosition();
       });
+
+      console.log('------------------');
+      console.log('cardDeckSorted', this.cardDeckSorted);
+      console.log('cardDeck', this.cardDeck);
+      console.log('tableau', this.tableau);
+      console.log('foundations', this.foundations);
+      console.log('hand', this.hand);
     }
   }
 
-  private fillStack() {
+  //Собираем полную колоду
+  private fillCardDeckSorted() {
     const suitKeys = getStringKeys(CardSuit);
-    const valueKeys = getStringKeys(CardValue);
-    this.cardStack = suitKeys.reduce((result: Array<Card>, suit: unknown): Array<Card> => {
+    const valueKeys = getStringKeys(CardRank);
+    this.cardDeckSorted = suitKeys.reduce((result: Array<Card>, suit: unknown): Array<Card> => {
       let prevCard: Card | null = null;
       valueKeys.forEach((value: unknown) => {
         const newCard: Card = {
-          value: value as CardValue,
+          rank: value as CardRank,
           suit: suit as CardSuit,
           position: null,
           draggable: false,
@@ -203,61 +234,66 @@ class GameEngine {
           prevCard.next = newCard;
         }
         result.push(newCard);
-        if (value === CardValue[CardValue.Ace]) {
-          this.targetStrokes![suit as string].nextCard = newCard;
-        }
         prevCard = newCard;
       });
       return result;
     }, []);
   }
 
-  private changeCardStackPlaces() {
-    this.shortCardStack = this.cardStack.slice();
-    for (let i = this.shortCardStack.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * i);
-      const temp = this.shortCardStack[i];
-      this.shortCardStack[i] = this.shortCardStack[j];
-      this.shortCardStack[j] = temp;
-    }
+  private shuffleCardDeck() {
+    this.cardDeck = shuffle(this.cardDeckSorted);
   }
 
-  fillSecondaryStacks(
-    stackNumber: number,
-    cardNumber: number,
-    success?: (value: PromiseLike<unknown> | unknown) => void,
-  ) {
+  fillTableauPile(pileNumber = 0, success?: (value: PromiseLike<unknown> | unknown) => void) {
     return new Promise((resolve) => {
-      if (stackNumber >= this.secondaryStackCount) {
+      if (pileNumber >= this.tableauPilesCount) {
         if (success) {
           return success('allIn');
         }
       }
       success = success || resolve;
-      const currentSecondaryStack = this.secondaryStrokes![this.secondaryStackCount - stackNumber - 1];
-      const currentCard = this.shortCardStack.pop();
-      if (!currentSecondaryStack.cards) {
-        currentSecondaryStack.cards = [];
+
+      const currentTableauPile = this.tableau![this.tableauPilesCount - pileNumber - 1];
+
+      //TODO вынести в инициализацию
+      if (!currentTableauPile.cards) {
+        currentTableauPile.cards = [];
       }
-      const {rootPosition} = currentSecondaryStack;
-      const endPosition: CardLeftUp = {x: rootPosition.x, y: rootPosition.y + cardNumber * this.targetStackMargin};
-      if (currentCard) {
-        currentSecondaryStack.cards?.push(currentCard);
-        currentCard.opened = cardNumber === stackNumber;
-        currentCard.draggable = cardNumber === stackNumber;
-        currentCard.position = endPosition;
-      }
-      const callback = () => {
+
+      const currentCard = this.getMovedCardFromDeck(currentTableauPile, pileNumber);
+
+      const daftNewCard = () => {
         this.showCardFront(currentCard!);
-        cardNumber++;
-        if (cardNumber > stackNumber) {
-          stackNumber++;
-          cardNumber = 0;
+
+        if ((currentTableauPile.cards?.length || 0) > pileNumber) {
+          pileNumber++;
         }
-        this.fillSecondaryStacks(stackNumber, cardNumber, success);
+        this.fillTableauPile(pileNumber, success);
       };
-      this.changeCardPosition(endPosition, this.startCardsPosition!, callback);
+
+      currentCard?.position && this.changeCardPosition(currentCard.position, this.startCardsPosition!, daftNewCard);
     });
+  }
+
+  getMovedCardFromDeck(currentTableauPile: Tree, pileNumber: number) {
+    const {rootPosition} = currentTableauPile;
+
+    const cardNumber = currentTableauPile.cards?.length || 0;
+
+    const currentCard = this.cardDeck.pop();
+
+    const cardPosition: CardLeftUp = {
+      x: rootPosition.x,
+      y: rootPosition.y + cardNumber * this.pileMargin,
+    };
+
+    if (currentCard) {
+      currentTableauPile.cards?.push(currentCard);
+      currentCard.opened = cardNumber === pileNumber;
+      currentCard.draggable = cardNumber === pileNumber;
+      currentCard.position = cardPosition;
+    }
+    return currentCard;
   }
 
   showCardFront(card: Card) {
@@ -267,14 +303,14 @@ class GameEngine {
         this.getRecaStyle(ctx);
         ctx.fillRect(card.position!.x, card.position!.y, this.cardWidth, this.cardHeight);
         ctx.strokeRect(card.position!.x, card.position!.y, this.cardWidth, this.cardHeight);
-        this.getTextStyle(ctx);
-        const textMargin = 1.5 * this.targetStackMargin;
-        const xPos: number = card.position!.x + this.targetStackMargin / 2 + textMargin;
-        const yPos: number = card.position!.y + this.targetStackMargin / 2 + textMargin;
-        const suitName: string = card.suit as unknown as string;
-        ctx.fillText(suitName, xPos, yPos, this.cardWidth - 2 * this.targetStackMargin);
-        const valueName = card.value as unknown as string;
-        ctx.fillText(valueName, xPos, yPos + textMargin, this.cardWidth - 2 * this.targetStackMargin);
+        this.getTextStyle(ctx, BLACK_CARD_COLORS.includes(card.suit));
+        const textMargin = 1.5 * this.pileMargin;
+        const xPos: number = card.position!.x + this.pileMargin / 2 + textMargin;
+        const yPos: number = card.position!.y + this.pileMargin / 2 + textMargin;
+        const suitName = card.suit;
+        ctx.fillText(CardSuitValues[suitName], xPos, yPos, this.cardWidth - 2 * this.pileMargin);
+        const valueName = card.rank;
+        ctx.fillText(CardRankValues[valueName], xPos, yPos + textMargin, this.cardWidth - 2 * this.pileMargin);
       }
     }
   }
@@ -285,8 +321,8 @@ class GameEngine {
     ctx.fillStyle = 'white';
   }
 
-  private getTextStyle(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = '#000';
+  private getTextStyle(ctx: CanvasRenderingContext2D, isBlackColor = true) {
+    ctx.fillStyle = isBlackColor ? '#000' : '#901414';
     ctx.font = 'bold 30px sans-serif';
     ctx.textAlign = 'center';
   }
@@ -329,23 +365,24 @@ class GameEngine {
 
   changeRemainStackPosition() {
     this.clearCardsPosition(this.startCardsPosition!);
-    const {rootPosition} = this.additionalCard![0];
+    const {rootPosition} = this.hand![0];
     this.changeCardPosition(rootPosition, this.startCardsPosition!);
-    if (this.additionalCard && this.additionalCard[0]) {
-      this.additionalCard[0].cards = this.shortCardStack;
-      this.additionalCard[0].cards!.forEach((card) => {
-        if (this.additionalCard && this.additionalCard[0]) {
-          card.position = this.additionalCard[0].rootPosition;
+    if (this.hand && this.hand[0]) {
+      this.hand[0].cards = this.cardDeck;
+      this.hand[0].cards!.forEach((card) => {
+        if (this.hand && this.hand[0]) {
+          card.position = this.hand[0].rootPosition;
         }
       });
     }
-    document.addEventListener('mousedown', (event) => this.onClick(event));
+
+    document.addEventListener('mousedown', (event) => this.onCardClick(event));
     console.log('------------------');
-    console.log(this.cardStack);
-    console.log(this.shortCardStack);
-    console.log(this.secondaryStrokes);
-    console.log(this.targetStrokes);
-    console.log(this.additionalCard);
+    console.log('cardDeckSorted', this.cardDeckSorted);
+    console.log('cardDeck', this.cardDeck);
+    console.log('tableau', this.tableau);
+    console.log('foundations', this.foundations);
+    console.log('hand', this.hand);
   }
 
   clearCardsPosition(position: CardLeftUp) {
@@ -360,51 +397,58 @@ class GameEngine {
     }
   }
 
-  onClick(event: MouseEvent) {
+  onCardClick(event: MouseEvent) {
     if (event.target === this.animationCanvas) {
       const {offsetX, offsetY} = event;
-      if (this.additionalCard && this.checkPosition(offsetX, offsetY, this.additionalCard[0].rootPosition)) {
-        return this.onAdditionalCardClick();
+      const isHand_0 = this.hand && this.checkPosition(offsetX, offsetY, this.hand[0].rootPosition);
+      const isHand_1 = this.hand && this.checkPosition(offsetX, offsetY, this.hand[1].rootPosition);
+
+      if (isHand_0) {
+        return this.onHandCardClick();
       }
-      const draggableTargetCard = this.findDraggableTargetCard(offsetX, offsetY);
-      if (draggableTargetCard) {
-        if (!this.draggableCard) {
-          this.draggableCard = draggableTargetCard;
-        } else {
-          if (draggableTargetCard !== this.draggableCard) {
-            this.moveCardOnClick(draggableTargetCard);
-          } else {
+      const currentFoundationPile = this.checkFoundationPosition(offsetX, offsetY);
+
+      if (currentFoundationPile) {
+        this.putCardOnFoundation(offsetX, offsetY, currentFoundationPile);
+      } else {
+        const draggableTargetCard = this.findDraggableTargetCard(offsetX, offsetY);
+
+        if (draggableTargetCard) {
+          if (!this.draggableCard) {
             this.draggableCard = draggableTargetCard;
+          } else {
+            if (!isHand_1 && isDraggableCardConditions(this.draggableCard, draggableTargetCard)) {
+              this.moveCardOnClick(draggableTargetCard);
+            } else {
+              this.draggableCard = draggableTargetCard;
+            }
           }
         }
       }
-      this.putCardOnTarget(offsetX, offsetY);
     }
   }
 
   findDraggableTargetCard(offsetX: number, offsetY: number) {
-    return this.cardStack.find((card) => {
+    return this.cardDeckSorted.find((card) => {
       return card.draggable && this.checkPosition(offsetX, offsetY, card.position!);
     });
   }
 
-  putCardOnTarget(offsetX: number, offsetY: number) {
-    if (this.targetStrokes) {
-      const targetStroke: TargetTree | undefined = Object.values(this.targetStrokes).find(
-        (value): TargetTree | undefined => {
-          if (this.checkPosition(offsetX, offsetY, value.rootPosition)) {
-            return value;
-          }
-        },
-      );
-      if (targetStroke && this.draggableCard && targetStroke.nextCard === this.draggableCard) {
+  putCardOnFoundation(offsetX: number, offsetY: number, foundationPile: TargetTree | undefined) {
+    if (this.foundations) {
+      if (
+        foundationPile &&
+        this.draggableCard &&
+        ((!foundationPile.nextCard && this.draggableCard.rank === CardRank.ACE) ||
+          foundationPile.nextCard === this.draggableCard)
+      ) {
         const stack = this.findCardStack(this.draggableCard);
         if (stack) {
           stack.cards = stack.cards!.filter((item) => item !== this.draggableCard!);
           this.renderPreviousCard(stack);
-          this.changeCardPosition(targetStroke.rootPosition, this.draggableCard.position!, () => {
-            this.draggableCard!.position! = targetStroke.rootPosition;
-            targetStroke.nextCard = this.draggableCard?.next;
+          this.changeCardPosition(foundationPile.rootPosition, this.draggableCard.position!, () => {
+            this.draggableCard!.position! = foundationPile.rootPosition;
+            foundationPile.nextCard = this.draggableCard?.next;
             this.showCardFront(this.draggableCard!);
             this.draggableCard = undefined;
           });
@@ -422,31 +466,56 @@ class GameEngine {
     );
   }
 
-  onAdditionalCardClick() {
-    if (this.additionalCard && this.additionalCard[1] && this.additionalCard[0]) {
-      const currentCard = this.additionalCard[0].cards!.pop();
-      this.additionalCard[1].cards = this.additionalCard[1]!.cards || [];
+  checkFoundationPosition(offsetX: number, offsetY: number) {
+    if (this.foundations) {
+      return Object.values(this.foundations).find((value): TargetTree | undefined => {
+        if (this.checkPosition(offsetX, offsetY, value.rootPosition)) {
+          return value;
+        }
+      });
+    }
+  }
+
+  onHandCardClick() {
+    if (this.hand && this.hand[1] && this.hand[0]) {
+      const currentCard = this.hand[0].cards!.pop();
+      this.hand[1].cards = this.hand[1]!.cards || [];
+
+      this.checkIsEmptyHand();
+
       if (currentCard) {
-        this.additionalCard[1].cards?.push(currentCard);
-        const endPosition = this.additionalCard[1].rootPosition;
+        this.hand[1].cards?.push(currentCard);
+        const endPosition = this.hand[1].rootPosition;
         this.changeCardPosition(endPosition, currentCard.position!, () => {
           currentCard.opened = true;
           currentCard.position = endPosition;
+          this.changeDraggableHandCards();
           this.showCardFront(currentCard);
         });
-      } else {
-        if (!this.isEmptyAdditional) {
-          this.renderAdditionalEmpty(this.additionalCard[0].rootPosition);
-          this.isEmptyAdditional = true;
-        } else {
-          this.additionalCard[0].cards = this.additionalCard[1].cards;
-          this.additionalCard[1].cards = [];
-          this.renderAdditionalEmpty(this.additionalCard[1].rootPosition);
-          this.changeCardPosition(this.additionalCard[0].rootPosition, this.additionalCard[1].rootPosition, () => {
-            this.isEmptyAdditional = false;
-          });
-        }
+      } else if (this.isEmptyHand) {
+        this.hand[0].cards = this.hand[1].cards.reverse();
+        this.hand[0].cards[0].draggable = false;
+        this.hand[1].cards = [];
+        this.renderHandEmpty(this.hand[1].rootPosition);
+        this.changeCardPosition(this.hand[0].rootPosition, this.hand[1].rootPosition, () => {
+          this.isEmptyHand = false;
+        });
       }
+    }
+  }
+
+  /** в открытой колоде доступна для перемещения только верхняя карта */
+  changeDraggableHandCards() {
+    this.hand &&
+      this.hand[1].cards?.forEach((card, index, array) => {
+        card.draggable = ++index === array.length;
+      });
+  }
+
+  checkIsEmptyHand() {
+    if (this.hand && this.hand[0].cards?.length === 0) {
+      this.isEmptyHand = true;
+      this.renderHandEmpty(this.hand[0].rootPosition);
     }
   }
 
@@ -456,14 +525,14 @@ class GameEngine {
     if (stack && stack.cards && newStack && newStack.cards) {
       stack.cards = stack.cards.filter((item) => item !== this.draggableCard!);
       if (!stack.cards.length) {
-        this.renderAdditionalEmpty(stack.rootPosition);
+        this.renderHandEmpty(stack.rootPosition);
       } else {
         this.renderPreviousCard(stack);
       }
       if (draggableTargetCard.position) {
         const newPosition = {
           x: draggableTargetCard.position.x,
-          y: draggableTargetCard.position.y + this.targetStackMargin,
+          y: draggableTargetCard.position.y + this.pileMargin,
         };
         this.draggableCard!.position = newPosition;
         this.changeCardPosition(newPosition, this.draggableCard!.position!, () => {
@@ -479,26 +548,28 @@ class GameEngine {
   }
 
   renderPreviousCard(stack: Tree) {
-    const lastCard = stack.cards![stack.cards!.length - 1];
-    lastCard.opened = true;
-    lastCard.draggable = true;
-    this.clearCardsPosition(this.draggableCard!.position!);
-    this.renderCard(this.gameCanvas!, lastCard.position!);
-    this.showCardFront(lastCard);
+    if (Array.isArray(stack.cards) && stack.cards.length !== 0) {
+      const lastCard = stack.cards[stack.cards.length - 1];
+      lastCard.opened = true;
+      lastCard.draggable = true;
+      this.clearCardsPosition(this.draggableCard!.position!);
+      this.renderCard(this.gameCanvas!, lastCard.position!);
+      this.showCardFront(lastCard);
+    }
   }
 
   findCardStack(card: Card): Tree | undefined {
     let result;
-    Object.entries(this.secondaryStrokes!).forEach(([key, value]) => {
+    Object.entries(this.tableau!).forEach(([key, value]) => {
       if (value.cards!.includes(card)) {
-        result = this.secondaryStrokes![key];
+        result = this.tableau![key];
         return;
       }
     });
     if (!result) {
-      Object.entries(this.additionalCard!).forEach(([key, value]) => {
+      Object.entries(this.hand!).forEach(([key, value]) => {
         if (value.cards!.includes(card)) {
-          result = this.additionalCard![key];
+          result = this.hand![key];
           return;
         }
       });
@@ -506,11 +577,11 @@ class GameEngine {
     return result;
   }
 
-  renderAdditionalEmpty(start: CardLeftUp) {
+  renderHandEmpty(start: CardLeftUp) {
     const ctx = this.gameCanvas!.getContext('2d');
     if (ctx) {
       ctx.clearRect(start.x, start.y, this.cardWidth, this.cardHeight);
-      this.getStrokeStyle(ctx);
+      this.getPileStyle(ctx);
       ctx.strokeRect(start.x, start.y, this.cardWidth, this.cardHeight);
     }
   }
