@@ -7,7 +7,7 @@ import SignUpAPI from '../../../services/signUpAPI';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import '../../../styles/modal.scss';
-import AuthAPI from '../../../services/authAPI';
+import AuthService from '../../../services/auth.service';
 import FormComponent from '../../common/form';
 import {RegisterFormElementsDef} from './types';
 
@@ -26,7 +26,7 @@ function RegisterPage() {
   const onRegisterFormSubmit = useCallback((values: FormikValues) => {
     SignUpAPI.signUp(values)
       .then(() => {
-        AuthAPI.auth()
+        AuthService.auth()
           .then(() => {
             navigate('/game');
           })

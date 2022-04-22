@@ -1,3 +1,4 @@
+import * as Yup from 'yup';
 import {FORM_VALIDATE_PATTERNS} from '../../../utils/validation';
 import {CurrentUserItem, CurrentUserPasswordItem} from '../../../models/current-user.model';
 import {FormElementsDef} from '../../common/form/types';
@@ -52,6 +53,6 @@ export const settingsPasswordsFormElementsDef: FormElementsDef<CurrentUserPasswo
     name: 'newPasswordCopy',
     label: 'Повторите новый пароль',
     defaultValue: '',
-    validatePattern: FORM_VALIDATE_PATTERNS.PASSWORD,
+    validatePattern: FORM_VALIDATE_PATTERNS.PASSWORD.oneOf([Yup.ref('newPassword')], 'Введенные пароли не совпадают'),
   },
 ];

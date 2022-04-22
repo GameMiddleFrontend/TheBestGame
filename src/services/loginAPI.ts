@@ -1,6 +1,6 @@
-import APIUtils from './APIUtils';
+import APIUtils from './service.utils';
 import {FormikValues} from 'formik';
-import AuthAPI, {authSuccess} from './authAPI';
+import AuthService, {authSuccess} from './auth.service';
 
 type LoginErrorRespone = {
   reason?: string;
@@ -13,7 +13,7 @@ class LoginAPI {
       const result: LoginErrorRespone = await response.json();
       throw new Error(result?.reason || 'Ошибка входа');
     }
-    return AuthAPI.auth();
+    return AuthService.auth();
   }
 }
 

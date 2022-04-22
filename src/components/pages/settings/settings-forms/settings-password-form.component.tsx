@@ -1,6 +1,8 @@
 import React, {FC, useCallback} from 'react';
 import FormComponent from '../../../common/form';
 import {settingsPasswordsFormElementsDef} from '../settings.types';
+import {CurrentUserPasswordItem} from '../../../../models/current-user.model';
+import {UserService} from '../../../../services/user.service';
 
 interface IProps {
   isEditPasswordMode: boolean;
@@ -11,9 +13,10 @@ interface IHandlers {
 }
 
 const SettingsPasswordFormComponent: FC<IProps & IHandlers> = (props: IProps & IHandlers) => {
-  const handleSavePassword = useCallback(() => {
-    //TODO
-    props.onSavePassword();
+  const handleSavePassword = useCallback((values: CurrentUserPasswordItem) => {
+    UserService.setUserPassword(values).then(() => {
+      props.onSavePassword();
+    });
   }, []);
 
   return (

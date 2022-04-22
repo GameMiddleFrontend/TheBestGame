@@ -4,6 +4,10 @@ import SettingsPasswordFormComponent from './settings-forms/settings-password-fo
 import TopBarComponent from '../../common/top-bar/top-bar.component';
 
 import './settings.scss';
+import {FormikValues} from 'formik';
+import SignUpAPI from '../../../services/signUpAPI';
+import AuthService from '../../../services/auth.service';
+import {UserService} from '../../../services/user.service';
 
 const SettingsPage = () => {
   const [isEditPasswordMode, setEditPasswordMode] = useState(false);

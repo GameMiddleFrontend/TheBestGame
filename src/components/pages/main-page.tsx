@@ -3,13 +3,13 @@ import {Link} from 'react-router-dom';
 
 import gameImage from '../../styles/images/game.jpg';
 import '../../styles/main-page.scss';
-import AuthAPI from '../../services/authAPI';
+import AuthService from '../../services/auth.service';
 
 function MainPage() {
   const [authorized, setAutorized] = useState(false);
 
   useEffect(() => {
-    AuthAPI.auth()
+    AuthService.auth()
       .then((user) => {
         setAutorized(true);
         console.dir(user);
