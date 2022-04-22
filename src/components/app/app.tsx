@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import LoginPage from '../pages/login-page/login-page';
 import RegisterPage from '../pages/register-page/register-page';

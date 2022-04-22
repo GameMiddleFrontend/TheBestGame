@@ -1,28 +1,18 @@
 import APIUtils from './APIUtils';
+import {CurrentUserItem} from '../models/current-user.model';
 
 type authError = {
   reason: string;
 };
 
-export type authSuccess = {
-  id: number;
-  first_name: string;
-  second_name: string;
-  display_name: string;
-  login: string;
-  email: string;
-  phone: string;
-  avatar: string;
-};
-
 class AuthAPI {
-  static async auth(): Promise<authSuccess> {
+  static async auth(): Promise<CurrentUserItem> {
     const response = await APIUtils.GET('/auth/user');
-    const result: authError | authSuccess = await response.json();
+    const result: authError | CurrentUserItem = await response.json();
     if (!response.ok) {
       throw new Error((result as authError).reason || 'Ошибка аутентификации');
     }
-    return result as authSuccess;
+    return result as CurrentUserItem;
   }
 }
 
