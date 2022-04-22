@@ -7,6 +7,7 @@ import AuthAPI from '../../services/authAPI';
 
 function MainPage() {
   const [authorized, setAutorized] = useState(false);
+
   useEffect(() => {
     AuthAPI.auth()
       .then((user) => {
@@ -17,6 +18,7 @@ function MainPage() {
         setAutorized(false);
       });
   }, [authorized]);
+
   return (
     <div className={'main-container'}>
       <div className={'main-page-header'}>
