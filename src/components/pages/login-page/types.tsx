@@ -1,5 +1,5 @@
 import {FormElementsDef} from '../../common/form/types';
-import {UserLoginItem} from '../../../models/current-user.model';
+import {UserLoginItem} from '../../../models/user.model';
 import {FORM_VALIDATE_PATTERNS} from '../../../utils/validation';
 
 const LoginFormElementsDef: FormElementsDef<UserLoginItem>[] = [

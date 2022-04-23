@@ -21,9 +21,7 @@ const GamePage = () => {
   }, []);
 
   return (
-    <div className={'page game-page'}>
-      {/*TODO отрендерить на уровне app (см https://github.com/GameMiddleFrontend/TheBestGame/pull/12)*/}
-      <TopBarComponent />
+    <div className={'game-page'}>
       <div className={'game-buttons-panel'}>
         {/*TODO тултипы для кнопок*/}
         <Button className={'button-icon-only button-rounded'} icon={playImg} onClick={handleStartGame} />

@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useMemo, useState} from 'react';
+import React, {FC, useCallback, useEffect, useMemo, useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {connect, MapDispatchToPropsParam} from 'react-redux';
 
@@ -6,10 +6,9 @@ import FormComponent from '../../common/form';
 import {LoginFormElementsDef} from './types';
 import IConfiguredStore from '../../../redux/reducers/configured-store';
 import {initialState as authInitialState, Actions as authActions} from '../../../redux/reducers/auth/auth.ducks';
+import {UserLoginItem} from '../../../models/user.model';
 
 import './login-page.scss';
-
-import {UserLoginItem} from '../../../models/current-user.model';
 
 const loginPageRootClass = 'login-page-container';
 const formContainerClass = 'form-container';
@@ -19,6 +18,7 @@ const canRedirectMessage = 'user already in system';
 
 interface IProps {
   isLoading: boolean;
+  isLoggedIn: boolean;
 }
 
 interface IHandler {
@@ -27,9 +27,10 @@ interface IHandler {
 
 const mapStateToProps = (state: IConfiguredStore): IProps => {
   //TODO add Reselect
-  const {isLoading} = state && state.auth ? state.auth : authInitialState;
+  const {isLoading, isLoggedIn} = state && state.auth ? state.auth : authInitialState;
   return {
     isLoading,
+    isLoggedIn,
   };
 };
 
@@ -40,19 +41,12 @@ const mapDispatchToProps: MapDispatchToPropsParam<IHandler, unknown> = {
 const LoginPage: FC<IProps & IHandler> = (props) => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    props.isLoggedIn && navigate('/game');
+  }, [props.isLoggedIn]);
+
   const onLoginFormSubmit = useCallback((data: UserLoginItem) => {
     props.login(data);
-    //TODO вынести в app redirect для залогиненного пользователя
-    // LoginAPI.signIn(data)
-    //   .then((result) => {
-    //     navigate('/game');
-    //   })
-    //   .catch((err: Error) => {
-    //     if (err.message.toLowerCase() === canRedirectMessage) {
-    //       navigate('/game');
-    //     }
-    //     setPopupMessage(err.message);
-    //   });
   }, []);
 
   const form = useMemo(

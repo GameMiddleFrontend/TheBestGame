@@ -21,7 +21,6 @@ const LeaderboardPage = () => {
 
   return (
     <div className="page">
-      <TopBarComponent />
       <table className="table">
         <thead className="table-header">
           <tr>

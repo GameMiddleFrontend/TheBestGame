@@ -1,4 +1,4 @@
-import {UserState} from './reducers/user/reducer.user.types';
+import {UserState} from './reducers/user/user.reducer.types';
 
 export type Nullable<T> = T | null;
 

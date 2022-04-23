@@ -1,12 +1,21 @@
-import APIUtils from './service.utils';
+import ServiceUtils from './service.utils';
+import {CurrentUserItem, UserPasswordApiItem} from '../models/user.model';
 
-export interface IUserPasswordApi {
-  oldPassword: string;
-  newPassword: string;
-}
+const _userBaseUrl = '/user';
 
 export class UserService {
-  static async setUserPassword(data: IUserPasswordApi): Promise<string> {
-    return await APIUtils.put('/password', data);
+  static async setUserPassword(data: UserPasswordApiItem): Promise<string> {
+    return await ServiceUtils.put(`${_userBaseUrl}/password`, data);
+  }
+
+  static async setUserInfo(data: CurrentUserItem): Promise<CurrentUserItem> {
+    return await ServiceUtils.put(`${_userBaseUrl}/profile`, data);
+  }
+
+  static async updateUserAvatar(avatar: File): Promise<CurrentUserItem> {
+    const formData = new FormData();
+    formData.append('avatar', avatar, `avatar`);
+
+    return await ServiceUtils.put(`${_userBaseUrl}/profile/avatar`, formData);
   }
 }

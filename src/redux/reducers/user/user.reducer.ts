@@ -1,8 +1,8 @@
-import {UserActions, UserActionType, UserState} from './reducer.user.types';
+import {UserActions, UserActionType, UserState} from './user.reducer.types';
 import {CaseReducer, createAction, createReducer} from '@reduxjs/toolkit';
 import {BaseActionType} from '../../redux.base.types';
 
-const initialState: UserState = {
+export const initialState: UserState = {
   status: 'failed',
   item: null,
 };
@@ -35,7 +35,7 @@ const userReducer: CaseReducer = createReducer<UserState>(initialState, (builder
     .addCase(setUserAction, (state, {payload: user}) => {
       return {
         ...state,
-        user,
+        ...user,
       };
     })
     .addDefaultCase((state) => {
@@ -53,8 +53,8 @@ export function loadPending(): BaseActionType<UserActions> {
   return {type: UserActions.PENDING};
 }
 
-export function setUser(user: UserActionType['item']): UserActionType {
-  return {type: UserActions.SET_USER_ITEM, item: user};
+export function setUser(user: UserActionType['payload']['item']): UserActionType {
+  return {type: UserActions.SET_USER_ITEM, payload: {item: user}};
 }
 
 export {userReducer as default};

@@ -1,4 +1,4 @@
-import {CurrentUserItem} from '../../../models/current-user.model';
+import {CurrentUserItem} from '../../../models/user.model';
 import {BaseActionType, Nullable} from '../../redux.base.types';
 
 type LoadStatus = 'success' | 'pending' | 'failed';
@@ -16,7 +16,9 @@ enum UserActions {
 }
 
 interface UserActionType extends BaseActionType<UserActions> {
-  item: Nullable<CurrentUserItem>;
+  payload: {
+    item: Nullable<CurrentUserItem>;
+  };
 }
 
 export {UserActionType, UserState, UserActions};

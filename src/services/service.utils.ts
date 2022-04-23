@@ -14,7 +14,12 @@ class ServiceUtils {
 
   simpleJsonHeader = {
     'Content-Type': 'application/json; charset=utf-8',
+    'Content-Security-Policy': `default-src 'self'; img-src *; media-src https://ya-praktikum.tech`,
   };
+
+  get(url: string, data?: unknown, requestInit?: RequestInit) {
+    return this.serviceFetch(url, CallMethodType.GET, null, requestInit);
+  }
 
   post(url: string, data?: unknown, requestInit?: RequestInit) {
     return this.serviceFetch(url, CallMethodType.POST, data, requestInit);
@@ -44,14 +49,16 @@ class ServiceUtils {
     const params: RequestInit = {
       ...requestInit,
       method: type,
+      keepalive: requestInit?.keepalive ?? true,
+      credentials: requestInit?.credentials ?? 'include',
     };
 
     if ([POST, PUT, DELETE].includes(type)) {
-      if (data) {
+      if (data instanceof FormData) {
+        params.body = data;
+      } else if (data) {
         params.body = JSON.stringify(data);
         params.headers = requestInit?.headers ?? this.simpleJsonHeader;
-        params.keepalive = requestInit?.keepalive ?? true;
-        params.credentials = requestInit?.credentials ?? 'include';
       }
     }
     return params;
@@ -72,6 +79,9 @@ class ServiceUtils {
     if (error && error.response) {
       const err = JSON.parse(error.response);
       return Promise.reject(err?.reason || err);
+    } else if (error instanceof Response) {
+      const err = await error.json();
+      throw new Error(err?.reason);
     }
     return Promise.reject(error);
   }

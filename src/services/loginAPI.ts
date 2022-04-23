@@ -1,6 +1,6 @@
-import APIUtils from './service.utils';
 import {FormikValues} from 'formik';
 import AuthService, {authSuccess} from './auth.service';
+import ServiceUtils from './service.utils';
 
 type LoginErrorRespone = {
   reason?: string;
@@ -8,12 +8,7 @@ type LoginErrorRespone = {
 
 class LoginAPI {
   static async signIn(body: FormikValues): Promise<authSuccess> {
-    const response = await APIUtils.POST('/auth/signin', body);
-    if (!response.ok) {
-      const result: LoginErrorRespone = await response.json();
-      throw new Error(result?.reason || 'Ошибка входа');
-    }
-    return AuthService.auth();
+    return await ServiceUtils.post(`/auth/signin`, body);
   }
 }
 
