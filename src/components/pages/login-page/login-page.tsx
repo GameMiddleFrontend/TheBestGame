@@ -1,14 +1,15 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {FC, useCallback, useMemo, useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
+import {connect, MapDispatchToPropsParam} from 'react-redux';
 
-import './login-page.scss';
-import LoginAPI from '../../../services/loginAPI';
-import {FormikValues} from 'formik';
-import 'reactjs-popup/dist/index.css';
-import '../../../styles/modal.scss';
-import PopupComponent from '../../common/popup';
 import FormComponent from '../../common/form';
 import {LoginFormElementsDef} from './types';
+import IConfiguredStore from '../../../redux/reducers/configured-store';
+import {initialState as authInitialState, Actions as authActions} from '../../../redux/reducers/auth/auth.ducks';
+
+import './login-page.scss';
+
+import {UserLoginItem} from '../../../models/current-user.model';
 
 const loginPageRootClass = 'login-page-container';
 const formContainerClass = 'form-container';
@@ -16,22 +17,42 @@ const formNameClass = 'form-name';
 
 const canRedirectMessage = 'user already in system';
 
-function LoginPage() {
-  const [popupMessage, setPopupMessage] = useState('');
+interface IProps {
+  isLoading: boolean;
+}
 
+interface IHandler {
+  login(data: UserLoginItem): void;
+}
+
+const mapStateToProps = (state: IConfiguredStore): IProps => {
+  //TODO add Reselect
+  const {isLoading} = state && state.auth ? state.auth : authInitialState;
+  return {
+    isLoading,
+  };
+};
+
+const mapDispatchToProps: MapDispatchToPropsParam<IHandler, unknown> = {
+  login: authActions.login,
+};
+
+const LoginPage: FC<IProps & IHandler> = (props) => {
   const navigate = useNavigate();
 
-  const onLoginFormSubmit = useCallback((data: FormikValues) => {
-    LoginAPI.signIn(data)
-      .then((result) => {
-        navigate('/game');
-      })
-      .catch((err: Error) => {
-        if (err.message.toLowerCase() === canRedirectMessage) {
-          navigate('/game');
-        }
-        setPopupMessage(err.message);
-      });
+  const onLoginFormSubmit = useCallback((data: UserLoginItem) => {
+    props.login(data);
+    //TODO вынести в app redirect для залогиненного пользователя
+    // LoginAPI.signIn(data)
+    //   .then((result) => {
+    //     navigate('/game');
+    //   })
+    //   .catch((err: Error) => {
+    //     if (err.message.toLowerCase() === canRedirectMessage) {
+    //       navigate('/game');
+    //     }
+    //     setPopupMessage(err.message);
+    //   });
   }, []);
 
   const form = useMemo(
@@ -54,10 +75,10 @@ function LoginPage() {
 
   return (
     <div className={loginPageRootClass}>
+      {/*TODO добавить лоадер*/}
       {form}
-      <PopupComponent message={popupMessage} onClose={() => setPopupMessage('')} />
     </div>
   );
-}
+};
 
-export default LoginPage;
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);
