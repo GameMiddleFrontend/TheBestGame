@@ -12,6 +12,7 @@ import ErrorFallbackComponent from '../common/error-fallback';
 import ForumThemePage from '../pages/forum-theme-page';
 import GamePage from '../pages/game';
 import AppRoutes from '../../utils/app-routes';
+import {NotificationContainer} from '../../containers/common/notification/notification.container';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/*" element={<NotFoundPage />} />
           </Routes>
         </Router>
+        <NotificationContainer />
       </ErrorBoundaryComponent>
     </div>
   );
