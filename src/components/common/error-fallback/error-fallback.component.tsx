@@ -7,8 +7,8 @@ import './error-fallback.scss';
 const ErrorFallbackComponent: FC<FallbackProps> = (props: FallbackProps) => {
   return (
     <div className="error-text-container">
-      <h2>{TextEnum.ERROR_MSG}</h2>
-      <p>{TextEnum.ERROR_MSG_FULL}</p>
+      <h2>{props.customMessage || TextEnum.ERROR_MSG}</h2>
+      <p>{props.customMessageHeader || TextEnum.ERROR_MSG_FULL}</p>
     </div>
   );
 };

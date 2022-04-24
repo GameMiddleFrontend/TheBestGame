@@ -1,6 +1,7 @@
 import React, {FC, useCallback, useEffect, useMemo, useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {connect, MapDispatchToPropsParam} from 'react-redux';
+import {compose} from 'redux';
 
 import FormComponent from '../../common/form';
 import {LoginFormElementsDef} from './types';
@@ -9,6 +10,7 @@ import {initialState as authInitialState, Actions as authActions} from '../../..
 import {UserLoginItem} from '../../../models/user.model';
 
 import './login-page.scss';
+import withAuth from '../../../hooks/chechAuthHookHOC';
 
 const loginPageRootClass = 'login-page-container';
 const formContainerClass = 'form-container';

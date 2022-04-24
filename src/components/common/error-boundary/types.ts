@@ -1,5 +1,7 @@
 export type ErrorBoundaryState = {error: Error | null};
 
 export interface FallbackProps {
-  error: Error;
+  error?: Error;
+  customMessageHeader?: string;
+  customMessage?: string;
 }

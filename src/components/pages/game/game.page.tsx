@@ -1,9 +1,11 @@
 import React, {useCallback} from 'react';
-import TopBarComponent from '../../common/top-bar/top-bar.component';
+import {compose} from 'redux';
+
 import Button from '../../common/button';
 import playImg from '../../../styles/images/play.svg';
 import replayImg from '../../../styles/images/restart.svg';
 import undoImg from '../../../styles/images/undo.svg';
+import withAuth from '../../../hooks/chechAuthHookHOC';
 
 import './game.scss';
 
@@ -32,4 +34,6 @@ const GamePage = () => {
   );
 };
 
-export default GamePage;
+const GamePageHOC = compose(withAuth(GamePage));
+
+export default GamePageHOC;
