@@ -13,9 +13,11 @@ import ForumThemePage from '../pages/forum-theme-page';
 import GamePage from '../pages/game';
 import AppRoutes from '../../utils/app-routes';
 import {NotificationContainer} from '../../containers/common/notification/notification.container';
+import WithLayout from '../common/page-layout';
+import useLayout from '../../hooks/withLayout';
 import {useDispatch} from 'react-redux';
 import {Actions as UserActions} from '../../redux/reducers/user/user.ducks';
-import useLayout from '../../hooks/withLayout';
+/*TODO добавить алиасы для путей*/
 
 function App() {
   const dispatch = useDispatch();
