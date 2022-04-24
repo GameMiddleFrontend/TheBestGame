@@ -7,13 +7,11 @@ import {Actions as notificationActions} from '../notification/notification.duck'
 import {getExceptionByError} from '../../../utils/notification';
 import {UserLoginItem} from '../../../models/user.model';
 import AuthService from '../../../services/auth.service';
-import {setUser} from '../user/user.reducer';
+import {Actions as UserActions} from '../user/user.ducks';
 
 enum ActionTypes {
   SET_LOADING = `@auth/setLoading`,
   SET_LOGGED_IN = `@auth/setLoggedIn`,
-
-  GET_USER = `@auth/getUser`,
   LOGIN = `@auth/login`,
   LOGOUT = `@auth/logout`,
 }
@@ -40,12 +38,12 @@ export const initialState: IStore = {
 /////////////////////////////////////
 const setLoading = createAction<boolean>(ActionTypes.SET_LOADING);
 const setLoggedIn = createAction<boolean>(ActionTypes.SET_LOGGED_IN);
-const getUser = createAction(ActionTypes.GET_USER);
+
 const login = createAction<UserLoginItem>(ActionTypes.LOGIN);
 const logout = createAction(ActionTypes.LOGOUT);
 
 export const Actions = {
-  getUser,
+  setLoggedIn,
   login,
   logout,
 };
@@ -62,7 +60,10 @@ export const reducer: Reducer<IStore, AuthActionType> = createReducer(initialSta
     .addCase(setLoggedIn, (state, {payload}) => ({
       ...state,
       isLoggedIn: payload,
-    })),
+    }))
+    .addDefaultCase((state) => {
+      return state;
+    }),
 );
 
 ///////////////////////////////////
@@ -76,13 +77,13 @@ function* loginFlow(action: PayloadAction<UserLoginItem>) {
 
     if (data) {
       const result = yield* call(LoginAPI.signIn, data);
-      yield* put(getUser());
+      yield* call(UserActions.getUser);
     }
 
     yield* put(setLoading(false));
   } catch (e) {
     yield* put(setLoading(false));
-    yield* put(notificationActions.setNotification(getExceptionByError(e)));
+    yield* put(notificationActions.setNotification(getExceptionByError(e as Error)));
   }
 }
 
@@ -97,22 +98,11 @@ function* logoutFlow() {
     yield* put(setLoading(false));
   } catch (e) {
     yield* put(setLoading(false));
-    yield* put(notificationActions.setNotification(getExceptionByError(e)));
+    yield* put(notificationActions.setNotification(getExceptionByError(e as Error)));
   }
 }
 
-function* getUserFlow() {
-  try {
-    const result = yield* call(AuthService.auth);
-    if (result) {
-      yield* put(setLoggedIn(true));
-      yield* put(setUser(result));
-    }
-  } catch (e) {}
-}
-
 export function* authListFlow() {
-  yield* takeEvery(getUser, getUserFlow);
   yield* takeEvery(login, loginFlow);
   yield* takeEvery(logout, logoutFlow);
 }

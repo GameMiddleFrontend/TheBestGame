@@ -15,13 +15,13 @@ import AppRoutes from '../../utils/app-routes';
 import {NotificationContainer} from '../../containers/common/notification/notification.container';
 import WithLayout from '../common/page-layout';
 import {useDispatch} from 'react-redux';
-import {Actions as authActions} from '../../redux/reducers/auth/auth.ducks';
+import {Actions as userActions} from '../../redux/reducers/user/user.ducks';
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(authActions.getUser());
+    dispatch(userActions.getUser());
   }, []);
 
   const getElement = useCallback((component: React.ElementType) => {
