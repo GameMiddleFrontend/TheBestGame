@@ -14,8 +14,10 @@ interface IHandlers {
   onChangeAvatar?(file: File): void;
 }
 
+const avatarUrl = `https://ya-praktikum.tech/api/v2/resources`;
+
 const AvatarComponent: FC<IProps & IHandlers> = (props: IProps & IHandlers) => {
-  const imgSrc = props.imgSrc || userImage;
+  const imgSrc = props.imgSrc ? avatarUrl.concat(props.imgSrc) : userImage;
   const className = `avatar ${props.className ? props.className : ''}${props.isEditMode ? ' avatar-upload' : ''}`;
 
   const handleClickAvatar = (event: MouseEvent<HTMLElement>) => {

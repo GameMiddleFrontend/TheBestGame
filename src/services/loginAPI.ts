@@ -1,19 +1,14 @@
-import APIUtils from './APIUtils';
 import {FormikValues} from 'formik';
-import AuthAPI, {authSuccess} from './authAPI';
+import ServiceUtils from './service.utils';
+import {CurrentUserItem} from '../models/user.model';
 
 type LoginErrorRespone = {
   reason?: string;
 };
 
 class LoginAPI {
-  static async signIn(body: FormikValues): Promise<authSuccess> {
-    const response = await APIUtils.POST('/auth/signin', body);
-    if (!response.ok) {
-      const result: LoginErrorRespone = await response.json();
-      throw new Error(result?.reason || 'Ошибка входа');
-    }
-    return AuthAPI.auth();
+  static async signIn(body: FormikValues): Promise<CurrentUserItem> {
+    return await ServiceUtils.post(`/auth/signin`, body);
   }
 }
 

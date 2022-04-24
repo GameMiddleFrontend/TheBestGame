@@ -3,7 +3,7 @@
 .login-page-container {
   background-color: $main-background-color;
   width: 100vw;
-  height: 100vh;
+  height: calc(100% - #{$top-bar-height});
   display: flex;
   align-items: center;
   justify-content: center;

@@ -1,5 +1,5 @@
 import {FormElementsDef} from '../../common/form/types';
-import {UserLoginItem, UserRegisterItem} from '../../../models/current-user.model';
+import {UserRegisterItem} from '../../../models/user.model';
 import {FORM_VALIDATE_PATTERNS} from '../../../utils/validation';
 
 const RegisterFormElementsDef: FormElementsDef<UserRegisterItem>[] = [

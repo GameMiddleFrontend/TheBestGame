@@ -7,15 +7,28 @@ import cancelArrowImg from '../../../styles/images/cancel-arrow.svg';
 import menuImg from '../../../styles/images/menu.svg';
 import userImage from '../../../styles/images/user.svg';
 import {topBarMenu} from './top-bar.types';
+import {connect} from 'react-redux';
+import IConfiguredStore from '../../../redux/reducers/configured-store';
+import {initialState as authInitialState} from '../../../redux/reducers/auth/auth.ducks';
 
 import './top-bar.scss';
 
 interface IProps {
+  isLoggedIn: boolean;
   avatar?: string;
 }
+
 interface IHandlers {
   onCancel?(): void;
 }
+
+const mapStateToProps = (state: IConfiguredStore): IProps => {
+  //TODO add Reselect
+  const {isLoggedIn} = state && state.auth ? state.auth : authInitialState;
+  return {
+    isLoggedIn,
+  };
+};
 
 const TopBar: FC<IProps & IHandlers> = (props) => {
   const location = useLocation();
@@ -32,12 +45,14 @@ const TopBar: FC<IProps & IHandlers> = (props) => {
       </section>
       <section className={'top-bar-section'}>
         {/*TODO можно отображать аватар*/}
-        <Button
-          className={'button-icon-only'}
-          icon={props.avatar || userImage}
-          onClick={handleNavigate.bind(null, AppRoutes.SETTINGS)}
-          disabled={location.pathname === AppRoutes.SETTINGS}
-        />
+        {props.isLoggedIn && (
+          <Button
+            className={'button-icon-only'}
+            icon={props.avatar || userImage}
+            onClick={handleNavigate.bind(null, AppRoutes.SETTINGS)}
+            disabled={location.pathname === AppRoutes.SETTINGS}
+          />
+        )}
         <Popup
           trigger={
             <div>
@@ -71,4 +86,4 @@ const TopBar: FC<IProps & IHandlers> = (props) => {
   );
 };
 
-export default TopBar;
+export default connect(mapStateToProps)(TopBar);

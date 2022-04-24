@@ -1,6 +1,7 @@
+import * as Yup from 'yup';
 import {FORM_VALIDATE_PATTERNS} from '../../../utils/validation';
-import {CurrentUserItem, CurrentUserPasswordItem} from '../../../models/current-user.model';
-import {FormElementsDef} from '../../common/form/types';
+import {CurrentUserItem, CurrentUserPasswordItem} from '../../../models/user.model';
+import {FormElementsDef, IInputType} from '../../common/form/types';
 
 export const settingsFormElementsDef: FormElementsDef<CurrentUserItem>[] = [
   {
@@ -19,20 +20,30 @@ export const settingsFormElementsDef: FormElementsDef<CurrentUserItem>[] = [
     name: 'login',
     label: 'Логин',
     defaultValue: '',
-    validatePattern: FORM_VALIDATE_PATTERNS.USER_NAME,
+    validatePattern: FORM_VALIDATE_PATTERNS.LOGIN,
   },
   {
     name: 'email',
     label: 'Почта',
     defaultValue: '',
-    validatePattern: FORM_VALIDATE_PATTERNS.USER_NAME,
+    validatePattern: FORM_VALIDATE_PATTERNS.EMAIL,
   },
   {
     name: 'phone',
     label: 'Телефон',
     defaultValue: '',
+    validatePattern: FORM_VALIDATE_PATTERNS.PHONE_NUMBER,
+  },
+];
+
+export const settingsEditFormElementsDef: FormElementsDef<CurrentUserItem>[] = [
+  {
+    name: 'display_name',
+    label: 'Имя в чате',
+    defaultValue: '',
     validatePattern: FORM_VALIDATE_PATTERNS.USER_NAME,
   },
+  ...settingsFormElementsDef,
 ];
 
 export const settingsPasswordsFormElementsDef: FormElementsDef<CurrentUserPasswordItem>[] = [
@@ -40,18 +51,21 @@ export const settingsPasswordsFormElementsDef: FormElementsDef<CurrentUserPasswo
     name: 'oldPassword',
     label: 'Старый пароль',
     defaultValue: '',
+    type: IInputType.password,
     validatePattern: FORM_VALIDATE_PATTERNS.PASSWORD,
   },
   {
     name: 'newPassword',
     label: 'Новый пароль',
     defaultValue: '',
+    type: IInputType.password,
     validatePattern: FORM_VALIDATE_PATTERNS.PASSWORD,
   },
   {
     name: 'newPasswordCopy',
     label: 'Повторите новый пароль',
     defaultValue: '',
-    validatePattern: FORM_VALIDATE_PATTERNS.PASSWORD,
+    type: IInputType.password,
+    validatePattern: FORM_VALIDATE_PATTERNS.PASSWORD.oneOf([Yup.ref('newPassword')], 'Введенные пароли не совпадают'),
   },
 ];

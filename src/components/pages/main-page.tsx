@@ -1,30 +1,18 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Link} from 'react-router-dom';
 
 import gameImage from '../../styles/images/game.jpg';
 import '../../styles/main-page.scss';
-import AuthAPI from '../../services/authAPI';
-
+import {useSelector} from 'react-redux';
+import IConfiguredStore from '../../redux/reducers/configured-store';
 function MainPage() {
-  const [authorized, setAutorized] = useState(false);
-
-  useEffect(() => {
-    AuthAPI.auth()
-      .then((user) => {
-        setAutorized(true);
-        console.dir(user);
-      })
-      .catch(() => {
-        setAutorized(false);
-      });
-  }, [authorized]);
-
+  const userData = useSelector((state: IConfiguredStore) => state.auth.isLoggedIn);
   return (
     <div className={'main-container'}>
       <div className={'main-page-header'}>
         <h1 className={'game-name-label'}>Косынка</h1>
         <div className={'links-container'}>
-          {authorized ? (
+          {userData ? (
             <Link className={'link'} to={'/game'}>
               Играть
             </Link>
