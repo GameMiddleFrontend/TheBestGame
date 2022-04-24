@@ -36,8 +36,7 @@ const GamePage = () => {
   });
 
   return (
-    <div className={'page game-page'}>
-      <TopBarComponent />
+    <div className={'game-page'}>
       <div className={'game-container'}>
         <div className={'game-buttons-panel'}>
           {/*TODO тултипы для кнопок*/}

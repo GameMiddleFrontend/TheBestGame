@@ -1,5 +1,5 @@
 import {FormikValues} from 'formik';
-import APIUtils from './APIUtils';
+import APIUtils from './service.utils';
 
 type SignUpError = {
   reason: string;

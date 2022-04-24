@@ -42,7 +42,6 @@ function ForumPage() {
   const page = useMemo(() => {
     return (
       <>
-        <TopBarComponent />
         <div className={'forum-header'}>
           <Link to={'/'} className={'header-label main-label'}>
             Косынка

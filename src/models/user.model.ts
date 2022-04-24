@@ -15,6 +15,8 @@ export type CurrentUserPasswordItem = {
   newPasswordCopy: string;
 };
 
+export type UserPasswordApiItem = Omit<CurrentUserPasswordItem, 'newPasswordCopy'>;
+
 type Password = {
   password: string;
 };
@@ -23,3 +25,8 @@ export type UserLoginItem = Pick<CurrentUserItem, 'login'> & Password;
 
 export type UserRegisterItem = Pick<CurrentUserItem, 'email' | 'login' | 'first_name' | 'second_name' | 'phone'> &
   Password;
+
+export type UpdateUserInfoType<T> = {
+  data: T;
+  callback: () => void;
+};

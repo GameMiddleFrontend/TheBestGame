@@ -1,14 +1,14 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {FC, useCallback, useEffect, useMemo, useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux';
 
-import './login-page.scss';
-import LoginAPI from '../../../services/loginAPI';
-import {FormikValues} from 'formik';
-import 'reactjs-popup/dist/index.css';
-import '../../../styles/modal.scss';
-import PopupComponent from '../../common/popup';
 import FormComponent from '../../common/form';
 import {LoginFormElementsDef} from './types';
+import IConfiguredStore from '../../../redux/reducers/configured-store';
+import {Actions as authActions, IStore as IAuthStore} from '../../../redux/reducers/auth/auth.ducks';
+import {UserLoginItem} from '../../../models/user.model';
+
+import './login-page.scss';
 
 const loginPageRootClass = 'login-page-container';
 const formContainerClass = 'form-container';
@@ -16,22 +16,17 @@ const formNameClass = 'form-name';
 
 const canRedirectMessage = 'user already in system';
 
-function LoginPage() {
-  const [popupMessage, setPopupMessage] = useState('');
-
+const LoginPage: FC = (props) => {
+  const {isLoading, isLoggedIn} = useSelector<IConfiguredStore, IAuthStore>((state) => state.auth);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const onLoginFormSubmit = useCallback((data: FormikValues) => {
-    LoginAPI.signIn(data)
-      .then((result) => {
-        navigate('/game');
-      })
-      .catch((err: Error) => {
-        if (err.message.toLowerCase() === canRedirectMessage) {
-          navigate('/game');
-        }
-        setPopupMessage(err.message);
-      });
+  useEffect(() => {
+    isLoggedIn && navigate('/game');
+  }, [isLoggedIn]);
+
+  const onLoginFormSubmit = useCallback((data: UserLoginItem) => {
+    dispatch(authActions.login(data));
   }, []);
 
   const form = useMemo(
@@ -54,10 +49,10 @@ function LoginPage() {
 
   return (
     <div className={loginPageRootClass}>
+      {/*TODO добавить лоадер*/}
       {form}
-      <PopupComponent message={popupMessage} onClose={() => setPopupMessage('')} />
     </div>
   );
-}
+};
 
 export default LoginPage;

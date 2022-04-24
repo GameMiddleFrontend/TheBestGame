@@ -1,14 +1,14 @@
 import React, {FC} from 'react';
 import {FallbackProps} from '../error-boundary';
+import TextEnum from '../../../models/enum/text.enum';
 
 import './error-fallback.scss';
 
 const ErrorFallbackComponent: FC<FallbackProps> = (props: FallbackProps) => {
   return (
     <div className="error-text-container">
-      {/*TODO вынести в enum*/}
-      <h2>{'Что-то пошло не так ^_^'}</h2>
-      <p>{'Возникла непредвиденная ошибка. Пожалуйста, попробуйте позже.'}</p>
+      <h2>{TextEnum.ERROR_MSG}</h2>
+      <p>{TextEnum.ERROR_MSG_FULL}</p>
     </div>
   );
 };

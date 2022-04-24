@@ -2,10 +2,6 @@ interface IPopupProps {
   message: string;
 }
 
-interface IEvents {
-  onClose: () => void;
-}
-
-type PopupProps = IPopupProps & IEvents;
+type PopupProps = IPopupProps;
 
 export {IPopupProps, PopupProps};
