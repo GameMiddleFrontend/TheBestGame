@@ -21,7 +21,7 @@ class GameEngine {
 
   private isStarted = false;
 
-  //колода
+  /** основная колода */
   private cardDeckSorted: Array<Card> = [];
   private cardDeck: Array<Card> = [];
 
@@ -38,7 +38,7 @@ class GameEngine {
   /** Основная часть раскладки пасьянса */
   private tableau: {[p: string]: TableauTree} | undefined;
 
-  //кол-во стопок в раскладке
+  /** Кол-во стопок в раскладке */
   private tableauPilesCount = 7;
 
   /** Дополнительная колода в левом верхнем углу:
@@ -304,13 +304,33 @@ class GameEngine {
         ctx.fillRect(card.position!.x, card.position!.y, this.cardWidth, this.cardHeight);
         ctx.strokeRect(card.position!.x, card.position!.y, this.cardWidth, this.cardHeight);
         this.getTextStyle(ctx, BLACK_CARD_COLORS.includes(card.suit));
-        const textMargin = 1.5 * this.pileMargin;
-        const xPos: number = card.position!.x + this.pileMargin / 2 + textMargin;
-        const yPos: number = card.position!.y + this.pileMargin / 2 + textMargin;
-        const suitName = card.suit;
-        ctx.fillText(CardSuitValues[suitName], xPos, yPos, this.cardWidth - 2 * this.pileMargin);
-        const valueName = card.rank;
-        ctx.fillText(CardRankValues[valueName], xPos, yPos + textMargin, this.cardWidth - 2 * this.pileMargin);
+
+        const suitName = CardSuitValues[card.suit];
+        const rankName = CardRankValues[card.rank];
+
+        const textCardMarginX = this.cardWidth / 5;
+        const textCardMarginY = this.pileMargin;
+
+        const textCardMaxWidth = this.cardWidth / 2;
+
+        //верхний левый угол (T-top L-left)
+        const textTLPosX: number = card.position!.x + textCardMarginX;
+        const textTLPosY: number = card.position!.y + textCardMarginY;
+
+        ctx.fillText(`${rankName}`, textTLPosX, textTLPosY, textCardMaxWidth);
+        ctx.fillText(`${suitName}`, textTLPosX, textTLPosY + textCardMarginY, textCardMaxWidth);
+
+        //нижний парвый угол
+        const textBRPosX: number = card.position!.x + this.cardWidth - textCardMarginX;
+        const textBRPosY: number = card.position!.y + this.cardHeight - textCardMarginY;
+
+        ctx.save();
+        ctx.rotate(Math.PI);
+
+        ctx.fillText(`${rankName}`, -textBRPosX, -textBRPosY, textCardMaxWidth);
+        ctx.fillText(`${suitName}`, -textBRPosX, -textBRPosY + textCardMarginY, textCardMaxWidth);
+
+        ctx.restore();
       }
     }
   }
@@ -323,7 +343,7 @@ class GameEngine {
 
   private getTextStyle(ctx: CanvasRenderingContext2D, isBlackColor = true) {
     ctx.fillStyle = isBlackColor ? '#000' : '#901414';
-    ctx.font = 'bold 30px sans-serif';
+    ctx.font = 'bold 25px sans-serif';
     ctx.textAlign = 'center';
   }
 
@@ -532,7 +552,7 @@ class GameEngine {
       if (draggableTargetCard.position) {
         const newPosition = {
           x: draggableTargetCard.position.x,
-          y: draggableTargetCard.position.y + this.pileMargin,
+          y: draggableTargetCard.position.y + this.pileMargin * 2,
         };
         this.draggableCard!.position = newPosition;
         this.changeCardPosition(newPosition, this.draggableCard!.position!, () => {
