@@ -1,5 +1,9 @@
 @import '../../../styles/style-variables';
 
+.game-page {
+  height: calc(100% - #{$top-bar-height});
+}
+
 .game-container {
   display: flex;
   position: relative;
