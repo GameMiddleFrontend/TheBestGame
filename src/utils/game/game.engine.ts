@@ -59,16 +59,16 @@ class GameEngine {
   private backImage: any;
 
   //класс контейнера с канвасами для их растягивания
-  private containerClass = '';
+  private canvasContainer: HTMLDivElement | undefined;
 
   private draggableCard: Card | undefined;
 
-  private cardBoderSize = 3;
+  private cardBorderSize = 3;
 
-  public init(gameCanvas: HTMLCanvasElement, animationCanvas: HTMLCanvasElement, containerClass: string) {
+  public init(gameCanvas: HTMLCanvasElement, animationCanvas: HTMLCanvasElement, canvasContainer: HTMLDivElement) {
     this.gameCanvas = gameCanvas;
     this.animationCanvas = animationCanvas;
-    this.containerClass = containerClass;
+    this.canvasContainer = canvasContainer;
     this.resizeCanvas();
     //TODO при изменении размера окна в процессе анимации пол поля затирается
     // window.addEventListener('resize', () => {
@@ -78,9 +78,8 @@ class GameEngine {
   }
 
   private resizeCanvas() {
-    const container = document.querySelector(`.${this.containerClass}`);
-    if (container) {
-      const {width, height} = container.getBoundingClientRect();
+    if (this.canvasContainer) {
+      const {width, height} = this.canvasContainer.getBoundingClientRect();
       this.gameCanvas!.width = width;
       this.gameCanvas!.height = height;
       this.animationCanvas!.width = width;
@@ -337,7 +336,7 @@ class GameEngine {
 
   private getRecaStyle(ctx: CanvasRenderingContext2D) {
     ctx.strokeStyle = '#000';
-    ctx.lineWidth = this.cardBoderSize;
+    ctx.lineWidth = this.cardBorderSize;
     ctx.fillStyle = 'white';
   }
 
@@ -409,10 +408,10 @@ class GameEngine {
     const ctx = this.gameCanvas?.getContext('2d');
     if (ctx) {
       ctx.clearRect(
-        position.x - this.cardBoderSize,
-        position.y - this.cardBoderSize,
-        this.cardWidth + 2 * this.cardBoderSize,
-        this.cardHeight + 2 * this.cardBoderSize,
+        position.x - this.cardBorderSize,
+        position.y - this.cardBorderSize,
+        this.cardWidth + 2 * this.cardBorderSize,
+        this.cardHeight + 2 * this.cardBorderSize,
       );
     }
   }
