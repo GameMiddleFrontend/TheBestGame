@@ -17,6 +17,7 @@ import WithLayout from '../common/page-layout';
 import {useDispatch} from 'react-redux';
 import {Actions as userActions} from '../../redux/reducers/user/user.ducks';
 import startServiceWorker from '../../serviceWorker/SWStart';
+/*TODO добавить алиасы для путей*/
 
 function App() {
   startServiceWorker();
