@@ -21,7 +21,7 @@ class GameEngine {
 
   private isStarted = false;
 
-  //колода
+  /** основная колода */
   private cardDeckSorted: Array<Card> = [];
   private cardDeck: Array<Card> = [];
 
@@ -38,7 +38,7 @@ class GameEngine {
   /** Основная часть раскладки пасьянса */
   private tableau: {[p: string]: TableauTree} | undefined;
 
-  //кол-во стопок в раскладке
+  /** Кол-во стопок в раскладке */
   private tableauPilesCount = 7;
 
   /** Дополнительная колода в левом верхнем углу:
@@ -59,16 +59,16 @@ class GameEngine {
   private backImage: any;
 
   //класс контейнера с канвасами для их растягивания
-  private containerClass = '';
+  private canvasContainer: HTMLDivElement | undefined;
 
   private draggableCard: Card | undefined;
 
-  private cardBoderSize = 3;
+  private cardBorderSize = 3;
 
-  public init(gameCanvas: HTMLCanvasElement, animationCanvas: HTMLCanvasElement, containerClass: string) {
+  public init(gameCanvas: HTMLCanvasElement, animationCanvas: HTMLCanvasElement, canvasContainer: HTMLDivElement) {
     this.gameCanvas = gameCanvas;
     this.animationCanvas = animationCanvas;
-    this.containerClass = containerClass;
+    this.canvasContainer = canvasContainer;
     this.resizeCanvas();
     //TODO при изменении размера окна в процессе анимации пол поля затирается
     // window.addEventListener('resize', () => {
@@ -78,9 +78,8 @@ class GameEngine {
   }
 
   private resizeCanvas() {
-    const container = document.querySelector(`.${this.containerClass}`);
-    if (container) {
-      const {width, height} = container.getBoundingClientRect();
+    if (this.canvasContainer) {
+      const {width, height} = this.canvasContainer.getBoundingClientRect();
       this.gameCanvas!.width = width;
       this.gameCanvas!.height = height;
       this.animationCanvas!.width = width;
@@ -304,26 +303,46 @@ class GameEngine {
         ctx.fillRect(card.position!.x, card.position!.y, this.cardWidth, this.cardHeight);
         ctx.strokeRect(card.position!.x, card.position!.y, this.cardWidth, this.cardHeight);
         this.getTextStyle(ctx, BLACK_CARD_COLORS.includes(card.suit));
-        const textMargin = 1.5 * this.pileMargin;
-        const xPos: number = card.position!.x + this.pileMargin / 2 + textMargin;
-        const yPos: number = card.position!.y + this.pileMargin / 2 + textMargin;
-        const suitName = card.suit;
-        ctx.fillText(CardSuitValues[suitName], xPos, yPos, this.cardWidth - 2 * this.pileMargin);
-        const valueName = card.rank;
-        ctx.fillText(CardRankValues[valueName], xPos, yPos + textMargin, this.cardWidth - 2 * this.pileMargin);
+
+        const suitName = CardSuitValues[card.suit];
+        const rankName = CardRankValues[card.rank];
+
+        const textCardMarginX = this.cardWidth / 5;
+        const textCardMarginY = this.pileMargin;
+
+        const textCardMaxWidth = this.cardWidth / 2;
+
+        //верхний левый угол (T-top L-left)
+        const textTLPosX: number = card.position!.x + textCardMarginX;
+        const textTLPosY: number = card.position!.y + textCardMarginY;
+
+        ctx.fillText(`${rankName}`, textTLPosX, textTLPosY, textCardMaxWidth);
+        ctx.fillText(`${suitName}`, textTLPosX, textTLPosY + textCardMarginY, textCardMaxWidth);
+
+        //нижний парвый угол
+        const textBRPosX: number = card.position!.x + this.cardWidth - textCardMarginX;
+        const textBRPosY: number = card.position!.y + this.cardHeight - textCardMarginY;
+
+        ctx.save();
+        ctx.rotate(Math.PI);
+
+        ctx.fillText(`${rankName}`, -textBRPosX, -textBRPosY, textCardMaxWidth);
+        ctx.fillText(`${suitName}`, -textBRPosX, -textBRPosY + textCardMarginY, textCardMaxWidth);
+
+        ctx.restore();
       }
     }
   }
 
   private getRecaStyle(ctx: CanvasRenderingContext2D) {
     ctx.strokeStyle = '#000';
-    ctx.lineWidth = this.cardBoderSize;
+    ctx.lineWidth = this.cardBorderSize;
     ctx.fillStyle = 'white';
   }
 
   private getTextStyle(ctx: CanvasRenderingContext2D, isBlackColor = true) {
     ctx.fillStyle = isBlackColor ? '#000' : '#901414';
-    ctx.font = 'bold 30px sans-serif';
+    ctx.font = 'bold 25px sans-serif';
     ctx.textAlign = 'center';
   }
 
@@ -389,10 +408,10 @@ class GameEngine {
     const ctx = this.gameCanvas?.getContext('2d');
     if (ctx) {
       ctx.clearRect(
-        position.x - this.cardBoderSize,
-        position.y - this.cardBoderSize,
-        this.cardWidth + 2 * this.cardBoderSize,
-        this.cardHeight + 2 * this.cardBoderSize,
+        position.x - this.cardBorderSize,
+        position.y - this.cardBorderSize,
+        this.cardWidth + 2 * this.cardBorderSize,
+        this.cardHeight + 2 * this.cardBorderSize,
       );
     }
   }
@@ -532,7 +551,7 @@ class GameEngine {
       if (draggableTargetCard.position) {
         const newPosition = {
           x: draggableTargetCard.position.x,
-          y: draggableTargetCard.position.y + this.pileMargin,
+          y: draggableTargetCard.position.y + this.pileMargin * 2,
         };
         this.draggableCard!.position = newPosition;
         this.changeCardPosition(newPosition, this.draggableCard!.position!, () => {
