@@ -8,12 +8,14 @@ import GameCanvas from '../../common/canvas';
 import GameEngine from '../../../utils/game/game.utils';
 
 import './game.scss';
+import useFullscreenTrigger from "../../../hooks/fullScreen";
 
 const gameCanvasClass = 'game';
 const animationCanvasClass = 'game-animation';
 const canvasContainerClass = 'game-container';
 
 const GamePage = () => {
+  useFullscreenTrigger();
   const handleStartGame = useCallback(() => {
     GameEngine.startGame();
   }, []);
