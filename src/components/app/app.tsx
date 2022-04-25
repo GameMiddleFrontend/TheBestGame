@@ -16,8 +16,11 @@ import {NotificationContainer} from '../../containers/common/notification/notifi
 import WithLayout from '../common/page-layout';
 import {useDispatch} from 'react-redux';
 import {Actions as userActions} from '../../redux/reducers/user/user.ducks';
+import startServiceWorker from '../../serviceWorker/SWStart';
 
 function App() {
+  startServiceWorker();
+
   const dispatch = useDispatch();
 
   useEffect(() => {

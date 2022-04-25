@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const SRC_DIR = path.resolve(__dirname, 'src');
 const OUTPUT_DIR = path.resolve(__dirname, 'dist');
@@ -72,6 +73,12 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'static/index.html',
+    }),
+    new CopyWebpackPlugin({
+      patterns: [{
+        from: path.resolve(SRC_DIR, 'sw.js'),
+        to: 'sw.js'
+      }]
     }),
   ]
 };
