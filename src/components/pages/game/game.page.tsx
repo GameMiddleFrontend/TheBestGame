@@ -1,14 +1,13 @@
 import React, {useCallback, useEffect} from 'react';
-import TopBarComponent from '../../common/top-bar/top-bar.component';
 import Button from '../../common/button';
 import playImg from '../../../styles/images/play.svg';
 import replayImg from '../../../styles/images/restart.svg';
 import undoImg from '../../../styles/images/undo.svg';
 import GameCanvas from '../../common/canvas';
 import GameEngine from '../../../utils/game/game.utils';
+import useFullscreenTrigger from '../../../hooks/fullScreen';
 
 import './game.scss';
-import useFullscreenTrigger from "../../../hooks/fullScreen";
 
 const gameCanvasClass = 'game';
 const animationCanvasClass = 'game-animation';

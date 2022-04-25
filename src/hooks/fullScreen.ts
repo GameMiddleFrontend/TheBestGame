@@ -1,5 +1,6 @@
 import {useCallback, useEffect} from 'react';
 
+/**можно прокидывать наружу колбеки и флаг есть ли фулскрин. Можно давбавить кнопку для открытия фулскрина */
 const useFullscreenTrigger = () => {
   const eventListener = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Enter') {
