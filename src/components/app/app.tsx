@@ -16,6 +16,7 @@ import {NotificationContainer} from '../../containers/common/notification/notifi
 import WithLayout from '../common/page-layout';
 import {useDispatch} from 'react-redux';
 import {Actions as userActions} from '../../redux/reducers/user/user.ducks';
+/*TODO добавить алиасы для путей*/
 
 function App() {
   const dispatch = useDispatch();
