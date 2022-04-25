@@ -2,6 +2,7 @@ import {useSelector} from 'react-redux';
 import IConfiguredStore from '../redux/reducers/configured-store';
 import React from 'react';
 import ErrorFallbackComponent from '../components/common/error-fallback';
+import TextEnum from '../models/enum/text.enum';
 
 export function useAuth() {
   const userItem = useSelector((state: IConfiguredStore) => {
@@ -17,10 +18,7 @@ const withAuth = (Component: React.ComponentType) => {
     return auth ? (
       <Component {...props} />
     ) : (
-      <ErrorFallbackComponent
-        customMessage={'Доступ запрещен'}
-        customMessageHeader={'Для посещения этой страницы вы должны быть авторизованы'}
-      />
+      <ErrorFallbackComponent customMessage={TextEnum.AUTH_WARNING} customMessageHeader={TextEnum.AUTH_WARNING_FULL} />
     );
   };
 };
