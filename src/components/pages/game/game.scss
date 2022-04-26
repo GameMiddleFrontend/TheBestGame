@@ -1,14 +1,14 @@
 @import '../../../styles/style-variables';
 
 .game-page {
-  height: calc(100% - #{$top-bar-height});
+  //height: calc(100% - #{$top-bar-height});
 }
 
 .game-container {
   display: flex;
   position: relative;
   width: 100%;
-  height: calc(100% - #{$top-bar-height});
+  height: calc(100vh - #{$top-bar-height});
 }
 
 .game-buttons-panel{

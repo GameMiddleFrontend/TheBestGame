@@ -11,7 +11,7 @@ import AuthService from '../../../services/auth.service';
 import FormComponent from '../../common/form';
 import {RegisterFormElementsDef} from './types';
 
-const registerPageRootClass = 'login-page-container';
+const registerPageRootClass = 'login-container';
 const formContainerClass = 'form-container';
 const formNameClass = 'form-name';
 
@@ -54,7 +54,7 @@ function RegisterPage() {
   );
 
   return (
-    <div className={registerPageRootClass}>
+    <div className={'page-container login-container'}>
       {signUpForm}
       <Popup open={!!popupMessage} onClose={() => setPopupMessage('')}>
         {(close: () => void) => (

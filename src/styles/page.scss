@@ -2,8 +2,13 @@
 
 .page {
   background-color: $primary-color;
-  width: 100vw;
-  height: 100vh;
+  min-width: 100vw;
+  min-height: 100vh;
+
+  .page-container {
+    height: calc(100vh - #{$top-bar-height});
+    box-sizing: border-box;
+  }
 
   &.form-page {
     display: flex;

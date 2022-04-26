@@ -8,9 +8,9 @@ import IConfiguredStore from '../../../redux/reducers/configured-store';
 import {Actions as authActions, IStore as IAuthStore} from '../../../redux/reducers/auth/auth.ducks';
 import {UserLoginItem} from '../../../models/user.model';
 
-import './login-page.scss';
+import './login.scss';
 
-const loginPageRootClass = 'login-page-container';
+const loginPageRootClass = 'login-container';
 const formContainerClass = 'form-container';
 const formNameClass = 'form-name';
 
@@ -48,7 +48,7 @@ const LoginPage: FC = (props) => {
   );
 
   return (
-    <div className={loginPageRootClass}>
+    <div className={'page-container login-container'}>
       {/*TODO добавить лоадер*/}
       {form}
     </div>

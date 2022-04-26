@@ -1,0 +1,86 @@
+@import 'src/styles/style-variables';
+
+.main-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  flex-grow: 1;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.main-page-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+
+  .game-name-label {
+    margin: 24px 24px 24px 10px;
+    font-size: 4rem;
+    color: $font-alt-color;
+    font-style: italic;
+    text-shadow: 0 0 2px $alt-color;
+  }
+
+  .main-page-subtext {
+    font-size: 1.7rem;
+    text-shadow: 0 0 2px $font-alt-color;
+  }
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: flex-end;
+  align-content: stretch;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0.5rem;
+
+  .button-text {
+    padding: 0.5em;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.main-content {
+  height: 100%;
+  width: 100%;
+  font-size: $fontSize;
+  color: $font-color;
+  display: flex;
+  justify-content: stretch;
+  flex-grow: 3;
+  padding: 0.5rem;
+}
+
+.game-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-image {
+  object-fit: contain;
+  max-width: 90%;
+  height: auto;
+}
+
+.game-rules {
+  flex: 1 .5 50%;
+  text-align: start;
+  padding: 20px;
+}
+
+.background-img-container{
+  overflow: hidden;
+  max-width: 60%;
+
+  .background-img{
+    max-width: 90%;
+    max-height: 90%;
+  }
+}

@@ -1,9 +1,7 @@
 @import 'src/styles/style-variables';
 
-.login-page-container {
+.login-container {
   background-color: $main-background-color;
-  width: 100vw;
-  height: calc(100% - #{$top-bar-height});
   display: flex;
   align-items: center;
   justify-content: center;

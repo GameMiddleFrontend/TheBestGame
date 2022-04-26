@@ -20,7 +20,7 @@ const LeaderboardPage = () => {
   }, [leaderList]);
 
   return (
-    <div className="page">
+    <div className="page-container">
       <table className="table">
         <thead className="table-header">
           <tr>

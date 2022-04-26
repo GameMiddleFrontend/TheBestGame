@@ -16,7 +16,7 @@ const SettingsPage = () => {
   }, []);
 
   return (
-    <div className={'settings-page'}>
+    <div className={'page-container settings-page'}>
       <div className={'page-content'}>
         <div className={'form-container'}>
           {isEditPasswordMode ? (
