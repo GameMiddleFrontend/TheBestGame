@@ -24,15 +24,15 @@ function MainPage() {
         <div className={'buttons-container'}>
           {userData ? (
             <Button className={'button-text main-page-subtext'} onClick={handleNavigate.bind(null, AppRoutes.GAME)}>
-              {TextEnum.BUTTON_NEW_GAME}
+              {TextEnum.NEW_GAME}
             </Button>
           ) : (
             <Button className={'button-text main-page-subtext'} onClick={handleNavigate.bind(null, AppRoutes.LOGIN)}>
-              {TextEnum.BUTTON_LOGIN}
+              {TextEnum.LOGIN}
             </Button>
           )}
           <Button className={'button-text main-page-subtext'} onClick={handleNavigate.bind(null, AppRoutes.REGISTER)}>
-            {TextEnum.BUTTON_REGISTER}
+            {TextEnum.REGISTER}
           </Button>
         </div>
       </div>

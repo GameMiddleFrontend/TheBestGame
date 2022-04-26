@@ -9,6 +9,8 @@ import {Actions as authActions, IStore as IAuthStore} from '../../../redux/reduc
 import {UserLoginItem} from '../../../models/user.model';
 
 import './login.scss';
+import AppRoutes from '../../../utils/app-routes';
+import TextEnum from '../../../models/enum/text.enum';
 
 const loginPageRootClass = 'login-container';
 const formContainerClass = 'form-container';
@@ -36,11 +38,11 @@ const LoginPage: FC = (props) => {
         <FormComponent
           formElementsDef={LoginFormElementsDef}
           isEditMode={true}
-          submitText={'Войти'}
+          submitText={TextEnum.LOGIN}
           onSubmit={onLoginFormSubmit}
         />
-        <Link to={'/sign-up'} className={'sign-up-link'}>
-          {'Регистрация'}
+        <Link to={AppRoutes.REGISTER} className={'link'}>
+          {TextEnum.REGISTER}
         </Link>
       </div>
     ),

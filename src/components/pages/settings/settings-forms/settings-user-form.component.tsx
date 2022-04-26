@@ -8,6 +8,7 @@ import {Actions as authActions, initialState as authInitialState} from '../../..
 import {Actions as userActions} from '../../../../redux/reducers/user/user.ducks';
 import {CurrentUserItem, UpdateUserInfoType} from '../../../../models/user.model';
 import {Nullable} from '../../../../redux/redux.base.types';
+import Button from '../../../common/button';
 
 interface IProps {
   isLoading: boolean;
@@ -76,11 +77,17 @@ const SettingsUserFormComponent: FC<IProps & IHandlers> = (props) => {
       />
       {!isEditMode && (
         <div className={'form-items-container'}>
-          <button onClick={handleClickEditUserInfoButton}>{'Изменить данные'}</button>
+          <Button className={'button-text'} onClick={handleClickEditUserInfoButton}>
+            {'Изменить данные'}
+          </Button>
           {props.onClickEditPasswordButton && (
-            <button onClick={props.onClickEditPasswordButton}>{'Изменить пароль'}</button>
+            <Button className={'button-text'} onClick={props.onClickEditPasswordButton}>
+              {'Изменить пароль'}
+            </Button>
           )}
-          <button onClick={handleClickLogoutButton}>{'Выход'}</button>
+          <Button className={'button-text'} onClick={handleClickLogoutButton}>
+            {'Выход'}
+          </Button>
         </div>
       )}
     </>

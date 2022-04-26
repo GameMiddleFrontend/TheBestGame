@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect} from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import LoginPage from '../pages/login/login.page';
-import RegisterPage from '../pages/register-page/register-page';
+import RegisterPage from '../pages/register/register.page';
 import ForumPage from '../pages/forum-page/forum-page';
 import SettingsPage from '../pages/settings/settings.page';
 import LeaderboardPage from '../pages/leaderboard/leaderboard.page';

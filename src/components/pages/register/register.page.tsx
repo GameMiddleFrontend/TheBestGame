@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo, useState} from 'react';
 
-import './register-page.scss';
+import './register.scss';
 import {FormikValues} from 'formik';
 import {Link, useNavigate} from 'react-router-dom';
 import SignUpAPI from '../../../services/signUpAPI';
@@ -10,6 +10,8 @@ import '../../../styles/modal.scss';
 import AuthService from '../../../services/auth.service';
 import FormComponent from '../../common/form';
 import {RegisterFormElementsDef} from './types';
+import TextEnum from '../../../models/enum/text.enum';
+import AppRoutes from '../../../utils/app-routes';
 
 const registerPageRootClass = 'login-container';
 const formContainerClass = 'form-container';
@@ -42,11 +44,11 @@ function RegisterPage() {
         <FormComponent
           formElementsDef={RegisterFormElementsDef}
           isEditMode={true}
-          submitText={'Зарегистрироваться'}
+          submitText={TextEnum.REGISTER}
           onSubmit={onRegisterFormSubmit}
         />
-        <Link to={'/sign-in'} className={'sign-up-link'}>
-          {'Войти'}
+        <Link to={AppRoutes.LOGIN} className={'link'}>
+          {TextEnum.LOGIN}
         </Link>
       </div>
     ),
