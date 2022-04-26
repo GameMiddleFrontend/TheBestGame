@@ -6,6 +6,8 @@ type Card = {
   position: CardLeftUp | null;
   next: Card | null;
   prev: Card | null;
+  canvasObj?: any;
+  options?: CardOptions;
 };
 
 enum CardSuit {
@@ -57,6 +59,16 @@ enum CardRankValues {
 type CardLeftUp = {
   x: number;
   y: number;
+};
+
+export type Position = {
+  x: number;
+  y: number;
+};
+
+export type CardOptions = {
+  width: number;
+  height: number;
 };
 
 export const RED_CARD_COLORS = [CardSuit.HEARTS, CardSuit.DIAMONDS];

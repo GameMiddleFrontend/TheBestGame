@@ -18,8 +18,13 @@ const isNextCardRank = (draggableCard: Card, targetCard: Card): boolean => {
 
 export const isDraggableCardConditions = (draggableCard: Card, targetCard: Card): boolean => {
   return (
-    draggableCard !== targetCard &&
-    !isEqualsCardColors(draggableCard, targetCard) &&
-    isNextCardRank(draggableCard, targetCard)
+    draggableCard !== targetCard
+    //&&
+    //!isEqualsCardColors(draggableCard, targetCard) &&
+    //isNextCardRank(draggableCard, targetCard)
   );
+};
+
+export const isDraggableCardToEmptyPileConditions = (draggableCard?: Card): boolean => {
+  return !!draggableCard && draggableCard.rank === CardRank.KING;
 };

@@ -7,11 +7,13 @@ import {
   CardSuit,
   CardSuitValues,
   getStringKeys,
+  Position,
 } from '../../models/card.models';
 import {TableauTree, TargetTree, Tree} from './types';
 import shuffle from '../helpers/shuffle';
 import {getPileStyle} from './game-elements.style';
-import {isDraggableCardConditions} from './moving-card-conditions';
+import {isDraggableCardConditions, isDraggableCardToEmptyPileConditions} from './moving-card-conditions';
+import {renderCard} from './card';
 
 const backImagePath = 'https://upload.wikimedia.org/wikipedia/commons/5/54/Card_back_06.svg';
 
@@ -49,11 +51,8 @@ class GameEngine {
   private cardWidth = 25;
   private cardHeight = 30;
 
-  //TODO отступы между стопками карт?
+  /** Oтступы между стопками карт */
   private pileMargin = 5;
-
-  //TODO возможно не используется нигде
-  private foundationPositions: Array<number> = [];
 
   //рубашка
   private backImage: any;
@@ -75,6 +74,22 @@ class GameEngine {
     //   this.resizeCanvas();
     //   this.renderStartElements();
     // });
+
+    const card: Card = {
+      rank: CardRank.ACE,
+      suit: CardSuit.SPADES,
+      position: {x: 200, y: 200},
+      draggable: false,
+      opened: false,
+      next: null,
+      prev: null,
+      options: {
+        width: this.cardWidth,
+        height: this.cardHeight,
+      },
+    };
+
+    renderCard(this.animationCanvas, card);
   }
 
   private resizeCanvas() {
@@ -120,6 +135,7 @@ class GameEngine {
   }
 
   private renderCard(canvas: HTMLCanvasElement, point: CardLeftUp) {
+    //TODO отрисовывать карту в том состоянии, в котором она находится
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     this.getImageStyles(ctx);
     ctx.drawImage(
@@ -131,6 +147,12 @@ class GameEngine {
       this.cardWidth,
       this.cardHeight,
     );
+  }
+
+  private cardShape(canvas: HTMLCanvasElement, card: Card, position: Position) {
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    this.getImageStyles(ctx); //TODO ?
+    ctx.drawImage(this.backImage, position.x, position.y, card.options.width, card.options.height);
   }
 
   private getImageStyles(ctx: CanvasRenderingContext2D) {
@@ -382,6 +404,53 @@ class GameEngine {
     window.requestAnimationFrame(step);
   }
 
+  private changeCardPositionNew(startPos: CardLeftUp, end: CardLeftUp, callback?: () => void) {
+    debugger;
+    this.renderCard(this.animationCanvas!, startPos);
+    const ctx = this.animationCanvas!.getContext('2d') as CanvasRenderingContext2D;
+
+    const counter = 15;
+    let count = 1;
+
+    const deltaX = (end.x - startPos.x) / counter;
+    const deltaY = (end.y - startPos.y) / counter;
+
+    let currentPoint = startPos;
+    let nextPoint;
+
+    const step = () => {
+      nextPoint = {x: startPos.x + deltaX * count, y: startPos.y + deltaY * count};
+      if ((nextPoint.x >= end.x && deltaX > 0) || (nextPoint.x <= end.x && deltaX < 0)) {
+        nextPoint = end;
+      }
+      ctx.clearRect(currentPoint.x, currentPoint.y, this.cardWidth + 1, this.cardHeight + 1);
+      this.getImageStyles(ctx);
+      ctx.drawImage(this.backImage, nextPoint.x, nextPoint.y, this.cardWidth, this.cardHeight);
+      currentPoint = nextPoint;
+      if (count <= counter) {
+        count++;
+        window.requestAnimationFrame(step);
+      } else {
+        this.renderCard(this.gameCanvas as HTMLCanvasElement, end);
+        ctx.clearRect(0, 0, this.animationCanvas!.width, this.animationCanvas!.height);
+        if (callback) {
+          callback();
+        }
+      }
+    };
+    window.requestAnimationFrame(step);
+  }
+
+  private moveCard(card: Card, targetPile: Tree, callback?: () => void) {
+    if (card.position) {
+      this.changeCardPositionNew(card.position, targetPile.rootPosition, () => {
+        // this.draggableCard!.opened = true;
+        // this.draggableCard!.position = endPosition;
+        // this.showCardFront(this.draggableCard!);
+      });
+    }
+  }
+
   changeRemainStackPosition() {
     this.clearCardsPosition(this.startCardsPosition!);
     const {rootPosition} = this.hand![0];
@@ -419,19 +488,23 @@ class GameEngine {
   onCardClick(event: MouseEvent) {
     if (event.target === this.animationCanvas) {
       const {offsetX, offsetY} = event;
+
       const isHand_0 = this.hand && this.checkPosition(offsetX, offsetY, this.hand[0].rootPosition);
       const isHand_1 = this.hand && this.checkPosition(offsetX, offsetY, this.hand[1].rootPosition);
 
       if (isHand_0) {
         return this.onHandCardClick();
       }
-      const currentFoundationPile = this.checkFoundationPosition(offsetX, offsetY);
+
+      const currentFoundationPile = this.checkObjectPosition(offsetX, offsetY, this.foundations);
 
       if (currentFoundationPile) {
         this.putCardOnFoundation(offsetX, offsetY, currentFoundationPile);
       } else {
         const draggableTargetCard = this.findDraggableTargetCard(offsetX, offsetY);
+        const currentTableauPile = this.checkObjectPosition(offsetX, offsetY, this.tableau);
 
+        debugger;
         if (draggableTargetCard) {
           if (!this.draggableCard) {
             this.draggableCard = draggableTargetCard;
@@ -440,6 +513,17 @@ class GameEngine {
               this.moveCardOnClick(draggableTargetCard);
             } else {
               this.draggableCard = draggableTargetCard;
+            }
+          }
+        } else {
+          if (
+            currentTableauPile &&
+            currentTableauPile.cards?.length === 0
+            //&& isDraggableCardToEmptyPileConditions(this.draggableCard)
+          ) {
+            const endPosition = currentTableauPile.rootPosition;
+            if (!!this.draggableCard && this.draggableCard.position) {
+              this.moveCard(this.draggableCard, currentTableauPile);
             }
           }
         }
@@ -489,6 +573,16 @@ class GameEngine {
     if (this.foundations) {
       return Object.values(this.foundations).find((value): TargetTree | undefined => {
         if (this.checkPosition(offsetX, offsetY, value.rootPosition)) {
+          return value;
+        }
+      });
+    }
+  }
+
+  checkObjectPosition(offsetX: number, offsetY: number, obj?: Record<string, Tree>) {
+    if (obj) {
+      return Object.values(obj).find((value) => {
+        if (value && this.checkPosition(offsetX, offsetY, value.rootPosition)) {
           return value;
         }
       });
