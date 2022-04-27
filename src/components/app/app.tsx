@@ -14,20 +14,19 @@ import GamePage from '../pages/game';
 import AppRoutes from '../../utils/app-routes';
 import {NotificationContainer} from '../../containers/common/notification/notification.container';
 import WithLayout from '../common/page-layout';
+import useLayout from '../../hooks/withLayout';
 import {useDispatch} from 'react-redux';
-import {Actions as userActions} from '../../redux/reducers/user/user.ducks';
+import {Actions as UserActions} from '../../redux/reducers/user/user.ducks';
 /*TODO добавить алиасы для путей*/
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(userActions.getUser());
+    dispatch(UserActions.getUser());
   }, []);
 
-  const getElement = useCallback((component: React.ElementType) => {
-    return <WithLayout component={component} />;
-  }, []);
+  const getElement = useLayout();
 
   return (
     <div className="app">
