@@ -27,13 +27,18 @@ function MainPage() {
               {TextEnum.NEW_GAME}
             </Button>
           ) : (
-            <Button className={'button-text main-page-subtext'} onClick={handleNavigate.bind(null, AppRoutes.LOGIN)}>
-              {TextEnum.LOGIN}
-            </Button>
+            <>
+              <Button className={'button-text main-page-subtext'} onClick={handleNavigate.bind(null, AppRoutes.LOGIN)}>
+                {TextEnum.LOGIN}
+              </Button>
+              <Button
+                className={'button-text main-page-subtext'}
+                onClick={handleNavigate.bind(null, AppRoutes.REGISTER)}
+              >
+                {TextEnum.REGISTER}
+              </Button>
+            </>
           )}
-          <Button className={'button-text main-page-subtext'} onClick={handleNavigate.bind(null, AppRoutes.REGISTER)}>
-            {TextEnum.REGISTER}
-          </Button>
         </div>
       </div>
       <main className={'main-content'}>

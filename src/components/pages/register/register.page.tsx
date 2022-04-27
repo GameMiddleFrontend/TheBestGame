@@ -30,7 +30,7 @@ function RegisterPage() {
       .then(() => {
         AuthService.auth()
           .then(() => {
-            navigate('/game');
+            navigate(AppRoutes.GAME);
           })
           .catch(errorHandler);
       })
@@ -40,7 +40,7 @@ function RegisterPage() {
   const signUpForm = useMemo(
     () => (
       <div className={formContainerClass}>
-        <div className={formNameClass}>Зарегистрироваться</div>
+        <div className={formNameClass}>{TextEnum.REGISTER}</div>
         <FormComponent
           formElementsDef={RegisterFormElementsDef}
           isEditMode={true}

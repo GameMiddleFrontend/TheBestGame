@@ -40,12 +40,6 @@ function ForumPage() {
   const page = useMemo(() => {
     return (
       <>
-        <div className={'forum-header'}>
-          {/*TODO навигацию в топ-бар*/}
-          <Link to={'/'} className={'header-label main-label'}>
-            Косынка
-          </Link>
-        </div>
         <div className={'forum-label'}>Форум</div>
         <div className={'find-theme-container'}>
           <input

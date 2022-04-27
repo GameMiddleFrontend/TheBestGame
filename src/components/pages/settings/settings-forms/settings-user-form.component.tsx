@@ -9,6 +9,7 @@ import {Actions as userActions} from '../../../../redux/reducers/user/user.ducks
 import {CurrentUserItem, UpdateUserInfoType} from '../../../../models/user.model';
 import {Nullable} from '../../../../redux/redux.base.types';
 import Button from '../../../common/button';
+import TextEnum from '../../../../models/enum/text.enum';
 
 interface IProps {
   isLoading: boolean;
@@ -61,6 +62,10 @@ const SettingsUserFormComponent: FC<IProps & IHandlers> = (props) => {
     setEditMode(true);
   };
 
+  const handleFinishEditUserInfoButton = () => {
+    setEditMode(false);
+  };
+
   const handleClickLogoutButton = useCallback(() => {
     props.logout();
   }, []);
@@ -72,21 +77,25 @@ const SettingsUserFormComponent: FC<IProps & IHandlers> = (props) => {
         formElementsDef={isEditMode ? settingsEditFormElementsDef : settingsFormElementsDef}
         values={props.user as CurrentUserItem}
         isEditMode={isEditMode}
-        submitText={'Сохранить данные'}
+        submitText={TextEnum.BUTTON_SAVE}
         onSubmit={handleSaveUserInfo}
       />
-      {!isEditMode && (
+      {isEditMode ? (
+        <Button className={'button-text'} onClick={handleFinishEditUserInfoButton}>
+          {TextEnum.BUTTON_CANCEL}
+        </Button>
+      ) : (
         <div className={'form-items-container'}>
           <Button className={'button-text'} onClick={handleClickEditUserInfoButton}>
-            {'Изменить данные'}
+            {TextEnum.BUTTON_CHANGE_DATA}
           </Button>
           {props.onClickEditPasswordButton && (
             <Button className={'button-text'} onClick={props.onClickEditPasswordButton}>
-              {'Изменить пароль'}
+              {TextEnum.BUTTON_CHANGE_PASSWORD}
             </Button>
           )}
           <Button className={'button-text'} onClick={handleClickLogoutButton}>
-            {'Выход'}
+            {TextEnum.BUTTON_EXIT}
           </Button>
         </div>
       )}

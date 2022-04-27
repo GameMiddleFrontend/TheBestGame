@@ -24,7 +24,7 @@ const LoginPage: FC = (props) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    isLoggedIn && navigate('/game');
+    isLoggedIn && navigate(AppRoutes.GAME);
   }, [isLoggedIn]);
 
   const onLoginFormSubmit = useCallback((data: UserLoginItem) => {
@@ -34,7 +34,7 @@ const LoginPage: FC = (props) => {
   const form = useMemo(
     () => (
       <div className={formContainerClass}>
-        <div className={formNameClass}>Войти</div>
+        <div className={formNameClass}>{TextEnum.LOGIN}</div>
         <FormComponent
           formElementsDef={LoginFormElementsDef}
           isEditMode={true}
