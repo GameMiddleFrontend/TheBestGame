@@ -10,6 +10,8 @@ import {CurrentUserItem, UpdateUserInfoType} from '../../../../models/user.model
 import {Nullable} from '../../../../redux/redux.base.types';
 import Button from '../../../common/button';
 import TextEnum from '../../../../models/enum/text.enum';
+import {useNavigate} from 'react-router-dom';
+import AppRoutes from '../../../../utils/app-routes';
 
 interface IProps {
   isLoading: boolean;
@@ -43,6 +45,7 @@ const mapDispatchToProps: MapDispatchToPropsParam<IDispatchHandlers, unknown> = 
 };
 
 const SettingsUserFormComponent: FC<IProps & IHandlers> = (props) => {
+  const navigate = useNavigate();
   const [isEditMode, setEditMode] = useState(false);
 
   const handleSaveUserInfo = useCallback((data: CurrentUserItem) => {
@@ -68,11 +71,13 @@ const SettingsUserFormComponent: FC<IProps & IHandlers> = (props) => {
 
   const handleClickLogoutButton = useCallback(() => {
     props.logout();
+    navigate(AppRoutes.HOME);
   }, []);
 
   return (
     <>
       <AvatarComponent isEditMode={true} onChangeAvatar={handleSaveAvatar} imgSrc={props.user?.avatar} />
+      {!isEditMode && <h4 className={'user-display-name'}>{props.user?.display_name}</h4>}
       <FormComponent
         formElementsDef={isEditMode ? settingsEditFormElementsDef : settingsFormElementsDef}
         values={props.user as CurrentUserItem}
