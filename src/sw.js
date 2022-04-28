@@ -21,6 +21,12 @@ this.addEventListener('install', (event) => {
 });
 
 this.addEventListener('fetch', (event) => {
+  if (!cacheURLS.includes(event.request.url)) {
+    fetch(event.request).then((response) => {
+      return response;
+    });
+    return;
+  }
   event.respondWith(
     // Пытаемся найти ответ на такой запрос в кеше
     caches.match(event.request).then((response) => {
@@ -36,9 +42,7 @@ this.addEventListener('fetch', (event) => {
           .then((response) => {
             // Если что-то пошло не так, выдаём в основной поток результат, но не кладём его в кеш
             if (!response || response.status !== 200 || response.type !== 'basic') {
-              if (cacheURLS.includes(response.url)) {
-                return response;
-              }
+              return response;
             }
 
             const responseToCache = response.clone();
