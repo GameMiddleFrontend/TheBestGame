@@ -8,6 +8,10 @@ import {Actions as authActions, initialState as authInitialState} from '../../..
 import {Actions as userActions} from '../../../../redux/reducers/user/user.ducks';
 import {CurrentUserItem, UpdateUserInfoType} from '../../../../models/user.model';
 import {Nullable} from '../../../../redux/redux.base.types';
+import Button from '../../../common/button';
+import TextEnum from '../../../../models/enum/text.enum';
+import {useNavigate} from 'react-router-dom';
+import AppRoutes from '../../../../utils/app-routes';
 
 interface IProps {
   isLoading: boolean;
@@ -41,6 +45,7 @@ const mapDispatchToProps: MapDispatchToPropsParam<IDispatchHandlers, unknown> = 
 };
 
 const SettingsUserFormComponent: FC<IProps & IHandlers> = (props) => {
+  const navigate = useNavigate();
   const [isEditMode, setEditMode] = useState(false);
 
   const handleSaveUserInfo = useCallback((data: CurrentUserItem) => {
@@ -60,27 +65,43 @@ const SettingsUserFormComponent: FC<IProps & IHandlers> = (props) => {
     setEditMode(true);
   };
 
+  const handleFinishEditUserInfoButton = () => {
+    setEditMode(false);
+  };
+
   const handleClickLogoutButton = useCallback(() => {
     props.logout();
+    navigate(AppRoutes.HOME);
   }, []);
 
   return (
     <>
       <AvatarComponent isEditMode={true} onChangeAvatar={handleSaveAvatar} imgSrc={props.user?.avatar} />
+      {!isEditMode && <h4 className={'user-display-name'}>{props.user?.display_name}</h4>}
       <FormComponent
         formElementsDef={isEditMode ? settingsEditFormElementsDef : settingsFormElementsDef}
         values={props.user as CurrentUserItem}
         isEditMode={isEditMode}
-        submitText={'Сохранить данные'}
+        submitText={TextEnum.BUTTON_SAVE}
         onSubmit={handleSaveUserInfo}
       />
-      {!isEditMode && (
+      {isEditMode ? (
+        <Button className={'button-text'} onClick={handleFinishEditUserInfoButton}>
+          {TextEnum.BUTTON_CANCEL}
+        </Button>
+      ) : (
         <div className={'form-items-container'}>
-          <button onClick={handleClickEditUserInfoButton}>{'Изменить данные'}</button>
+          <Button className={'button-text'} onClick={handleClickEditUserInfoButton}>
+            {TextEnum.BUTTON_CHANGE_DATA}
+          </Button>
           {props.onClickEditPasswordButton && (
-            <button onClick={props.onClickEditPasswordButton}>{'Изменить пароль'}</button>
+            <Button className={'button-text'} onClick={props.onClickEditPasswordButton}>
+              {TextEnum.BUTTON_CHANGE_PASSWORD}
+            </Button>
           )}
-          <button onClick={handleClickLogoutButton}>{'Выход'}</button>
+          <Button className={'button-text'} onClick={handleClickLogoutButton}>
+            {TextEnum.BUTTON_EXIT}
+          </Button>
         </div>
       )}
     </>

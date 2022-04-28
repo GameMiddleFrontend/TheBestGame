@@ -7,7 +7,7 @@ import {Actions as notificationActions} from '../notification/notification.duck'
 import {getExceptionByError} from '../../../utils/notification';
 import {UserLoginItem} from '../../../models/user.model';
 import AuthService from '../../../services/auth.service';
-import {Actions as UserActions} from '../user/user.ducks';
+import {Actions as userActions} from '../user/user.ducks';
 
 enum ActionTypes {
   SET_LOADING = `@auth/setLoading`,
@@ -77,7 +77,7 @@ function* loginFlow(action: PayloadAction<UserLoginItem>) {
 
     if (data) {
       const result = yield* call(LoginAPI.signIn, data);
-      yield* call(UserActions.getUser);
+      yield* put(userActions.getUser());
     }
 
     yield* put(setLoading(false));

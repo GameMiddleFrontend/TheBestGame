@@ -47,7 +47,7 @@ const UserReducer: Reducer<UserState, UserActionType> = createReducer(initialSta
     .addCase(setUser, (state, {payload}) => {
       return {
         ...state,
-        user: {item: payload},
+        item: payload,
       };
     })
     .addDefaultCase((state) => {

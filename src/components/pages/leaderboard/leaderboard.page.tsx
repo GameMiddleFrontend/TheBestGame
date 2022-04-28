@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from 'react';
+import {compose} from 'redux';
+
 import {LeaderboardUserType} from './leaderboard.types';
 import AvatarComponent from '../../common/avatar';
 import LeaderboardAPI from '../../../services/leaderboardAPI';
-import TopBarComponent from '../../common/top-bar/top-bar.component';
+import withAuth from '../../../hooks/chechAuthHookHOC';
 
 import './liderboard.scss';
 
@@ -20,7 +22,7 @@ const LeaderboardPage = () => {
   }, [leaderList]);
 
   return (
-    <div className="page">
+    <div className="page-container">
       <table className="table">
         <thead className="table-header">
           <tr>
@@ -51,4 +53,6 @@ const LeaderboardPage = () => {
   );
 };
 
-export default LeaderboardPage;
+const LeaderboardPageHOC = compose(withAuth(LeaderboardPage));
+
+export default LeaderboardPageHOC;

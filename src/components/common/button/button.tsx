@@ -1,4 +1,4 @@
-import React, {FC, MouseEvent} from 'react';
+import React, {ButtonHTMLAttributes, FC, MouseEvent} from 'react';
 
 import './button.scss';
 
@@ -6,6 +6,7 @@ interface IProps {
   className?: string;
   icon?: string;
   disabled?: boolean;
+  type?: ButtonHTMLAttributes<unknown>['type'];
 }
 
 interface IHandler {
@@ -22,6 +23,7 @@ const Button: FC<IProps & IHandler> = (props) => {
       className={`button ${props.className ? props.className : ''}`}
       onClick={handleClick}
       disabled={props.disabled}
+      type={props.type}
     >
       {props.icon && <img src={props.icon} role="img" />}
       {props.children}

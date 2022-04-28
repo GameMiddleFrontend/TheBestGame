@@ -30,7 +30,7 @@
   position: relative;
   cursor: pointer;
 
-  >input {
+  > input {
 
     display: none;
   }
@@ -38,15 +38,15 @@
   .icon-add-image {
 
     position: absolute;
-    width: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translateY(-50%) translateX(-50%);
+    transform: translateY(-85%) translateX(15%);
     display: none;
   }
 }
 
 .avatar-upload:hover {
+  .avatar-img {
+    opacity: 0.2;
+  }
   .icon-add-image {
 
     display: block;

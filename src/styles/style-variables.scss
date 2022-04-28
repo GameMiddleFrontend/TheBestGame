@@ -13,9 +13,12 @@ $buttons-accent-color: $alt-color;
 $buttons-disabled-color: $alt-color;
 
 /** text */
-$font-color: #FFF;
+$font-color: $alt-color;
 $font-alt-color: #000000;
-$links-font-color: #FFF;
+$links-font-color: $alt-color;
+$placeholder-color: #bfc5ca;
+$error-color: #5f1723;
+
 
 /** top-bar */
 $top-bar-height: 52px;

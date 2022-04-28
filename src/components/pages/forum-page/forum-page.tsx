@@ -1,12 +1,15 @@
 import React, {MouseEventHandler, useEffect, useMemo, useState} from 'react';
-import './forum-page.styles.scss';
 import {Link, useNavigate} from 'react-router-dom';
+import {compose} from 'redux';
+
 import {IForumTheme} from '../../common/forum-theme/forum-theme.types';
 import ForumAPI from '../../../services/forumAPI';
 import ForumThemeComponent from '../../common/forum-theme';
-import TopBarComponent from '../../common/top-bar/top-bar.component';
+import withAuth from '../../../hooks/chechAuthHookHOC';
 
-const forumPageRootClass = 'forum-page-container';
+import './forum-page.styles.scss';
+
+import './forum-page.styles.scss';
 
 function ForumPage() {
   const [themes, setThemes] = useState<IForumTheme[]>([]);
@@ -42,11 +45,6 @@ function ForumPage() {
   const page = useMemo(() => {
     return (
       <>
-        <div className={'forum-header'}>
-          <Link to={'/'} className={'header-label main-label'}>
-            Косынка
-          </Link>
-        </div>
         <div className={'forum-label'}>Форум</div>
         <div className={'find-theme-container'}>
           <input
@@ -75,7 +73,9 @@ function ForumPage() {
     );
   }, [themes, filterValue]);
 
-  return <div className={forumPageRootClass}>{page}</div>;
+  return <div className={'page-container forum-page-container'}>{page}</div>;
 }
 
-export default ForumPage;
+const ForumPageHOC = compose(withAuth(ForumPage));
+
+export default ForumPageHOC;

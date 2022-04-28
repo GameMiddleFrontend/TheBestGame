@@ -16,8 +16,12 @@
   font-weight: 500;
   line-height: 1;
 
+  &:hover{
+    opacity: 0.7;
+  }
   &:disabled {
     cursor: default;
+    opacity: 1;
   }
 
   &.button-text {
