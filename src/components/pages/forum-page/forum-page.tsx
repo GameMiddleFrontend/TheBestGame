@@ -9,7 +9,7 @@ import withAuth from '../../../hooks/chechAuthHookHOC';
 
 import './forum-page.styles.scss';
 
-const forumPageRootClass = 'forum-page-container';
+import './forum-page.styles.scss';
 
 function ForumPage() {
   const [themes, setThemes] = useState<IForumTheme[]>([]);
@@ -45,11 +45,6 @@ function ForumPage() {
   const page = useMemo(() => {
     return (
       <>
-        <div className={'forum-header'}>
-          <Link to={'/'} className={'header-label main-label'}>
-            Косынка
-          </Link>
-        </div>
         <div className={'forum-label'}>Форум</div>
         <div className={'find-theme-container'}>
           <input
@@ -78,7 +73,7 @@ function ForumPage() {
     );
   }, [themes, filterValue]);
 
-  return <div className={forumPageRootClass}>{page}</div>;
+  return <div className={'page-container forum-page-container'}>{page}</div>;
 }
 
 const ForumPageHOC = compose(withAuth(ForumPage));

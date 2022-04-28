@@ -36,7 +36,7 @@ const AvatarComponent: FC<IProps & IHandlers> = (props: IProps & IHandlers) => {
 
   return (
     <div className={className} onClick={handleClickAvatar}>
-      <img src={imgSrc} alt={'аватар'} />
+      <img className={'avatar-img'} src={imgSrc} alt={'аватар'} />
       {props.isEditMode && (
         <>
           <input name="avatar-input" type="file" accept=".jpg, .jpeg, .png" onChange={handleInputChange} />

@@ -8,9 +8,11 @@ import IConfiguredStore from '../../../redux/reducers/configured-store';
 import {Actions as authActions, IStore as IAuthStore} from '../../../redux/reducers/auth/auth.ducks';
 import {UserLoginItem} from '../../../models/user.model';
 
-import './login-page.scss';
+import './login.scss';
+import AppRoutes from '../../../utils/app-routes';
+import TextEnum from '../../../models/enum/text.enum';
 
-const loginPageRootClass = 'login-page-container';
+const loginPageRootClass = 'login-container';
 const formContainerClass = 'form-container';
 const formNameClass = 'form-name';
 
@@ -22,7 +24,7 @@ const LoginPage: FC = (props) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    isLoggedIn && navigate('/game');
+    isLoggedIn && navigate(AppRoutes.GAME);
   }, [isLoggedIn]);
 
   const onLoginFormSubmit = useCallback((data: UserLoginItem) => {
@@ -32,15 +34,15 @@ const LoginPage: FC = (props) => {
   const form = useMemo(
     () => (
       <div className={formContainerClass}>
-        <div className={formNameClass}>Войти</div>
+        <div className={formNameClass}>{TextEnum.LOGIN}</div>
         <FormComponent
           formElementsDef={LoginFormElementsDef}
           isEditMode={true}
-          submitText={'Войти'}
+          submitText={TextEnum.LOGIN}
           onSubmit={onLoginFormSubmit}
         />
-        <Link to={'/sign-up'} className={'sign-up-link'}>
-          {'Регистрация'}
+        <Link to={AppRoutes.REGISTER} className={'link'}>
+          {TextEnum.REGISTER}
         </Link>
       </div>
     ),
@@ -48,7 +50,7 @@ const LoginPage: FC = (props) => {
   );
 
   return (
-    <div className={loginPageRootClass}>
+    <div className={'page-container login-container'}>
       {/*TODO добавить лоадер*/}
       {form}
     </div>

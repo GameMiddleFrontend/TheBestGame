@@ -2,6 +2,7 @@ import React, {FC, useEffect} from 'react';
 import {Field, Form, FormikValues, useFormikContext} from 'formik';
 import {FormElementsDef, IInputType} from './types';
 import {withFormik} from './formik-wrapper.component';
+import Button from '../button';
 
 import './form.scss';
 
@@ -33,7 +34,7 @@ const FormComponent: FC<IProps & IHandlers> = (props: IProps & IHandlers) => {
                 name={field.name}
                 placeholder={field.label}
                 type={field.type ?? IInputType.text}
-                className={'form-input'}
+                className={`form-input${errors[field.name] && touched[field.name] ? ' form-input-invalid' : ''}`}
                 disabled={!props.isEditMode}
               />
               {errors[field.name] && touched[field.name] ? (
@@ -45,7 +46,9 @@ const FormComponent: FC<IProps & IHandlers> = (props: IProps & IHandlers) => {
       </div>
       {props.isEditMode && props.submitText && (
         <div className={'form-items-container'}>
-          <button type={'submit'}>{props.submitText}</button>
+          <Button className={'auth-button'} type={'submit'}>
+            {props.submitText}
+          </Button>
         </div>
       )}
     </Form>

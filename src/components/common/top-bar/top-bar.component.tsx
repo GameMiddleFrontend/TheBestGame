@@ -3,55 +3,46 @@ import {useLocation, useNavigate} from 'react-router-dom';
 import AppRoutes from '../../../utils/app-routes';
 import Popup from 'reactjs-popup';
 import Button from '../button';
-import cancelArrowImg from '../../../styles/images/cancel-arrow.svg';
+import spadesImg from '../../../styles/images/spades.svg';
 import menuImg from '../../../styles/images/menu.svg';
-import userImage from '../../../styles/images/user.svg';
 import {topBarMenu} from './top-bar.types';
-import {connect} from 'react-redux';
+import {useSelector} from 'react-redux';
 import IConfiguredStore from '../../../redux/reducers/configured-store';
-import {initialState as authInitialState} from '../../../redux/reducers/auth/auth.ducks';
+import {IStore as IAuthStore} from '../../../redux/reducers/auth/auth.ducks';
+import AvatarComponent from '../avatar';
+import {UserState} from '../../../redux/reducers/user/user.ducks';
 
 import './top-bar.scss';
 
-interface IProps {
-  isLoggedIn: boolean;
-  avatar?: string;
-}
-
-interface IHandlers {
-  onCancel?(): void;
-}
-
-const mapStateToProps = (state: IConfiguredStore): IProps => {
-  //TODO add Reselect
-  const {isLoggedIn} = state && state.auth ? state.auth : authInitialState;
-  return {
-    isLoggedIn,
-  };
-};
-
-const TopBar: FC<IProps & IHandlers> = (props) => {
+const TopBar: FC = (props) => {
+  const {isLoggedIn} = useSelector<IConfiguredStore, IAuthStore>((state) => state.auth);
+  const {item} = useSelector<IConfiguredStore, UserState>((state) => state.user);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleNavigate = useCallback((route: AppRoutes) => {
+  const handleNavigate = useCallback((route: AppRoutes, closePopup?: () => void) => {
     navigate(route);
+    closePopup && closePopup();
   }, []);
 
   return (
     <header className={'top-bar'}>
       <section className={'top-bar-section'}>
-        {props.onCancel && <Button className={'button-icon-only'} icon={cancelArrowImg} onClick={props.onCancel} />}
+        <Button
+          className={'button-icon-only'}
+          icon={spadesImg}
+          onClick={handleNavigate.bind(null, AppRoutes.HOME, undefined)}
+        />
       </section>
       <section className={'top-bar-section'}>
-        {/*TODO можно отображать аватар*/}
-        {props.isLoggedIn && (
+        {isLoggedIn && (
           <Button
-            className={'button-icon-only'}
-            icon={props.avatar || userImage}
-            onClick={handleNavigate.bind(null, AppRoutes.SETTINGS)}
+            className={'button-text'}
+            onClick={handleNavigate.bind(null, AppRoutes.SETTINGS, undefined)}
             disabled={location.pathname === AppRoutes.SETTINGS}
-          />
+          >
+            <AvatarComponent className={'avatar-sm'} imgSrc={item?.avatar} />
+          </Button>
         )}
         <Popup
           trigger={
@@ -66,24 +57,28 @@ const TopBar: FC<IProps & IHandlers> = (props) => {
           className="menu"
           arrow={false}
         >
-          <ul className="menu-container" role={'menu'}>
-            {topBarMenu
-              .filter((menuItem) => menuItem.route !== location.pathname)
-              ?.map((menuItem, index) => (
-                <li key={menuItem.sysName + index} className="menu-item">
-                  <Button
-                    className={'button-text menu-button-text'}
-                    onClick={handleNavigate.bind(null, menuItem.route)}
-                  >
-                    {menuItem.item}
-                  </Button>
-                </li>
-              ))}
-          </ul>
+          {(close: () => void) => {
+            return (
+              <ul className="menu-container" role={'menu'}>
+                {topBarMenu
+                  .filter((menuItem) => menuItem.route !== location.pathname)
+                  ?.map((menuItem, index) => (
+                    <li key={menuItem.sysName + index} className="menu-item">
+                      <Button
+                        className={'button-text menu-button-text'}
+                        onClick={handleNavigate.bind(null, menuItem.route, close)}
+                      >
+                        {menuItem.item}
+                      </Button>
+                    </li>
+                  ))}
+              </ul>
+            );
+          }}
         </Popup>
       </section>
     </header>
   );
 };
 
-export default connect(mapStateToProps)(TopBar);
+export default TopBar;

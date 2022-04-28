@@ -2,11 +2,16 @@
   display: flex;
   align-content: center;
   flex-direction: column;
+  justify-content: center;
 }
 
 .page-content{
   flex-grow: 1;
   margin: 5rem auto;
+}
+
+.user-display-name{
+  margin-bottom: 0;
 }
 
 .form-container {
