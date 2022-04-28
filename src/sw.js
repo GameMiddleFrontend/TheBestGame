@@ -3,6 +3,8 @@ const CACHE_VERSION = 'v1';
 
 const URLS = ['/', '/main.js'];
 
+const cacheURLS = [''];
+
 this.addEventListener('install', (event) => {
   event.waitUntil(
     caches
@@ -19,6 +21,12 @@ this.addEventListener('install', (event) => {
 });
 
 this.addEventListener('fetch', (event) => {
+  if (!cacheURLS.includes(event.request.url)) {
+    fetch(event.request).then((response) => {
+      return response;
+    });
+    return;
+  }
   event.respondWith(
     // Пытаемся найти ответ на такой запрос в кеше
     caches.match(event.request).then((response) => {
