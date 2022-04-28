@@ -1,5 +1,6 @@
 import React, {FC} from 'react';
 import PageLayoutComponent from './page-layout.component';
+import withAuth from "../../../hooks/chechAuthHookHOC";
 
 interface IProps {
   component: React.ElementType;
