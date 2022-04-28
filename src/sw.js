@@ -3,6 +3,8 @@ const CACHE_VERSION = 'v1';
 
 const URLS = ['/', '/main.js'];
 
+const cacheURLS = [''];
+
 this.addEventListener('install', (event) => {
   event.waitUntil(
     caches
@@ -34,7 +36,9 @@ this.addEventListener('fetch', (event) => {
           .then((response) => {
             // Если что-то пошло не так, выдаём в основной поток результат, но не кладём его в кеш
             if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
+              if (cacheURLS.includes(response.url)) {
+                return response;
+              }
             }
 
             const responseToCache = response.clone();
