@@ -17,9 +17,12 @@ import WithLayout from '../common/page-layout';
 import useLayout from '../../hooks/withLayout';
 import {useDispatch} from 'react-redux';
 import {Actions as UserActions} from '../../redux/reducers/user/user.ducks';
+import startServiceWorker from '../../serviceWorker/SWStart';
 /*TODO добавить алиасы для путей*/
 
 function App() {
+  startServiceWorker();
+
   const dispatch = useDispatch();
 
   useEffect(() => {
