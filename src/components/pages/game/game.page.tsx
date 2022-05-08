@@ -3,17 +3,15 @@ import Button from '../../common/button';
 import playImg from '../../../styles/images/play.svg';
 import replayImg from '../../../styles/images/restart.svg';
 import undoImg from '../../../styles/images/undo.svg';
-import GameEngine from '../../../utils/game/game.engine';
+import GameEngine from '../../../utils/solitaire/solitaire.game';
 
 import './game.scss';
 
-const gameCanvasClass = 'game';
-const animationCanvasClass = 'game-animation';
-const canvasContainerClass = 'game-container';
-
 const GamePage = () => {
+  let gameEngine: GameEngine;
+
   const handleStartGame = useCallback(() => {
-    GameEngine.startGame();
+    gameEngine && gameEngine.startGame();
   }, []);
 
   const staticCanvas = useRef(null);
@@ -21,7 +19,7 @@ const GamePage = () => {
   const canvasContainer = useRef(null);
 
   const handleReplayGame = useCallback(() => {
-    GameEngine.renderStartElements();
+    gameEngine && gameEngine.renderStartElements();
   }, []);
 
   const handleUndo = useCallback(() => {
@@ -30,10 +28,11 @@ const GamePage = () => {
 
   useEffect(() => {
     if (staticCanvas.current && dynamicCanvas.current && canvasContainer.current) {
-      GameEngine.init(staticCanvas.current, dynamicCanvas.current, canvasContainer.current);
-      GameEngine.renderStartElements();
+      gameEngine = new GameEngine(staticCanvas.current, dynamicCanvas.current, canvasContainer.current);
+      //GameEngine.init(staticCanvas.current, dynamicCanvas.current, canvasContainer.current);
+      gameEngine.renderStartElements();
     }
-  });
+  }, []);
 
   return (
     <div className={'page-container game-page'}>
@@ -44,8 +43,8 @@ const GamePage = () => {
           <Button className={'button-icon-only button-rounded'} icon={replayImg} onClick={handleReplayGame} />
           <Button className={'button-icon-only button-rounded'} icon={undoImg} onClick={handleUndo} />
         </div>
-        <canvas ref={staticCanvas} className={gameCanvasClass} />
-        <canvas ref={dynamicCanvas} className={animationCanvasClass} />
+        <canvas ref={staticCanvas} className={'game'} />
+        <canvas ref={dynamicCanvas} className={'game-animation'} />
       </div>
     </div>
   );

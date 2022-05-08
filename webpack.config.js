@@ -39,17 +39,6 @@ module.exports = {
         use: 'babel-loader',
       },
       {
-        test: /\.(png|jp(e*)g|svg|gif)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: 'images/[hash]-[name].[ext]',
-            },
-          },
-        ],
-      },
-      {
         test: /\.(css|scss)$/,
         use: [
           "style-loader",
@@ -67,7 +56,15 @@ module.exports = {
             },
           },
         ],
-      }
+      },
+      {
+        type: 'asset',
+        resourceQuery: '*.svg?url',
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
+      },
     ]
   },
   plugins: [

@@ -1,4 +1,4 @@
-import {Card, CardLeftUp, CardSuit} from '../../models/card.models';
+import {Card, CardLeftUp, CardSuit, Position} from '../../models/card.models';
 
 type Tree = {
   rootPosition: CardLeftUp;
@@ -13,4 +13,15 @@ type TargetTree = {
 
 type TableauTree = Tree;
 
-export {TargetTree, TableauTree, Tree};
+interface Pile {
+  rootPosition: Position;
+  finished?: boolean;
+  cards?: Card[] | null;
+  nextCard?: Card | null;
+}
+
+type TableauPile = Pile;
+type HandPile = Pile;
+type FoundationPile = Pile;
+
+export {TargetTree, TableauTree, Tree, TableauPile, HandPile, FoundationPile, Pile};
