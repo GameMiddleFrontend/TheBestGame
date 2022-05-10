@@ -1,15 +1,13 @@
-import React, {StrictMode} from 'react';
+import initStore from './redux/store';
 import ReactDOM from 'react-dom';
-import App from './components/app';
+import React, {StrictMode} from 'react';
 import {Provider} from 'react-redux';
-
-import store from './redux';
-
-import './styles/index.scss';
+import App from './components/app';
 
 class RootComponent extends HTMLElement {
   connectedCallback() {
-    ReactDOM.render(
+    const store = initStore();
+    ReactDOM.hydrate(
       <StrictMode>
         <Provider store={store}>
           <App />
