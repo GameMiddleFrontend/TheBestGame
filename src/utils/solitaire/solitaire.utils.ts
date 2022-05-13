@@ -1,5 +1,5 @@
-import {Card, CardSuit, CardRank, getStringKeys} from './card/card.types';
-import {Options, Position} from './solitaire.types';
+import {Card, CardSuit, CardRank, getStringKeys} from './card';
+import {Options, Pile, PilesElement, Position} from './solitaire.types';
 
 export function getCardDeck(cardOptions: Options, initPosition: Position): Card[] {
   const suitKeys = getStringKeys(CardSuit);
@@ -25,4 +25,23 @@ export function getCardDeck(cardOptions: Options, initPosition: Position): Card[
     });
     return result;
   }, []);
+}
+
+export function checkPosition(currentPosition: Position, objPosition: Position, objOptions?: Options) {
+  return (
+    currentPosition.x >= objPosition.x &&
+    currentPosition.x <= objPosition.x + (objOptions?.width ?? 0) &&
+    currentPosition.y >= objPosition.y &&
+    currentPosition.y <= objPosition.y + (objOptions?.height ?? 0)
+  );
+}
+
+export function checkPilePosition(checkedPile: Pile, pileElement: PilesElement) {
+  if (pileElement) {
+    return Object.values(pileElement).find((pile) => {
+      if (pile && checkPosition(checkedPile.rootPosition, pile.rootPosition)) {
+        return true;
+      }
+    });
+  }
 }

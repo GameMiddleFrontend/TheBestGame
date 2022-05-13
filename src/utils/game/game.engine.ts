@@ -668,7 +668,7 @@ class GameEngine {
   checkMovesCardToTableauPile(draggableCard: Card, mousePosition: Position): TableauPile | undefined {
     /* TODO нужно искать полностью стопку, а не нажатую карту */
     const targetCard = this.findCardByPosition(mousePosition);
-    console.log('checkMovesCardToTableauPile', draggableCard, targetCard);
+    //console.log('checkMovesCardToTableauPile', draggableCard, targetCard);
 
     if (targetCard && isDraggableCardConditions(draggableCard, targetCard)) {
       const tableauPile = this.findCardPile(targetCard);
@@ -761,7 +761,7 @@ class GameEngine {
 
   clearCardFromPile(card: Card) {
     const cardPile = this.findCardPile(card);
-    console.log('clearCardFromPile', card, cardPile);
+    //console.log('clearCardFromPile', card, cardPile);
 
     if (cardPile) {
       cardPile.cards = cardPile.cards!.filter((item) => item !== card);

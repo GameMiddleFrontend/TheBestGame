@@ -1,40 +1,40 @@
-import {getContextCanvas} from './canvas/canvas.util';
+import {drawMovingObject, getContextCanvas} from './canvas';
+import {Options, Position, Pile, PilesElement, Area, DraggableCards} from './solitaire.types';
 import {
-  MIN_PILE_MARGIN,
-  MIN_CARD_HEIGHT,
-  MIN_CARD_WIDTH,
-  getCardWidthByHeight,
-  Options,
-  Position,
-  getPileMarginByCardHeight,
-  FoundationPile,
-  Pile,
-  PilesElement,
-  initialPilesElement,
-  FOUNDATIONS_PILES_COUNT,
-  HandPile,
-  HAND_PILES_COUNT,
-  TableauPile,
-  TABLEAU_PILES_COUNT,
-  Area,
-  initialPilesArea,
-  initialPosition,
-  MIN_OFFSET_IN_PILE,
-  getOffsetInPileByHeight,
-} from './solitaire.types';
-import {
+  Card,
+  CardRank,
   checkCardPosition,
   clearDrawingCard,
-  clearDrawingCardFromPile,
+  clearDrawingCardsFromPile,
+  closeCard,
   drawCard,
+  drawCards,
+  drawDraggableCards,
+  getCardsImageData,
+  getTableauPileCardPosition,
   moveCards,
   openCard,
-} from './card/card';
-import {Card} from './card/card.types';
-import {clearSelectedCards, drawElementPile, drawSelectedCards} from './solitaire.draw-elements';
-import {getCardDeck} from './solitaire.utils';
+} from './card';
+import {drawElementPile} from './solitaire.draw-elements';
+import {checkPilePosition, checkPosition, getCardDeck} from './solitaire.utils';
 import shuffle from '../helpers/shuffle';
-import isEqual from '../helpers/isEqual';
+import isEqual from 'lodash.isequal';
+import {
+  FOUNDATIONS_PILES_COUNT,
+  getCardWidthByHeight,
+  getOffsetInPileByHeight,
+  getPileMarginByCardHeight,
+  HAND_PILES_COUNT,
+  initialPilesArea,
+  initialPilesElement,
+  initialPosition,
+  MIN_CARD_HEIGHT,
+  MIN_CARD_WIDTH,
+  MIN_OFFSET_IN_PILE,
+  MIN_PILE_MARGIN,
+  TABLEAU_PILES_COUNT,
+} from './solitaire.defaults';
+import {isDraggableCardConditions} from './moving-card-conditions';
 
 class GameEngine {
   private static _instance: GameEngine;
@@ -49,8 +49,7 @@ class GameEngine {
   private pilesArea: Area = initialPilesArea;
 
   private isStarted = false;
-  private draggableCards: Card | undefined;
-  private selectedCards: Card | Card[] | undefined;
+  private draggableCards?: DraggableCards;
 
   /** основная колода */
   private readonly cardDeckSorted: Array<Card> = [];
@@ -73,15 +72,16 @@ class GameEngine {
    * arr[0] - последняя карта в стопке
    * arr[arr.length - 1] - верхняя, открытая карта */
 
+  private gamePiles: Pile[] = [];
   /** Базы - верхние колоды разложенные по мастям */
-  private foundations: PilesElement<FoundationPile> = initialPilesElement;
+  private foundations: PilesElement = initialPilesElement;
 
   /** Основная часть раскладки пасьянса */
-  private tableau: PilesElement<TableauPile> = initialPilesElement;
+  private tableau: PilesElement = initialPilesElement;
 
   /** Дополнительная колода в левом верхнем углу:
    * карты, оставшиеся после раскладывания пасьянса */
-  private hand: PilesElement<HandPile> = initialPilesElement;
+  private hand: PilesElement = initialPilesElement;
 
   constructor(gameCanvas: HTMLCanvasElement, animationCanvas: HTMLCanvasElement, canvasContainer: HTMLDivElement) {
     this.gameCanvas = gameCanvas;
@@ -150,12 +150,6 @@ class GameEngine {
         this.canvasContainer.addEventListener('mouseup', this.handleMouseUp.bind(this));
         this.canvasContainer.addEventListener('mouseout', this.handleMouseUp.bind(this));
       });
-
-      console.log('------------------');
-      console.log('cardDeck', this.cardDeck);
-      console.log('tableau', this.tableau);
-      console.log('foundations', this.foundations);
-      console.log('hand', this.hand);
     }
   }
 
@@ -163,6 +157,10 @@ class GameEngine {
     this.renderFoundations();
     this.renderHand();
     this.renderTableau();
+
+    this.gamePiles = Object.values(this.foundations)
+      .concat(Object.values(this.hand))
+      .concat(Object.values(this.tableau));
 
     this.startPilePosition = {
       x: this.pilesArea.x + this.pilesArea.width / 2 - this.cardOptions.width / 2,
@@ -176,13 +174,13 @@ class GameEngine {
   }
 
   /** PILES */
-  private getElementPile<T extends Pile = Pile>(
-    element: Record<number, T> = {},
+  private getElementPile(
+    element: Record<number, Pile> = {},
     coordX = 0,
     coordY = 0,
     pilesCount = 1,
     isRightMove = true,
-  ): Record<number, T> {
+  ): Record<number, Pile> {
     const sign = isRightMove ? 1 : -1;
 
     for (let i = 0; i < pilesCount; i++) {
@@ -203,12 +201,7 @@ class GameEngine {
     const coordX: number = this.pilesArea.x + (this.cardOptions.width + this.pileMargin) * 3;
     const coordY = this.pileMargin;
 
-    this.foundations = this.getElementPile<FoundationPile>(
-      {...this.foundations},
-      coordX,
-      coordY,
-      FOUNDATIONS_PILES_COUNT,
-    );
+    this.foundations = this.getElementPile({...this.foundations}, coordX, coordY, FOUNDATIONS_PILES_COUNT);
     drawElementPile(getContextCanvas(this.gameCanvas), this.foundations, this.cardOptions);
   }
 
@@ -216,7 +209,7 @@ class GameEngine {
     const coordX: number = this.pilesArea.x;
     const coordY = this.pileMargin;
 
-    this.hand = this.getElementPile<HandPile>({...this.hand}, coordX, coordY, HAND_PILES_COUNT);
+    this.hand = this.getElementPile({...this.hand}, coordX, coordY, HAND_PILES_COUNT);
     drawElementPile(getContextCanvas(this.gameCanvas), this.hand, this.cardOptions);
   }
 
@@ -224,16 +217,8 @@ class GameEngine {
     const coordX: number = this.pilesArea.x;
     const coordY = this.pilesArea.y + this.cardOptions.height + this.cardOptions.height / 2;
 
-    this.tableau = this.getElementPile<TableauPile>({...this.tableau}, coordX, coordY, TABLEAU_PILES_COUNT);
+    this.tableau = this.getElementPile({...this.tableau}, coordX, coordY, TABLEAU_PILES_COUNT);
     drawElementPile(getContextCanvas(this.gameCanvas), this.tableau, this.cardOptions);
-  }
-
-  private rerenderPile(pile: Pile) {
-    if (Array.isArray(pile.cards) && pile.cards.length !== 0) {
-      const lastPileCard = pile.cards[pile.cards.length - 1];
-
-      drawCard(getContextCanvas(this.gameCanvas), lastPileCard);
-    }
   }
 
   /** Раздаем карты */
@@ -263,20 +248,19 @@ class GameEngine {
     });
   }
 
-  private renderPile(pile: Pile) {
-    if (pile.cards.length !== 0) {
-      const lastPileCard = pile.cards[pile.cards.length - 1];
-
-      drawCard(getContextCanvas(this.gameCanvas), lastPileCard);
-    }
+  private rerenderPile(pile: Pile) {
+    const ctx = getContextCanvas(this.gameCanvas);
+    if (!!pile.cards.length) drawCards(ctx, pile.cards);
+    else drawElementPile(ctx, pile, this.cardOptions);
   }
 
   /** CARDS */
-  getCardFromDeck(currentTableauPile: TableauPile, pileNumber: number) {
+  getCardFromDeck(currentTableauPile: Pile, pileNumber: number) {
     const {rootPosition} = currentTableauPile;
 
     const cardNumber = currentTableauPile.cards.length;
 
+    /*TODO use getTableauPileCardPosition */
     const cardPosition: Position = {
       x: rootPosition.x,
       y: rootPosition.y + cardNumber * this.offsetInPile,
@@ -295,310 +279,408 @@ class GameEngine {
   }
 
   private changeCardPosition(
-    card: Card,
+    cards: Card | Card[],
     startPos: Position | null,
     endPos: Position,
     callback?: (position: Position) => void,
   ) {
-    const ctx = getContextCanvas(this.animationCanvas);
+    if (!Array.isArray(cards)) {
+      cards = [cards];
+    }
+    const startCardPosition = startPos ?? cards[0].currentPosition;
 
-    const startCardPosition = startPos ?? card.currentPosition;
-    drawCard(ctx, card, startCardPosition);
+    drawMovingObject(this.gameCanvas, this.animationCanvas, startCardPosition, endPos, cards, drawCards, callback);
+  }
 
-    const counter = 15;
-    let count = 1;
+  /*TODO почти копия changeCardPosition, придти к одной реализации */
+  private changeDraggableCardsPosition(
+    draggableCards: DraggableCards,
+    endPos: Position,
+    callback?: (position: Position) => void,
+  ) {
+    const startCardPosition = draggableCards.position;
 
-    const deltaX = (endPos.x - startCardPosition.x) / counter;
-    const deltaY = (endPos.y - startCardPosition.y) / counter;
-
-    let currentPoint = startCardPosition;
-    let nextPoint;
-
-    const step = () => {
-      nextPoint = {x: startCardPosition.x + deltaX * count, y: startCardPosition.y + deltaY * count};
-      if ((nextPoint.x >= endPos.x && deltaX > 0) || (nextPoint.x <= endPos.x && deltaX < 0)) {
-        nextPoint = endPos;
-      }
-      ctx.clearRect(0, 0, this.animationCanvas.width, this.animationCanvas.height);
-      drawCard(ctx, card, nextPoint);
-
-      currentPoint = nextPoint;
-      if (count <= counter) {
-        count++;
-        window.requestAnimationFrame(step);
-      } else {
-        drawCard(getContextCanvas(this.gameCanvas), card, endPos);
-        ctx.clearRect(0, 0, this.animationCanvas.width, this.animationCanvas.height);
-
-        if (callback) {
-          callback(endPos);
-        }
-      }
-    };
-
-    window.requestAnimationFrame(step);
+    drawMovingObject(
+      this.gameCanvas,
+      this.animationCanvas,
+      startCardPosition,
+      endPos,
+      draggableCards,
+      drawDraggableCards,
+      callback,
+    );
   }
 
   changeRemainStackPosition() {
-    const {rootPosition} = this.hand[0];
+    const handPile = this.hand[0];
+    const {rootPosition} = handPile;
 
     clearDrawingCard(getContextCanvas(this.gameCanvas), this.cardDeck[0], this.startPilePosition);
 
-    this.hand[0].cards = this.cardDeck;
-    this.hand[0].cards.forEach((card: Card) => {
+    handPile.cards = this.cardDeck;
+    handPile.cards.forEach((card: Card) => {
+      card.currentPile = handPile;
       this.changeCardPosition(card, this.startPilePosition, rootPosition);
     });
     this.cardDeck = [];
   }
 
-  private findCardByPosition(position: Position, excludedCards: Card[] = []) {
-    return this.cardDeckSorted.find((card) => {
-      return card.draggable && checkCardPosition(card, position) && !excludedCards.includes(card);
+  private findPileByPosition(position: Position) {
+    return this.gamePiles.find((pile) => {
+      return checkPosition(position, pile.rootPosition, this.cardOptions);
     });
   }
 
-  private findSelectedCards(): Card | undefined {
-    /*TODO искать все выделенные карты*/
-    return this.cardDeckSorted.find((card) => {
-      return card.selected;
+  private findCardsByCondition(
+    condition: (card: Card) => boolean,
+    isSearchFromEndOfPile: (pile: Pile) => boolean = () => false,
+  ): Card[] | undefined {
+    const cards = this.cardDeckSorted.filter((card) => {
+      return condition(card);
     });
-  }
 
-  private deleteCardFromPile(card: Card) {
-    const cardPile = card.currentPile;
+    if (cards && !!cards.length) {
+      const cardsPile = cards[0].currentPile;
+      const lastCardIndex = cardsPile.cards.length - 1;
 
-    if (cardPile) {
-      cardPile.cards = cardPile.cards.filter((item) => item !== card);
-      this.rerenderPile(cardPile);
+      const isSearchFromEnd = isSearchFromEndOfPile(cardsPile);
+
+      const searchStack = isSearchFromEnd ? cardsPile.cards.slice().reverse() : cardsPile.cards.slice();
+
+      const firstDraggableCardIndex = searchStack.findIndex((card) => {
+        return cards.includes(card);
+      });
+
+      console.log(
+        'findCardsByCondition',
+        cardsPile.cards.slice(isSearchFromEnd ? lastCardIndex - firstDraggableCardIndex : firstDraggableCardIndex),
+      );
+      return cardsPile.cards.slice(isSearchFromEnd ? lastCardIndex - firstDraggableCardIndex : firstDraggableCardIndex);
     }
   }
 
-  private prepareCardsForMove = (cards: Card | Card[]) => {
+  private findCardsByPosition(position: Position, excludedCards: Card[] = []) {
+    const condition = (card: Card): boolean => {
+      return card.draggable && checkCardPosition(card, position) && !excludedCards.includes(card);
+    };
+    const isSearchFromEndOfPile = (pile: Pile) => {
+      return true;
+    };
+
+    return this.findCardsByCondition(condition, isSearchFromEndOfPile);
+
+    // const cards = this.cardDeckSorted.filter((card) => {
+    //   return condition(card);
+    // });
+    //
+    // if (cards && !!cards.length) {
+    //   const cardsPile = cards[0].currentPile;
+    //   const lastCardIndex = cardsPile.cards.length - 1;
+    //
+    //   const searchStack = isEqual(cardsPile.rootPosition, this.hand[1])
+    //     ? cardsPile.cards.slice()
+    //     : cardsPile.cards.slice().reverse();
+    //
+    //   const firstDraggableCardIndex = searchStack.findIndex((card) => {
+    //     return cards.includes(card);
+    //   });
+    //
+    //   return cardsPile.cards.slice(lastCardIndex - firstDraggableCardIndex);
+    // }
+  }
+
+  private findSelectedCards(): Card[] | undefined {
+    const condition = (card: Card): boolean => {
+      return card.selected;
+    };
+    const isSearchFromEndOfPile = (pile: Pile) => {
+      return isEqual(pile.rootPosition, this.hand[1].rootPosition);
+    };
+
+    return this.findCardsByCondition(condition, isSearchFromEndOfPile);
+
+    // const cards = this.cardDeckSorted.filter((card) => {
+    //   return card.selected;
+    // });
+    //
+    // if (cards && !!cards.length) {
+    //   const cardsPile = cards[0].currentPile;
+    //
+    //   const firstDraggableCardIndex = cardsPile.cards.slice().findIndex((card) => {
+    //     return cards.includes(card);
+    //   });
+    //
+    //   return cardsPile.cards.slice(firstDraggableCardIndex);
+    // }
+  }
+
+  /** @deprecated (но это не точно) */
+  private findCardByPosition(position: Position, excludedPile: Pile) {
+    return this.cardDeckSorted.find((card) => {
+      return (
+        card.draggable &&
+        checkCardPosition(card, position) &&
+        !isEqual(card.currentPile.rootPosition, excludedPile.rootPosition)
+      );
+    });
+  }
+
+  private deleteCardsFromPile(cards: Card[], pile?: Pile, isOpenNewCard = false) {
+    const cardsPile = pile ?? cards[0].currentPile;
+
+    if (cardsPile) {
+      cardsPile.cards = cardsPile.cards.filter((item) => !cards.includes(item));
+
+      if (isOpenNewCard) {
+        const lastPileCard = cardsPile.cards[cardsPile.cards.length - 1];
+        lastPileCard && !lastPileCard.opened && openCard(lastPileCard);
+      }
+
+      this.rerenderPile(cardsPile);
+    }
+  }
+
+  private prepareCardsForMove = (draggableCards: DraggableCards) => {
     /** Удаляем карту из текущей стопки на основном холсте
-     * ререндерим стопку карт,
      * сама карта отрисовывается на холсте анимации
      * у карты остается ссылка на ту стопку, где она хранилась (currentPile) */
-    if (cards) {
-      const gameCanvasContext = getContextCanvas(this.gameCanvas);
-      const animationCanvasContext = getContextCanvas(this.animationCanvas);
+    const gameCanvasContext = getContextCanvas(this.gameCanvas);
+    const animationCanvasContext = getContextCanvas(this.animationCanvas);
 
-      clearDrawingCardFromPile(gameCanvasContext, cards, this.deleteCardFromPile.bind(this));
-      drawCard(animationCanvasContext, cards);
-    }
+    clearDrawingCardsFromPile(gameCanvasContext, draggableCards.cards, this.deleteCardsFromPile.bind(this));
+    drawDraggableCards(animationCanvasContext, draggableCards);
   };
 
-  // private selectCards = (cards: Card | Card[]) => {
-  //   if (cards) {
-  //     this.selectedCards = cards;
-  //   }
-  // };
-  //
-  // private unselectCards = (cards: Card | Card[]) => {
-  //   /** Снимаем выделение с карт, и нужно их вернуть в стопку и отрисовать заново на gameCanvas */
-  //   if (cards) {
-  //     clearSelectedCards(getContextCanvas(this.animationCanvas), cards, this.offsetInPile);
-  //     drawCard(getContextCanvas(this.gameCanvas), Array.isArray(cards) ? cards[0] : cards);
-  //
-  //     console.log('unselectCards', cards);
-  //     this.selectedCards = undefined;
-  //   }
-  // };
+  private getDraggableCards = (cards: Card[]): DraggableCards => {
+    return {
+      cards,
+      imageData: getCardsImageData(getContextCanvas(this.gameCanvas), cards),
+      position: cards[0].currentPosition,
+    };
+  };
 
-  putCardToInitialPosition(draggableCard: Card) {
-    // const pileLastCardIndex = draggableCard.currentPile.cards.length - 1;
-    // const lastCardInPile = draggableCard.currentPile.cards[pileLastCardIndex];
-    //
-    // if (lastCardInPile && lastCardInPile === draggableCard) {
-    //    draggableCard.currentPile.cards.pop();
-    // }
+  private pileLastCardPosition(pile: Pile): Position {
+    const isHandPile = checkPosition(pile.rootPosition, this.hand[1].rootPosition, this.cardOptions);
 
-    const cardPosition = this.getTableauPileLastCardPosition(draggableCard.currentPile);
-    if (!isEqual(cardPosition, draggableCard.currentPosition)) {
-      this.changeCardPosition(draggableCard, draggableCard.currentPosition, cardPosition);
-      draggableCard.selected = false;
-    } else {
-      draggableCard.selected = true;
+    return isHandPile ? this.hand[1].rootPosition : this.getTableauPileLastCardPosition(pile);
+  }
+
+  private putCardsToInitialPosition(draggableCards: DraggableCards): boolean {
+    console.log('putCardsToInitialPosition');
+    const firstDraggableCard = draggableCards.cards[0];
+    const pile = firstDraggableCard.currentPile;
+
+    const cardNewPosition =
+      pile.cards.find((item) => draggableCards.cards.includes(item))?.currentPosition ??
+      this.pileLastCardPosition(pile);
+
+    let selected = false;
+
+    if (isEqual(firstDraggableCard.currentPosition, cardNewPosition)) {
+      selected = true;
+    }
+    this.changeDraggableCardsPosition(draggableCards, cardNewPosition);
+    console.log(draggableCards, cardNewPosition);
+    return selected;
+  }
+
+  private checkIsHandPileClick(position: Position) {
+    const isHand_0 = checkPosition(position, this.hand[0].rootPosition, this.cardOptions);
+
+    if (isHand_0) {
+      this.onHandCardClick();
+    }
+
+    return isHand_0;
+  }
+
+  private onHandCardClick() {
+    const closedHandPile = this.hand[0];
+    const openedHandPile = this.hand[1];
+
+    const currentCard = closedHandPile.cards.pop();
+    const isEmptyHand = closedHandPile.cards.length === 0;
+
+    if (currentCard) {
+      openedHandPile.cards.push(currentCard);
+      const endPosition = openedHandPile.rootPosition;
+
+      currentCard.currentPile = openedHandPile;
+      openCard(currentCard);
+
+      this.changeCardPosition(currentCard, null, endPosition);
+
+      if (isEmptyHand) {
+        this.rerenderPile(closedHandPile);
+      }
+    } else if (isEmptyHand) {
+      closedHandPile.cards = openedHandPile.cards.reverse();
+      closedHandPile.cards.forEach((card) => {
+        card.currentPile = closedHandPile;
+        card.currentPosition = closedHandPile.rootPosition;
+        closeCard(card);
+      });
+
+      openedHandPile.cards = [];
+      this.rerenderPile(openedHandPile);
+
+      this.changeCardPosition(closedHandPile.cards[0], openedHandPile.rootPosition, closedHandPile.rootPosition);
     }
   }
 
-  private moveCardsAcrossAnimationCanvas(draggableCards: Card | Cards[], mousePosition: Position) {
+  private checkMovesCardToFoundationPile(draggableCards: DraggableCards, pile: Pile): Pile | undefined {
+    if (!checkPilePosition(pile, this.foundations) || !draggableCards.cards.length || draggableCards.cards.length > 1) {
+      return;
+    }
+
+    const draggableCard = draggableCards.cards[0];
+    const draggableCardsPile = draggableCard.currentPile;
+
+    const pileNextCard = pile.cards?.[pile.cards.length - 1]?.next;
+
+    if ((!pileNextCard && draggableCard.rank === CardRank.ACE) || isEqual(pileNextCard, draggableCard)) {
+      const changeCardPositionCallBack = (position: Position) => {
+        this.deleteCardsFromPile(draggableCards.cards, draggableCardsPile, true);
+      };
+
+      this.changeDraggableCardsPosition(draggableCards, pile.rootPosition, changeCardPositionCallBack);
+
+      return pile;
+    }
+  }
+
+  private checkMovesCardToTableauPile(draggableCards: DraggableCards, pile: Pile): Pile | undefined {
+    if (!checkPilePosition(pile, this.tableau)) {
+      return;
+    }
+    const targetCard = pile.cards[pile.cards.length - 1];
+
+    const draggableCard = draggableCards.cards[0];
+    const draggableCardsPile = draggableCard.currentPile;
+
+    if (isDraggableCardConditions(draggableCard, targetCard)) {
+      const tableauPileLastCardPosition = this.getTableauPileLastCardPosition(pile);
+
+      const changeCardPositionCallBack = (position: Position) => {
+        this.deleteCardsFromPile(draggableCards.cards, draggableCardsPile, true);
+      };
+
+      this.changeDraggableCardsPosition(draggableCards, tableauPileLastCardPosition, changeCardPositionCallBack);
+
+      return pile;
+    }
+  }
+
+  private getTableauPileLastCardPosition(tableauPile: Pile): Position {
+    const pileCardsCount = tableauPile.cards.length;
+
+    return getTableauPileCardPosition(tableauPile.rootPosition, pileCardsCount, this.cardOptions);
+  }
+
+  /** MOVE CARDS */
+  private moveCardsAcrossAnimationCanvas(draggableCards: DraggableCards, mousePosition: Position) {
     moveCards(this.animationCanvas, draggableCards, mousePosition);
   }
 
-  private moveCardsToPile(draggableCard: Card, mousePosition: Position) {
-    const selectedCards = this.findSelectedCards();
+  private moveCardsToPile(draggableCards: DraggableCards, mousePosition: Position) {
+    // const selectedCards = this.findSelectedCards();
+    // if (
+    //   selectedCards &&
+    //   !!selectedCards.length &&
+    //   !isEqual(selectedCards[0].currentPile.rootPosition, draggableCards.cards[0].currentPile.rootPosition)
+    // ) {
+    //   const draggableCardsPile = draggableCards.cards[0].currentPile;
+    //   draggableCardsPile.cards = draggableCardsPile.cards.concat(draggableCards.cards);
+    //
+    //   this.renderPile(draggableCardsPile);
+    //   draggableCards = this.getDraggableCards(selectedCards);
+    //   this.prepareCardsForMove(draggableCards);
+    // }
 
-    if (selectedCards && selectedCards !== draggableCard) {
-      draggableCard.currentPile.cards.push(draggableCard);
-      this.renderPile(draggableCard.currentPile);
-      draggableCard = selectedCards;
-    }
+    const targetCard = this.findCardByPosition(mousePosition, draggableCards.cards[0].currentPile);
+    const targetPile = targetCard?.currentPile ?? this.findPileByPosition(mousePosition);
 
-    const targetCard = this.findCardByPosition(mousePosition);
-    debugger;
-    let cardPile = draggableCard.currentPile;
-    /*TODO проверять сразу по targetCard */
-    const tableauPile = this.checkMovesCardToTableauPile(draggableCard, mousePosition);
+    let cardsPile = draggableCards.cards[0].currentPile;
 
-    if (tableauPile) {
-      draggableCard.currentPile = tableauPile;
-      draggableCard.selected = false;
-      cardPile = tableauPile;
-    } else {
-      debugger;
-      this.putCardToInitialPosition(draggableCard);
-    }
-
-    cardPile.cards.push(draggableCard);
-    console.log('moveCardToPile draggableCard', draggableCard);
-    console.log('moveCardToPile cardPile', cardPile);
-  }
-
-  private checkMovesCardToTableauPile(draggableCard: Card, mousePosition: Position): TableauPile | undefined {
-    /* TODO нужно искать полностью стопку, а не нажатую карту */
-    const targetCard = this.findCardByPosition(mousePosition, [draggableCard]);
-
-    if (targetCard && targetCard !== draggableCard /*&& isDraggableCardConditions(draggableCard, targetCard)*/) {
-      // const tableauPile = this.findCardPile(targetCard);
-      const tableauPile = targetCard.currentPile;
-      tableauPile && this.putCardOnTableau(draggableCard, tableauPile, mousePosition);
-      return tableauPile;
-    }
-  }
-
-  private putCardOnTableau(draggableCard: Card, tableauPile: TableauPile, mousePosition: Position) {
-    const cardPile = draggableCard.currentPile;
-    const tableauPileLastCardPosition = this.getTableauPileLastCardPosition(tableauPile);
-
-    const changeCardPositionCallBack = (position: Position) => {
-      if (cardPile) {
-        cardPile.cards = cardPile.cards.filter((item) => item !== draggableCard);
-        const lastPileCard = cardPile.cards[cardPile.cards.length - 1];
-
-        lastPileCard && openCard(lastPileCard);
-        this.renderPile(cardPile);
-      }
-    };
-
-    this.changeCardPosition(draggableCard, null, tableauPileLastCardPosition, changeCardPositionCallBack);
-  }
-
-  private getTableauPileLastCardPosition(tableauPile: TableauPile): Position {
-    const pileCardsCount = tableauPile.cards.length;
-
-    return {
-      x: tableauPile.rootPosition.x,
-      y: tableauPile.rootPosition.y + pileCardsCount * this.offsetInPile,
-    };
-  }
-
-  private findCardPile(card: Card): Pile | undefined {
-    /*TODO рефакторинг*/
-    let result;
-    // console.log('findCardPile card', card);
-    Object.entries(this.tableau).forEach(([key, value]) => {
-      // console.log('findCardPile tableau', this.tableau, value);
-      if ((value.cards || []).includes(card)) {
-        result = this.tableau[key];
-        return;
-      }
-    });
-    if (!result) {
-      Object.entries(this.hand).forEach(([key, value]) => {
-        // console.log('findCardPile hand', this.hand, value);
-        if ((value.cards || []).includes(card)) {
-          result = this.hand[key];
-          return;
-        }
+    const foundationPile = targetPile && this.checkMovesCardToFoundationPile(draggableCards, targetPile);
+    const tableauPile = targetPile && this.checkMovesCardToTableauPile(draggableCards, targetPile);
+    console.log('moveCardsToPile', foundationPile, tableauPile);
+    /*TODO много букв, нужен рефакторинг */
+    if (foundationPile) {
+      draggableCards.cards.forEach((card) => {
+        card.currentPile = foundationPile;
+        card.selected = false;
       });
+      cardsPile = foundationPile;
+      cardsPile.cards = cardsPile.cards.concat(draggableCards.cards);
+    } else if (tableauPile) {
+      draggableCards.cards.forEach((card) => {
+        card.currentPile = tableauPile;
+        card.selected = false;
+      });
+      cardsPile = tableauPile;
+      cardsPile.cards = cardsPile.cards.concat(draggableCards.cards);
+    } else {
+      const selected = this.putCardsToInitialPosition(draggableCards);
+
+      cardsPile.cards = cardsPile.cards.concat(draggableCards.cards);
+      cardsPile.cards
+        .filter((card) => {
+          return card.draggable;
+        })
+        .forEach((card) => {
+          card.selected = selected;
+        });
     }
-    return result;
   }
 
+  /** HANDLERS */
   private handleMouseDown(event: MouseEvent) {
-    if (event.target === this.animationCanvas) {
-      event.preventDefault();
-      event.stopPropagation();
+    if (event.target !== this.animationCanvas) {
+      return;
+    }
+    /*TODO двойной клик по карте все ломает*/
+    event.preventDefault();
+    event.stopPropagation();
 
-      const {offsetX, offsetY} = event;
+    const mousePosition = {x: event.offsetX, y: event.offsetY};
 
-      this.draggableCards = this.findCardByPosition({x: offsetX, y: offsetY});
-      if (this.draggableCards) {
-        //this.draggableCards.selected = true;
+    if (!this.checkIsHandPileClick(mousePosition)) {
+      const cards = this.findCardsByPosition(mousePosition);
+
+      if (cards && !!cards.length) {
+        this.draggableCards = this.getDraggableCards(cards);
         this.prepareCardsForMove(this.draggableCards);
       }
-
-      // const card = this.findCardByPosition({x: offsetX, y: offsetY});
-      // this.selectedCards = card;
-      //
-      // debugger;
-      // if (card) {
-      //   if (!this.draggableCards) {
-      //     this.draggableCards = card;
-      //   }
-      //
-      //   if (this.draggableCards) {
-      //     this.draggableCards.selected = true;
-      //     this.prepareCardsForMove(this.draggableCards);
-      //   }
-      // }
     }
-    console.log('handleMouseDown', this.draggableCards, this.selectedCards);
   }
 
   handleMouseUp(event: MouseEvent) {
-    if (event.target === this.animationCanvas) {
-      if (!this.draggableCards) {
-        return;
-      }
-
-      event.preventDefault();
-      event.stopPropagation();
-
-      const {offsetX, offsetY} = event;
-
-      //let selectedCard = this.draggableCards;
-      this.moveCardsToPile(this.draggableCards, {x: offsetX, y: offsetY});
-
-      //if (this.draggableCards !== this.selectedCards) {
-      this.draggableCards = undefined;
-      //}
-
-      // if (this.selectedCards) {
-      //   if (this.selectedCards !== this.draggableCards) {
-      //     //movedCards = this.selectedCards;
-      //     this.moveCardToPile(this.selectedCards, {x: offsetX, y: offsetY});
-      //     //   this.moveCardToPile(this.selectedCards, {x: offsetX, y: offsetY});
-      //     //   //this.unselectCards(this.selectedCards);
-      //   } else {
-      //     this.moveCardToPile(this.selectedCards, {x: offsetX, y: offsetY});
-      //   }
-      // } else {
-      //   //this.moveCardToPile(this.draggableCards, {x: offsetX, y: offsetY});
-      //   this.selectCards(this.draggableCards);
-      //   this.moveCardToPile(this.draggableCards, {x: offsetX, y: offsetY});
-      // }
-
-      //this.unselectCards();
-
-      // clearSelectedCards(getContextCanvas(this.animationCanvas), this.draggableCard, this.offsetInPile);
-      // drawCard(
-      //   getContextCanvas(this.gameCanvas),
-      //   Array.isArray(this.draggableCard) ? this.draggableCard[0] : this.draggableCard,
-      // );
-      // this.draggableCard = undefined;
-    }
-  }
-
-  handleMouseMove(event: MouseEvent) {
-    if (!this.draggableCards) {
+    if (event.target !== this.animationCanvas || !this.draggableCards) {
       return;
     }
 
     event.preventDefault();
     event.stopPropagation();
 
-    this.moveCardsAcrossAnimationCanvas(this.draggableCards, {x: event.clientX, y: event.clientY});
+    const {offsetX, offsetY} = event;
+
+    this.moveCardsToPile(this.draggableCards, {x: offsetX, y: offsetY});
+    this.draggableCards = undefined;
+  }
+
+  handleMouseMove(event: MouseEvent) {
+    if (event.target !== this.animationCanvas || !this.draggableCards) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.moveCardsAcrossAnimationCanvas(this.draggableCards, {
+      x: event.clientX,
+      y: event.clientY,
+    });
   }
 }
 

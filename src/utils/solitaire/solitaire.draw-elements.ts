@@ -1,13 +1,32 @@
-import {Options, Pile} from './solitaire.types';
-import {getNotSelectedCardsStyle, getPileStyle, getSelectedCardsStyle} from './canvas/canvas-styles.util';
-import {Card} from './card/card.types';
-import {drawCard} from './card/card';
+import {Area, isPile, Options, Pile} from './solitaire.types';
+import {getPileStyle, getSelectedCardsStyle} from './canvas';
+import {Card, drawCard} from './card';
 
-export function drawElementPile(ctx: CanvasRenderingContext2D, element: Record<string, Pile>, cardOptions: Options) {
+export function drawElementPile(
+  ctx: CanvasRenderingContext2D,
+  element: Record<string, Pile> | Pile,
+  cardOptions: Options,
+) {
   ctx = getPileStyle(ctx);
 
-  for (const [key, pile] of Object.entries(element).values()) {
-    ctx.strokeRect(pile.rootPosition.x, pile.rootPosition.y, cardOptions.width, cardOptions.height);
+  const drawPile = (pile: Pile) => {
+    const pileArea: Area = {
+      x: pile.rootPosition.x,
+      y: pile.rootPosition.y,
+      width: cardOptions.width,
+      height: cardOptions.height,
+    };
+
+    ctx.clearRect(pileArea.x, pileArea.y, pileArea.width, pileArea.height);
+    ctx.strokeRect(pileArea.x, pileArea.y, pileArea.width, pileArea.height);
+  };
+
+  if (isPile(element)) {
+    drawPile(element);
+  } else {
+    for (const [key, pile] of Object.entries(element).values()) {
+      drawPile(pile);
+    }
   }
 }
 

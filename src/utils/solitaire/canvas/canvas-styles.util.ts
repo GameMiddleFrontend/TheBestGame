@@ -1,5 +1,3 @@
-import {Card} from '../card/card.types';
-
 export function getPileStyle(ctx: CanvasRenderingContext2D): CanvasRenderingContext2D {
   ctx.strokeStyle = 'white';
   ctx.lineWidth = 1;

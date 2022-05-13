@@ -29,7 +29,6 @@ const GamePage = () => {
   useEffect(() => {
     if (staticCanvas.current && dynamicCanvas.current && canvasContainer.current) {
       gameEngine = new GameEngine(staticCanvas.current, dynamicCanvas.current, canvasContainer.current);
-      //GameEngine.init(staticCanvas.current, dynamicCanvas.current, canvasContainer.current);
       gameEngine.renderStartElements();
     }
   }, []);

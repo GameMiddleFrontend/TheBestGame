@@ -11,7 +11,6 @@ export type Card = {
   prev?: Card;
   next?: Card;
   currentPile: Pile;
-  // canvasObj?: any;
 };
 
 export enum CardSuit {
@@ -37,16 +36,9 @@ export enum CardRank {
   KING = 'KING',
 }
 
-// export type CardOptions = {
-//   width: number;
-//   height: number;
-// };
+export const RED_CARD_COLORS = [CardSuit.HEARTS, CardSuit.DIAMONDS];
+export const BLACK_CARD_COLORS = [CardSuit.SPADES, CardSuit.CLUBS];
 
-// export const RED_CARD_COLORS = [CardSuit.HEARTS, CardSuit.DIAMONDS];
-// export const BLACK_CARD_COLORS = [CardSuit.SPADES, CardSuit.CLUBS];
-//
 export function getStringKeys<T extends Record<any, any>>(obj: T) {
   return Object.keys(obj).filter((item) => isNaN(parseInt(item, 10)));
 }
-//
-// export {Card, CardSuit, CardSuitValues, CardRank, CardRankValues, CardLeftUp, getStringKeys};
