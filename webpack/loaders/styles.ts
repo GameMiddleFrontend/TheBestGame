@@ -4,7 +4,7 @@ export default {
   client: {
     test: /\.(css|scss)$/,
     use: [
-      IS_DEV && 'css-hot-loader',
+      'css-hot-loader',
       'style-loader',
       {
         loader: 'css-loader',

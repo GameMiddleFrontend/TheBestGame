@@ -1,22 +1,19 @@
 import React, {useEffect} from 'react';
 import {Route, Routes} from 'react-router-dom';
-import LoginPage from '../pages/login/login.page';
-import RegisterPage from '../pages/register/register.page';
-import ForumPage from '../pages/forum-page/forum-page';
-import SettingsPage from '../pages/settings/settings.page';
-import LeaderboardPage from '../pages/leaderboard/leaderboard.page';
-import MainPage from '../pages/main/main.page';
-import NotFoundPage from '../pages/not-found-page';
-import ForumThemePage from '../pages/forum-theme-page';
-import GamePage from '../pages/game';
-import AppRoutes from '../../utils/app-routes';
-import useLayout from '../../hooks/withLayout';
+import LoginPage from '@pages/login/login.page';
+import RegisterPage from '@pages/register/register.page';
+import ForumPage from '@pages/forum-page/forum-page';
+import SettingsPage from '@pages/settings/settings.page';
+import LeaderboardPage from '@pages/leaderboard/leaderboard.page';
+import MainPage from '@pages/main/main.page';
+import NotFoundPage from '@pages/not-found-page';
+import ForumThemePage from '@pages/forum-theme-page';
+import GamePage from '@pages/game';
+import AppRoutes from '@utils/app-routes';
+import useLayout from '@hooks/withLayout';
 import {useDispatch} from 'react-redux';
-import {Actions as UserActions} from '../../redux/reducers/user/user.ducks';
-import startServiceWorker from '../../serviceWorker/SWStart';
-import {hot} from 'react-hot-loader/root';
-
-/*TODO добавить алиасы для путей*/
+import {Actions as UserActions} from '@store/reducers/user/user.ducks';
+import startServiceWorker from '@serviceWorker/SWStart';
 
 function App() {
   //startServiceWorker();

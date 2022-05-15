@@ -9,7 +9,22 @@
     "skipLibCheck": true,
     "outDir": "dist",
     "noImplicitThis": false,
-    "jsx": "react"
+    "jsx": "react",
+    "baseUrl": "src",
+    "paths": {
+      "@images/*": ["styles/images/*"],
+      "@styles/*": ["styles/*"],
+      "@store/*": ["store/*"],
+      "@utils/*": ["utils/*"],
+      "@components/*": ["components/*"],
+      "@models/*": ["models/*"],
+      "@common/*": ["components/common/*"],
+      "@services/*": ["services/*"],
+      "@hooks/*": ["hooks/*"],
+      "@pages/*": ["components/pages/*"],
+      "@serviceWorker/*": ["serviceWorker/*"],
+      "@webpack/*": ["../webpack/*"]
+    }
   },
   "include": ["src/**/*", "src/**/*.spec.ts", "src/custom.d.ts", "webpack/**/*.ts"],
   "exclude": ["node_modules"]

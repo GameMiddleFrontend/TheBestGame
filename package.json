@@ -7,6 +7,12 @@
     "dev": "webpack serve --open --mode development",
     "build": "webpack --mode production",
     "start": "webpack --mode production && set PORT=3000 && node server.js",
+    "ssr:dev": "npm-run-all --print-label  ssr:dev:*",
+    "ssr:dev:webpack": "webpack --mode=development --config webpack/index.ts ",
+    "ssr:dev:start": "node index.js",
+    "ssr:prod": "npm-run-all --print-label  ssr:prod:*",
+    "ssr:prod:webpack": "webpack --mode=production --config webpack/index.ts ",
+    "ssr:prod:start": "node index.js",
     "test": "jest"
   },
   "repository": {
@@ -69,6 +75,10 @@
     "file-loader": "~6.2.0",
     "html-webpack-plugin": "~5.5.0",
     "jest": "~28.0.0",
+    "nodemon": "^2.0.16",
+    "normalize-url": "^7.0.3",
+    "npm-run-all": "^4.1.5",
+    "null-loader": "^4.0.1",
     "prettier": "~2.6.1",
     "react-hot-loader": "^4.13.0",
     "react-test-renderer": "~18.0.0",

@@ -1,6 +1,6 @@
 import React, {ChangeEvent, FC, MouseEvent} from 'react';
-import addImage from '../../../styles/images/add-image.svg';
-import userImage from '../../../styles/images/user.svg';
+import addImage from '@styles/images/add-image.svg';
+import userImage from '@styles/images/user.svg';
 
 import './avatar.scss';
 

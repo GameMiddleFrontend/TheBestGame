@@ -1,4 +1,4 @@
-import {IForumTheme} from '../components/common/forum-theme/forum-theme.types';
+import {IForumTheme} from '@components/common/forum-theme/forum-theme.types';
 
 const testThemes: IForumTheme[] = [
   {

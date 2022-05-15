@@ -3,12 +3,12 @@ import {Provider} from 'react-redux';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {createRoot} from 'react-dom/client';
+import {hydrateRoot} from 'react-dom/client';
 
-import initStore from './redux';
+import initStore from './store';
 
 import './styles/index.scss';
-import IConfiguredStore from './redux/reducers/configured-store';
+import IConfiguredStore from './store/reducers/configured-store';
 import ErrorBoundaryComponent from './components/common/error-boundary';
 import ErrorFallbackComponent from './components/common/error-fallback';
 import {NotificationContainer} from './containers/common/notification/notification.container';
@@ -18,17 +18,18 @@ import App from './components/app';
 
 declare global {
   interface Window {
-    __INITIAL_STATE__: IConfiguredStore;
-    __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: () => void;
+    __INITIAL_STATE__?: IConfiguredStore;
   }
 }
 
 class RootComponent extends HTMLElement {
   connectedCallback() {
-    const store = initStore();
-    const container = this as Element;
-    const root = createRoot(container);
-    root.render(
+    const store = initStore(window.__INITIAL_STATE__);
+    if (window.__INITIAL_STATE__) {
+      delete window.__INITIAL_STATE__;
+    }
+    hydrateRoot(
+      this,
       <StrictMode>
         <Provider store={store}>
           <ErrorBoundaryComponent FallbackComponent={ErrorFallbackComponent}>
@@ -39,7 +40,6 @@ class RootComponent extends HTMLElement {
           </ErrorBoundaryComponent>
         </Provider>
       </StrictMode>,
-      this,
     );
   }
 }

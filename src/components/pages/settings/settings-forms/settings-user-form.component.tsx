@@ -1,17 +1,17 @@
 import React, {FC, useCallback, useState} from 'react';
 import {connect, MapDispatchToPropsParam} from 'react-redux';
-import AvatarComponent from '../../../common/avatar';
-import FormComponent from '../../../common/form';
+import AvatarComponent from '@common/avatar';
+import FormComponent from '@common/form';
 import {settingsEditFormElementsDef, settingsFormElementsDef} from '../settings.types';
-import IConfiguredStore from '../../../../redux/reducers/configured-store';
-import {Actions as authActions, initialState as authInitialState} from '../../../../redux/reducers/auth/auth.ducks';
-import {Actions as userActions} from '../../../../redux/reducers/user/user.ducks';
-import {CurrentUserItem, UpdateUserInfoType} from '../../../../models/user.model';
-import {Nullable} from '../../../../redux/redux.base.types';
-import Button from '../../../common/button';
-import TextEnum from '../../../../models/enum/text.enum';
+import IConfiguredStore from '@store/reducers/configured-store';
+import {Actions as authActions, initialState as authInitialState} from '@store/reducers/auth/auth.ducks';
+import {Actions as userActions} from '@store/reducers/user/user.ducks';
+import {CurrentUserItem, UpdateUserInfoType} from '@models/user.model';
+import {Nullable} from '@store/redux.base.types';
+import Button from '@common/button';
+import TextEnum from '@models/enum/text.enum';
 import {useNavigate} from 'react-router-dom';
-import AppRoutes from '../../../../utils/app-routes';
+import AppRoutes from '@utils/app-routes';
 
 interface IProps {
   isLoading: boolean;

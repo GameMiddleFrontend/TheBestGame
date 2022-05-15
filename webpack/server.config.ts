@@ -14,7 +14,7 @@ const serverConfig: WebpackConfig = {
   name: 'server',
   target: 'node',
   node: {__dirname: false},
-  entry: path.join(SRC_DIR, 'server'),
+  entry: path.join(SRC_DIR, 'server/server'),
   module: {
     rules: [fileLoader.server, stylesLoader.server, jsLoader.server],
   },
@@ -22,11 +22,11 @@ const serverConfig: WebpackConfig = {
     filename: 'server.js',
     libraryTarget: 'commonjs2',
     path: DIST_DIR,
-    publicPath: '/static/',
+    publicPath: '/',
   },
   resolve: {
     modules: ['src', 'node_modules'],
-    extensions: ['*', '.js', '.jsx', '.json', '.ts', '.tsx'],
+    extensions: ['.ts', '.tsx', '...'],
     plugins: [new TsconfigPathsPlugin({configFile: './tsconfig.json'})],
   },
   externals: [nodeExternals({allowlist: [/\.(?!(?:tsx?|json)$).{1,5}$/i]})],

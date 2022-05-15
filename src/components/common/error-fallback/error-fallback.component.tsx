@@ -1,6 +1,6 @@
 import React, {FC} from 'react';
 import {FallbackProps} from '../error-boundary';
-import TextEnum from '../../../models/enum/text.enum';
+import TextEnum from '@models/enum/text.enum';
 
 import './error-fallback.scss';
 

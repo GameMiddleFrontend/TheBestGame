@@ -1,5 +1,5 @@
 import ServiceUtils from './service.utils';
-import {CurrentUserItem, UserPasswordApiItem} from '../models/user.model';
+import {CurrentUserItem, UserPasswordApiItem} from '@models/user.model';
 
 const _userBaseUrl = '/user';
 

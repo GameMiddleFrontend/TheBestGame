@@ -1,4 +1,4 @@
-import {LeaderboardUserType} from '../components/pages/leaderboard/leaderboard.types';
+import {LeaderboardUserType} from '@components/pages/leaderboard/leaderboard.types';
 
 const leaderList: LeaderboardUserType[] = [
   {userName: 'userName', points: 123123123},

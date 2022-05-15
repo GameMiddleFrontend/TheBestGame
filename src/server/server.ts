@@ -1,11 +1,10 @@
 import path from 'path';
 import express, {RequestHandler} from 'express';
-import 'babel-polyfill';
 import serverRenderMiddleware from './server.middleware.render';
 import webpack from 'webpack';
 import devMiddleware from 'webpack-dev-middleware';
 import hotMiddleware from 'webpack-hot-middleware';
-import clientConfig from '../../webpack/client.config';
+import clientConfig from '@webpack/client.config';
 
 // Эта функция возвращает middleware для локального девсервера и HMR
 // Она должна работать только для режима разработки
@@ -16,7 +15,7 @@ function getWebpackMiddlewares(config: webpack.Configuration): RequestHandler[] 
     devMiddleware(compiler, {
       publicPath: config.output!.publicPath!,
     }),
-    hotMiddleware(compiler, {path: `/__webpack_hmr`}),
+    //hotMiddleware(compiler, {path: `/__webpack_hmr`}),
   ];
 }
 
