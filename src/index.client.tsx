@@ -1,8 +1,6 @@
 import React, {StrictMode} from 'react';
 import {Provider} from 'react-redux';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import {hydrateRoot} from 'react-dom/client';
 
 import initStore from './store';

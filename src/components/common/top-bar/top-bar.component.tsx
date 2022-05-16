@@ -34,7 +34,7 @@ const TopBar: FC = (props) => {
           onClick={handleNavigate.bind(null, AppRoutes.HOME, undefined)}
         />
       </section>
-      <section className={'top-bar-section'} suppressHydrationWarning={true}>
+      <section className={'top-bar-section'}>
         {isLoggedIn && (
           <Button
             className={'button-text'}
@@ -56,6 +56,7 @@ const TopBar: FC = (props) => {
           repositionOnResize
           className="menu"
           arrow={false}
+          a
         >
           {(close: () => void) => {
             return (

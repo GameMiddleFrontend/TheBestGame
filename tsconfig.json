@@ -11,6 +11,9 @@
     "noImplicitThis": false,
     "jsx": "react",
     "baseUrl": "src",
+    "types" : [
+      "react-dom/experimental"
+    ],
     "paths": {
       "@images/*": ["styles/images/*"],
       "@styles/*": ["styles/*"],
