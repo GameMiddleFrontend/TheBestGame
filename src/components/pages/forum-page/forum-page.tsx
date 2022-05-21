@@ -1,11 +1,11 @@
 import React, {MouseEventHandler, useEffect, useMemo, useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {compose} from 'redux';
 
-import {IForumTheme} from '../../common/forum-theme/forum-theme.types';
-import ForumAPI from '../../../services/forumAPI';
-import ForumThemeComponent from '../../common/forum-theme';
-import withAuth from '../../../hooks/chechAuthHookHOC';
+import {IForumTheme} from '@common/forum-theme/forum-theme.types';
+import ForumAPI from '@services/forumAPI';
+import ForumThemeComponent from '@common/forum-theme';
+import withAuth from '@hooks/chechAuthHookHOC';
 
 import './forum-page.styles.scss';
 

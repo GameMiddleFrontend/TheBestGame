@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import {compose} from 'redux';
 
 import {LeaderboardUserType} from './leaderboard.types';
-import AvatarComponent from '../../common/avatar';
-import LeaderboardAPI from '../../../services/leaderboardAPI';
-import withAuth from '../../../hooks/chechAuthHookHOC';
+import AvatarComponent from '@common/avatar';
+import LeaderboardAPI from '@services/leaderboardAPI';
+import withAuth from '@hooks/chechAuthHookHOC';
 
 import './liderboard.scss';
 

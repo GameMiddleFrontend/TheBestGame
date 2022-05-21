@@ -1,6 +1,6 @@
 import {createAction, createReducer, Reducer} from '@reduxjs/toolkit';
-import {INotification, INotificationType} from '../../../models/notification.model';
-import {BaseActionType} from '../../redux.base.types';
+import {INotification, INotificationType} from '@models/notification.model';
+import {BaseActionType} from '@store/redux.base.types';
 
 enum ActionTypes {
   SET_NOTIFICATION = `@notification/setNotification`,

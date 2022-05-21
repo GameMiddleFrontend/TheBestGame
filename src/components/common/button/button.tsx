@@ -1,4 +1,4 @@
-import React, {ButtonHTMLAttributes, FC, MouseEvent} from 'react';
+import React, { ButtonHTMLAttributes, FC, MouseEvent, ReactNode } from "react";
 
 import './button.scss';
 
@@ -7,6 +7,7 @@ interface IProps {
   icon?: string;
   disabled?: boolean;
   type?: ButtonHTMLAttributes<unknown>['type'];
+  children?: ReactNode;
 }
 
 interface IHandler {

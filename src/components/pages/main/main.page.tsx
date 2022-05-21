@@ -1,11 +1,11 @@
 import React, {useCallback} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {useSelector} from 'react-redux';
-import IConfiguredStore from '../../../redux/reducers/configured-store';
-import AppRoutes from '../../../utils/app-routes';
-import Button from '../../common/button';
-import TextEnum from '../../../models/enum/text.enum';
-import mainPageImage from '../../../styles/images/ace-of-spades.svg';
+import IConfiguredStore from '@store/reducers/configured-store';
+import AppRoutes from '@utils/app-routes';
+import Button from '@common/button';
+import TextEnum from '@models/enum/text.enum';
+import '@images/ace-of-spades.svg';
 
 import './main.scss';
 
@@ -65,7 +65,7 @@ function MainPage() {
           </ul>
         </article>
         <div className={'background-img-container'}>
-          <img className={'background-img'} src={mainPageImage} />
+          <img className={'background-img'} src={'Images/ace-of-spades.svg'} />
         </div>
       </main>
     </div>

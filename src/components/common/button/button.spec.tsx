@@ -1,7 +1,7 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 import Button from './button';
-import cancelArrowImg from '../../../styles/images/cancel-arrow.svg';
+import cancelArrowImg from '@styles/images/cancel-arrow.svg';
 
 describe('Button', () => {
   it('ButtonText Snapshot', () => {

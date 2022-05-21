@@ -1,5 +1,5 @@
 import ServiceUtils from './service.utils';
-import {CurrentUserItem} from '../models/user.model';
+import {CurrentUserItem} from '@models/user.model';
 
 type authError = {
   reason: string;

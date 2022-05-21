@@ -8,7 +8,7 @@ interface IForumTheme {
 }
 
 interface IForumThemeEvents {
-  onCLick: (event: MouseEventHandler<HTMLDivElement> | undefined) => void;
+  onCLick: MouseEventHandler<HTMLDivElement>;
 }
 
 type ForumProps = IForumTheme & IForumThemeEvents;
