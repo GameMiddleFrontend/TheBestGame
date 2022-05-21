@@ -1,5 +1,5 @@
-import React, {useCallback} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import React, {useCallback, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import IConfiguredStore from '@store/reducers/configured-store';
 import AppRoutes from '@utils/app-routes';
@@ -8,6 +8,10 @@ import TextEnum from '@models/enum/text.enum';
 import '@images/ace-of-spades.svg';
 
 import './main.scss';
+import getGETParams from '@utils/getGETParams';
+import YandexOAuthAPI from '@services/Yandex.OAuth.API';
+
+import {Actions as UserActions} from '@store/reducers/user/user.ducks';
 
 function MainPage() {
   const userData = useSelector((state: IConfiguredStore) => state.auth.isLoggedIn);
@@ -15,6 +19,17 @@ function MainPage() {
 
   const handleNavigate = useCallback((route: AppRoutes) => {
     navigate(route);
+  }, []);
+
+  useEffect(() => {
+    const queryParams: Record<string, any> | undefined = getGETParams();
+    if (queryParams && queryParams.hasOwnProperty('code')) {
+      YandexOAuthAPI.getUserByYandexCode(queryParams.code)
+        .then(() => {
+          UserActions.getUser();
+        })
+        .catch((error) => console.log(error));
+    }
   }, []);
 
   return (
