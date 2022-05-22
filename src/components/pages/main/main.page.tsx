@@ -63,6 +63,9 @@ function MainPage() {
               В свободную ячейку (не дом) можно положить только короля. Игра заканчивается, когда все карты разложены.
             </li>
           </ul>
+          <Link className={'video-link'} to={AppRoutes.VIDEO_GUIDE}>
+            Успокаивающее видео :)
+          </Link>
         </article>
         <div className={'background-img-container'}>
           <img className={'background-img'} src={'Images/ace-of-spades.svg'} />

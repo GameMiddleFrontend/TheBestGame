@@ -14,6 +14,7 @@ import useLayout from '@hooks/withLayout';
 import {useDispatch} from 'react-redux';
 import {Actions as UserActions} from '@store/reducers/user/user.ducks';
 import startServiceWorker from '@serviceWorker/SWStart';
+import VideoGuidePage from '@pages/video-guide-page';
 
 function App() {
   //startServiceWorker();
@@ -35,6 +36,7 @@ function App() {
       <Route path={AppRoutes.SETTINGS} element={getElement(SettingsPage)} />
       <Route path={AppRoutes.LEADERBOARD} element={getElement(LeaderboardPage)} />
       <Route path={AppRoutes.FORUM} element={getElement(ForumPage)} />
+      <Route path={AppRoutes.VIDEO_GUIDE} element={getElement(VideoGuidePage)} />
       <Route path={`${AppRoutes.FORUM}/*`} element={getElement(ForumThemePage)} />
       <Route path="/*" element={getElement(NotFoundPage)} />
     </Routes>
