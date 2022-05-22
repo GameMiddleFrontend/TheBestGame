@@ -10,7 +10,7 @@ class YandexOAuthAPI {
   private static redirectUri = '';
 
   public static async authWithYandex() {
-    YandexOAuthAPI.redirectUri = 'http://localhost:5000';
+    YandexOAuthAPI.redirectUri = 'http://localhost:3000';
     return await YandexOAuthAPI.getServiceId(YandexOAuthAPI.redirectUri)
       .then((serviceId) => {
         YandexOAuthAPI.redirectYandexId(serviceId);
@@ -40,7 +40,7 @@ class YandexOAuthAPI {
   }
 
   public static async getUserByYandexCode(code: string) {
-    YandexOAuthAPI.redirectUri = 'http://localhost:5000';
+    YandexOAuthAPI.redirectUri = 'http://localhost:3000';
     return await ServiceUtils.post('/oauth/yandex', {code, redirect_uri: YandexOAuthAPI.redirectUri}).then(
       (response: YandexServiceIdResponse) => {
         if (response.reason) {
