@@ -6,7 +6,6 @@ enum AppRoutes {
   SETTINGS = '/settings',
   LEADERBOARD = '/leaderboard',
   FORUM = '/forum',
-  VIDEO_GUIDE = '/video-guide',
 }
 
 export default AppRoutes;

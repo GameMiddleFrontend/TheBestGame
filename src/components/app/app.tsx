@@ -36,7 +36,6 @@ function App() {
       <Route path={AppRoutes.SETTINGS} element={getElement(SettingsPage)} />
       <Route path={AppRoutes.LEADERBOARD} element={getElement(LeaderboardPage)} />
       <Route path={AppRoutes.FORUM} element={getElement(ForumPage)} />
-      <Route path={AppRoutes.VIDEO_GUIDE} element={getElement(VideoGuidePage)} />
       <Route path={`${AppRoutes.FORUM}/*`} element={getElement(ForumThemePage)} />
       <Route path="/*" element={getElement(NotFoundPage)} />
     </Routes>
