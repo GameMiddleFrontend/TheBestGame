@@ -1,6 +1,6 @@
 import {FormikValues} from 'formik';
 import ServiceUtils from './service.utils';
-import {CurrentUserItem} from '../models/user.model';
+import {CurrentUserItem} from '@models/user.model';
 
 type LoginErrorRespone = {
   reason?: string;

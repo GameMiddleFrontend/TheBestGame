@@ -1,11 +1,11 @@
 import React, {FC, useCallback} from 'react';
-import FormComponent from '../../../common/form';
+import FormComponent from '@common/form';
 import {settingsPasswordsFormElementsDef} from '../settings.types';
-import {UpdateUserInfoType, UserPasswordApiItem} from '../../../../models/user.model';
+import {UpdateUserInfoType, UserPasswordApiItem} from '@models/user.model';
 import {connect, MapDispatchToPropsParam} from 'react-redux';
-import {Actions as userActions} from '../../../../redux/reducers/user/user.ducks';
-import Button from '../../../common/button';
-import TextEnum from '../../../../models/enum/text.enum';
+import {Actions as userActions} from '@store/reducers/user/user.ducks';
+import Button from '@common/button';
+import TextEnum from '@models/enum/text.enum';
 
 interface IProps {
   isEditPasswordMode: boolean;

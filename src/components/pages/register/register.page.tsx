@@ -3,17 +3,16 @@ import React, {useCallback, useMemo, useState} from 'react';
 import './register.scss';
 import {FormikValues} from 'formik';
 import {Link, useNavigate} from 'react-router-dom';
-import SignUpAPI from '../../../services/signUpAPI';
+import SignUpAPI from '@services/signUpAPI';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import '../../../styles/modal.scss';
-import AuthService from '../../../services/auth.service';
-import FormComponent from '../../common/form';
+import '@styles/modal.scss';
+import AuthService from '@services/auth.service';
+import FormComponent from '@common/form';
 import {RegisterFormElementsDef} from './types';
-import TextEnum from '../../../models/enum/text.enum';
-import AppRoutes from '../../../utils/app-routes';
+import TextEnum from '@models/enum/text.enum';
+import AppRoutes from '@utils/app-routes';
 
-const registerPageRootClass = 'login-container';
 const formContainerClass = 'form-container';
 const formNameClass = 'form-name';
 

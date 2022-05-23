@@ -1,8 +1,9 @@
 import {useSelector} from 'react-redux';
-import IConfiguredStore from '../redux/reducers/configured-store';
 import React from 'react';
-import ErrorFallbackComponent from '../components/common/error-fallback';
-import TextEnum from '../models/enum/text.enum';
+
+import IConfiguredStore from '@store/reducers/configured-store';
+import ErrorFallbackComponent from '@components/common/error-fallback';
+import TextEnum from '@models/enum/text.enum';
 
 export function useAuth() {
   const userItem = useSelector((state: IConfiguredStore) => {

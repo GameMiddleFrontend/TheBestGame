@@ -1,16 +1,16 @@
 import React, {FC, useCallback} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
-import AppRoutes from '../../../utils/app-routes';
+import AppRoutes from '@utils/app-routes';
 import Popup from 'reactjs-popup';
 import Button from '../button';
-import spadesImg from '../../../styles/images/spades.svg';
-import menuImg from '../../../styles/images/menu.svg';
+import '@images/spades.svg';
+import '@images/menu.svg';
 import {topBarMenu} from './top-bar.types';
 import {useSelector} from 'react-redux';
-import IConfiguredStore from '../../../redux/reducers/configured-store';
-import {IStore as IAuthStore} from '../../../redux/reducers/auth/auth.ducks';
+import IConfiguredStore from '@store/reducers/configured-store';
+import {IStore as IAuthStore} from '@store/reducers/auth/auth.ducks';
 import AvatarComponent from '../avatar';
-import {UserState} from '../../../redux/reducers/user/user.ducks';
+import {UserState} from '@store/reducers/user/user.ducks';
 
 import './top-bar.scss';
 
@@ -30,7 +30,7 @@ const TopBar: FC = (props) => {
       <section className={'top-bar-section'}>
         <Button
           className={'button-icon-only'}
-          icon={spadesImg}
+          icon={'Images/spades.svg'}
           onClick={handleNavigate.bind(null, AppRoutes.HOME, undefined)}
         />
       </section>
@@ -47,7 +47,7 @@ const TopBar: FC = (props) => {
         <Popup
           trigger={
             <div>
-              <Button className={'button-icon-only'} icon={menuImg} />
+              <Button className={'button-icon-only'} icon={'Images/menu.svg'} />
             </div>
           }
           position="bottom right"
@@ -56,6 +56,7 @@ const TopBar: FC = (props) => {
           repositionOnResize
           className="menu"
           arrow={false}
+          a
         >
           {(close: () => void) => {
             return (

@@ -3,7 +3,7 @@ import {compose} from 'redux';
 
 import SettingsUserFormComponent from './settings-forms/settings-user-form.component';
 import SettingsPasswordFormComponent from './settings-forms/settings-password-form.component';
-import withAuth from '../../../hooks/chechAuthHookHOC';
+import withAuth from '@hooks/chechAuthHookHOC';
 
 import './settings.scss';
 

@@ -21,7 +21,7 @@ module.exports = {
     historyApiFallback: true,
   },
 
-  entry: path.join(SRC_DIR, 'index.tsx'),
+  entry: path.join(SRC_DIR, 'index.client.tsx'),
   output: {
     filename: '[name].js',
     path: OUTPUT_DIR,

@@ -1,4 +1,4 @@
-import {INotificationTitles, INotificationType} from '../models/notification.model';
+import {INotificationTitles, INotificationType} from '@models/notification.model';
 import TextEnum from '../models/enum/text.enum';
 
 export const getNotificationTitleByType = (type: INotificationType) => {

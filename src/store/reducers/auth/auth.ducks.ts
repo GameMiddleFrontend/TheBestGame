@@ -1,12 +1,12 @@
 import {createAction, createReducer, PayloadAction, Reducer} from '@reduxjs/toolkit';
 import {call, put, takeEvery} from 'typed-redux-saga';
 
-import {BaseActionType} from '../../redux.base.types';
-import LoginAPI from '../../../services/loginAPI';
+import {BaseActionType} from '@store/redux.base.types';
+import LoginAPI from '@services/loginAPI';
 import {Actions as notificationActions} from '../notification/notification.duck';
-import {getExceptionByError} from '../../../utils/notification';
-import {UserLoginItem} from '../../../models/user.model';
-import AuthService from '../../../services/auth.service';
+import {getExceptionByError} from '@utils/notification';
+import {UserLoginItem} from '@models/user.model';
+import AuthService from '@services/auth.service';
 import {Actions as userActions} from '../user/user.ducks';
 
 enum ActionTypes {

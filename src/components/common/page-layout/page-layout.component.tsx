@@ -1,7 +1,11 @@
-import React, {FC} from 'react';
+import React, {FC, ReactNode} from 'react';
 import TopBarComponent from '../top-bar/top-bar.component';
 
-const PageLayoutComponent: FC = (props) => {
+interface LayoutProps {
+  children: ReactNode;
+}
+
+const PageLayoutComponent: FC<LayoutProps> = (props) => {
   return (
     <div className={'page'}>
       <TopBarComponent />

@@ -2,12 +2,12 @@ import {createAction, createReducer, PayloadAction, Reducer} from '@reduxjs/tool
 import {call, put, takeEvery} from 'typed-redux-saga';
 
 import {Actions as notificationActions} from '../notification/notification.duck';
-import {getExceptionByError} from '../../../utils/notification';
-import {CurrentUserItem, UpdateUserInfoType, UserPasswordApiItem} from '../../../models/user.model';
-import {UserService} from '../../../services/user.service';
-import {Actions as AuthActions} from '../auth/auth.ducks';
-import {BaseActionType, Nullable} from '../../redux.base.types';
-import AuthService from '../../../services/auth.service';
+import {getExceptionByError} from '@utils/notification';
+import {CurrentUserItem, UpdateUserInfoType, UserPasswordApiItem} from '@models/user.model';
+import {UserService} from '@services/user.service';
+import {Actions as AuthActions} from '@store/reducers/auth/auth.ducks';
+import {BaseActionType, Nullable} from '@store/redux.base.types';
+import AuthService from '@services/auth.service';
 
 enum ActionTypes {
   SET_USER = `@user/setUser`,
