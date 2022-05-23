@@ -14,7 +14,6 @@ import useLayout from '@hooks/withLayout';
 import {useDispatch} from 'react-redux';
 import {Actions as UserActions} from '@store/reducers/user/user.ducks';
 import startServiceWorker from '@serviceWorker/SWStart';
-import VideoGuidePage from '@pages/video-guide-page';
 
 function App() {
   //startServiceWorker();
