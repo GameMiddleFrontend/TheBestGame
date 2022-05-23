@@ -5,7 +5,7 @@ import {
   CardRank,
   checkCardPosition,
   clearDrawingCard,
-  clearDrawingCardsFromPile,
+  clearDrawingCards,
   closeCard,
   drawCard,
   drawCards,
@@ -244,7 +244,7 @@ class GameEngine {
       };
 
       currentCard &&
-        this.changeCardPosition(currentCard, this.startPilePosition, currentCard.currentPosition, daftNewCard);
+        this.changeCardsPosition(currentCard, this.startPilePosition, currentCard.currentPosition, daftNewCard);
     });
   }
 
@@ -278,7 +278,7 @@ class GameEngine {
     return currentCard;
   }
 
-  private changeCardPosition(
+  private changeCardsPosition(
     cards: Card | Card[],
     startPos: Position | null,
     endPos: Position,
@@ -289,7 +289,16 @@ class GameEngine {
     }
     const startCardPosition = startPos ?? cards[0].currentPosition;
 
-    drawMovingObject(this.gameCanvas, this.animationCanvas, startCardPosition, endPos, cards, drawCards, callback);
+    drawMovingObject(
+      this.gameCanvas,
+      this.animationCanvas,
+      startCardPosition,
+      endPos,
+      cards,
+      drawCards,
+      undefined,
+      callback,
+    );
   }
 
   /*TODO почти копия changeCardPosition, придти к одной реализации */
@@ -300,6 +309,10 @@ class GameEngine {
   ) {
     const startCardPosition = draggableCards.position;
 
+    const finishDrawCards: typeof drawDraggableCards = (ctx, draggableCards, position) => {
+      drawCards(ctx, draggableCards.cards, position);
+    };
+
     drawMovingObject(
       this.gameCanvas,
       this.animationCanvas,
@@ -307,6 +320,7 @@ class GameEngine {
       endPos,
       draggableCards,
       drawDraggableCards,
+      finishDrawCards,
       callback,
     );
   }
@@ -320,7 +334,7 @@ class GameEngine {
     handPile.cards = this.cardDeck;
     handPile.cards.forEach((card: Card) => {
       card.currentPile = handPile;
-      this.changeCardPosition(card, this.startPilePosition, rootPosition);
+      this.changeCardsPosition(card, this.startPilePosition, rootPosition);
     });
     this.cardDeck = [];
   }
@@ -447,7 +461,9 @@ class GameEngine {
     const gameCanvasContext = getContextCanvas(this.gameCanvas);
     const animationCanvasContext = getContextCanvas(this.animationCanvas);
 
-    clearDrawingCardsFromPile(gameCanvasContext, draggableCards.cards, this.deleteCardsFromPile.bind(this));
+    clearDrawingCards(gameCanvasContext, draggableCards.cards);
+    this.deleteCardsFromPile(draggableCards.cards);
+
     drawDraggableCards(animationCanvasContext, draggableCards);
   };
 
@@ -508,7 +524,7 @@ class GameEngine {
       currentCard.currentPile = openedHandPile;
       openCard(currentCard);
 
-      this.changeCardPosition(currentCard, null, endPosition);
+      this.changeCardsPosition(currentCard, null, endPosition);
 
       if (isEmptyHand) {
         this.rerenderPile(closedHandPile);
@@ -524,7 +540,7 @@ class GameEngine {
       openedHandPile.cards = [];
       this.rerenderPile(openedHandPile);
 
-      this.changeCardPosition(closedHandPile.cards[0], openedHandPile.rootPosition, closedHandPile.rootPosition);
+      this.changeCardsPosition(closedHandPile.cards[0], openedHandPile.rootPosition, closedHandPile.rootPosition);
     }
   }
 
@@ -639,7 +655,7 @@ class GameEngine {
     if (event.target !== this.animationCanvas) {
       return;
     }
-    /*TODO двойной клик по карте все ломает*/
+
     event.preventDefault();
     event.stopPropagation();
 

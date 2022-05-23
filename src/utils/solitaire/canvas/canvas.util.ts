@@ -11,6 +11,7 @@ export function drawMovingObject(
   endPos: Position,
   obj: any,
   drawFunction: (ctx: CanvasRenderingContext2D, obj: any, position: Position) => void,
+  finishDrawFunction: (ctx: CanvasRenderingContext2D, obj: any, position: Position) => void = drawFunction,
   callback?: (position: Position) => void,
 ) {
   const ctx = getContextCanvas(canvas);
@@ -40,7 +41,7 @@ export function drawMovingObject(
       count++;
       window.requestAnimationFrame(step);
     } else {
-      drawFunction(ctx, obj, endPos);
+      finishDrawFunction(ctx, obj, endPos);
       ctxAnimation.clearRect(0, 0, canvasAnimation.width, canvasAnimation.height);
 
       if (callback) {

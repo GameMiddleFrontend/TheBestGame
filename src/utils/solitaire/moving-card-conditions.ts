@@ -21,11 +21,9 @@ export const isDraggableCardConditions = (draggableCard: Card, targetCard: Card)
   return (
     (targetCard &&
       !isEqual(draggableCard, targetCard) &&
-      !isEqual(draggableCard.currentPile, targetCard.currentPile)
-      //&&
-      //!isEqualsCardColors(draggableCard, targetCard) &&
-      //isNextCardRank(draggableCard, targetCard)
-      ) ||
+      !isEqual(draggableCard.currentPile, targetCard.currentPile) &&
+      !isEqualsCardColors(draggableCard, targetCard) &&
+      isNextCardRank(draggableCard, targetCard)) ||
     (!targetCard && isDraggableCardToEmptyPileConditions(draggableCard))
   );
 };
