@@ -42,6 +42,14 @@ export type UserState = {
 
 const initialState: UserState = {item: null};
 
+/////////////////////////////////////
+// SELECTORS
+/////////////////////////////////////
+export const getUserItem = (state: IConfiguredStore) => state.user.item;
+
+/////////////////////////////////////
+// REDUCER
+/////////////////////////////////////
 const UserReducer: Reducer<UserState, UserActionType> = createReducer(initialState, (builder) =>
   builder
     .addCase(setUser, (state, {payload}) => {
