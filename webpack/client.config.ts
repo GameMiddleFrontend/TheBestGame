@@ -1,6 +1,6 @@
 import webpack, {Configuration as WebpackConfig, Entry} from 'webpack';
 import path from 'path';
-import { DIST_DIR, IS_DEV, ROOT_DIR, SRC_DIR } from "./env";
+import {DIST_DIR, IS_DEV, ROOT_DIR, SRC_DIR} from './env';
 
 import fileLoader from './loaders/file';
 import stylesLoader from './loaders/styles';
@@ -39,6 +39,7 @@ const clientConfig: WebpackConfig = {
           from: path.resolve(SRC_DIR, 'sw.js'),
           to: 'sw.js',
         },
+        {from: path.resolve(SRC_DIR, 'styles/images'), to: 'images'},
       ],
     }),
   ],

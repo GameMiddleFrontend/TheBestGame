@@ -4,6 +4,8 @@ import {getContextCanvas} from '../canvas';
 import {checkPosition} from '../solitaire.utils';
 import {getOffsetInPileByHeight} from '../solitaire.defaults';
 
+//import '@images/cards';
+
 const CARD_BACK_IMG_NAME = `card_back.svg`;
 
 /** draw */
@@ -13,7 +15,8 @@ function drawCardImg(ctx: CanvasRenderingContext2D, card: Card, callback?: () =>
     : CARD_BACK_IMG_NAME;
 
   const image = new Image();
-  image.src = require(`/src/styles/images/cards/${cardName}`);
+  //image.src = require(`/src/styles/images/cards/${cardName}`);
+  image.src = `Images/cards/${cardName}`;
 
   const drawImage = () => {
     ctx.drawImage(image, card.currentPosition.x, card.currentPosition.y, card.options.width, card.options.height);
