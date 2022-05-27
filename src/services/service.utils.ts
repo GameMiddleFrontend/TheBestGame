@@ -36,7 +36,6 @@ class ServiceUtils {
       const response = await fetch(this.baseURL.concat(url), params).catch((e) => {
         throw e;
       });
-
       return await this.handleResponse(response, data);
     } catch (e) {
       return await this.handleError(e);
@@ -67,7 +66,7 @@ class ServiceUtils {
   async handleResponse(response: Response, data?: any) {
     try {
       if (response && response.status === 200) {
-        return Promise.resolve(this.tryParseJSON(response.response));
+        return Promise.resolve((await response.json()) ?? this.tryParseJSON(response.response));
       }
       return this.handleError(response);
     } catch (e) {
