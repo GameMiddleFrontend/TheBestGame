@@ -22,13 +22,11 @@ function MainPage() {
   }, []);
 
   useEffect(() => {
-    const queryParams: Record<string, any> | undefined = getGETParams();
-    if (queryParams && queryParams.hasOwnProperty('code')) {
-      YandexOAuthAPI.getUserByYandexCode(queryParams.code)
-        .then(() => {
-          UserActions.getUser();
-        })
-        .catch((error) => console.log(error));
+    const code = getGETParams(window.location.href, 'code');
+    if (code) {
+      YandexOAuthAPI.getUserByYandexCode(code).finally(() => {
+        UserActions.getUser();
+      });
     }
   }, []);
 

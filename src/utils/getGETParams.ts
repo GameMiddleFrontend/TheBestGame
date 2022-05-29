@@ -1,19 +1,9 @@
-import IsServer from '@utils/isServer';
-
-const getGETParams = (): Record<string, any> | undefined => {
-  if (IsServer) {
-    return;
+const getGETParams = (urlString: string, paramName: string): string | null => {
+  const url = new URL(urlString);
+  if (url.searchParams.has(paramName)) {
+    return url.searchParams.get(paramName);
   }
-  return window.location.search
-    .replace('?', '')
-    .split('&')
-    .reduce(function (result: Record<string, any>, current: string) {
-      const a = current.split('=');
-      if (a[0]) {
-        result[decodeURIComponent(a[0])] = decodeURIComponent(a[1]);
-      }
-      return result;
-    }, {});
+  return null;
 };
 
 export default getGETParams;

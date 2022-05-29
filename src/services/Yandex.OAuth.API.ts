@@ -9,7 +9,7 @@ type YandexServiceIdResponse = {
 class YandexOAuthAPI {
   private static redirectUri = 'http://localhost:3000';
 
-  public static async authWithYandex() {
+  public static async auth() {
     return await YandexOAuthAPI.getServiceId(YandexOAuthAPI.redirectUri)
       .then((serviceId) => {
         YandexOAuthAPI.redirectYandexId(serviceId);
@@ -34,7 +34,7 @@ class YandexOAuthAPI {
     if (!IsServer && serviceId) {
       const encodedServiceUri = encodeURIComponent(YandexOAuthAPI.redirectUri);
       const redirectYaUri = `https://oauth.yandex.ru/authorize?response_type=code&client_id=${serviceId}&redirect_uri=${encodedServiceUri}`;
-      window.location.href = redirectYaUri;
+      window.open(redirectYaUri, '_blank');
     }
   }
 

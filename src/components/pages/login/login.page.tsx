@@ -25,7 +25,7 @@ const LoginPage: FC = (props) => {
   const navigate = useNavigate();
 
   const onYandexOAuthClick = useCallback<MouseEventHandler>((event) => {
-    YandexOAuthAPI.authWithYandex().catch((error) => {
+    YandexOAuthAPI.auth().catch((error) => {
       console.log(error);
     });
   }, []);
