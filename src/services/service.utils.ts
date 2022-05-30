@@ -18,7 +18,7 @@ class ServiceUtils {
   };
 
   get(url: string, data?: unknown, requestInit?: RequestInit) {
-    return this.serviceFetch(url, CallMethodType.GET, null, requestInit);
+    return this.serviceFetch(url, CallMethodType.GET, data, requestInit);
   }
 
   post(url: string, data?: unknown, requestInit?: RequestInit) {
@@ -32,11 +32,14 @@ class ServiceUtils {
   async serviceFetch(url: string, type = CallMethodType.GET, data?: unknown, requestInit?: RequestInit) {
     const params: RequestInit = this.getFetchParams(type, requestInit, data);
 
+    if (type === CallMethodType.GET && data) {
+      url += '?' + queryString(data as Record<string, any>);
+    }
+
     try {
       const response = await fetch(this.baseURL.concat(url), params).catch((e) => {
         throw e;
       });
-
       return await this.handleResponse(response, data);
     } catch (e) {
       return await this.handleError(e);
@@ -67,7 +70,7 @@ class ServiceUtils {
   async handleResponse(response: Response, data?: any) {
     try {
       if (response && response.status === 200) {
-        return Promise.resolve(this.tryParseJSON(response.response));
+        return Promise.resolve((await response.json()) ?? this.tryParseJSON(response.response));
       }
       return this.handleError(response);
     } catch (e) {
@@ -121,6 +124,25 @@ class ServiceUtils {
       credentials: 'include',
     });
   }
+}
+
+function queryString(data: Record<string, any>) {
+  return getParams(data)
+    .map((arr) => arr.join('='))
+    .join('&');
+}
+
+function getParams(data: Record<string, any>): [string, string][] {
+  const result: [string, string][] = [];
+
+  for (const [key, value] of Object.entries(data)) {
+    result.push([getKey(key), encodeURIComponent(String(value))]);
+  }
+  return result;
+}
+
+function getKey(key: string, parentKey?: string) {
+  return parentKey ? `${parentKey}[${key}]` : key;
 }
 
 export default new ServiceUtils();

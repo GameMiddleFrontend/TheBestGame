@@ -1,28 +1,32 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {compose} from 'redux';
+import {useDispatch, useSelector} from 'react-redux';
 
-import {LeaderboardUserType} from './leaderboard.types';
+import Button from '@common/button';
 import AvatarComponent from '@common/avatar';
-import LeaderboardAPI from '@services/leaderboardAPI';
 import withAuth from '@hooks/chechAuthHookHOC';
+import {
+  Actions as LeaderboardActions,
+  IStore as ILeaderboardStore,
+} from '@store/reducers/leaderboard/leaderboard.ducks';
+import IConfiguredStore from '@store/reducers/configured-store';
 
 import './liderboard.scss';
 
 const LeaderboardPage = () => {
-  const [leaderList, setLeaderList] = useState<LeaderboardUserType[]>([]);
+  const dispatch = useDispatch();
+  const {items: leaderList} = useSelector<IConfiguredStore, ILeaderboardStore>((state) => state.leaderboard);
 
   useEffect(() => {
-    LeaderboardAPI.getLeaders()
-      .then((result) => {
-        setLeaderList(result);
-      })
-      .catch((err: Error) => {
-        console.log(err.message);
-      });
-  }, [leaderList]);
+    dispatch(LeaderboardActions.getLeaders());
+  }, []);
+
+  const handler = () => dispatch(LeaderboardActions.addLeader({points: new Date().getTime()}));
 
   return (
     <div className="page-container">
+      {/* TODO временная кнопка */}
+      <Button onClick={handler}>Отправить резаультат</Button>
       <table className="table">
         <thead className="table-header">
           <tr>
@@ -33,17 +37,18 @@ const LeaderboardPage = () => {
           </tr>
         </thead>
         <tbody>
-          {leaderList.map((item, index) => {
+          {leaderList.map(({data}, index) => {
+            const {user, points} = data;
             const position = index + 1;
 
             return (
               <tr key={position} className="table-row">
                 <td>{position}</td>
                 <td className="user-avatar-column">
-                  <AvatarComponent className={'avatar-sm'} imgSrc={item.avatar} />
+                  <AvatarComponent className={'avatar-sm'} imgSrc={user.avatar} />
                 </td>
-                <td className="user-column">{item.userName}</td>
-                <td>{item.points}</td>
+                <td className="user-column">{user.display_name ?? user.login}</td>
+                <td>{points}</td>
               </tr>
             );
           })}
