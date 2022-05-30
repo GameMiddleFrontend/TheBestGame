@@ -1,4 +1,5 @@
-import {Card, CardRank, RED_CARD_COLORS} from '../../models/card.models';
+import {Card, CardRank, RED_CARD_COLORS} from './card';
+import isEqual from 'lodash.isequal';
 
 const isEqualsCardColors = (card_1: Card, card_2: Card): boolean => {
   const isRedCard_1 = RED_CARD_COLORS.includes(card_1.suit);
@@ -18,8 +19,15 @@ const isNextCardRank = (draggableCard: Card, targetCard: Card): boolean => {
 
 export const isDraggableCardConditions = (draggableCard: Card, targetCard: Card): boolean => {
   return (
-    draggableCard !== targetCard &&
-    !isEqualsCardColors(draggableCard, targetCard) &&
-    isNextCardRank(draggableCard, targetCard)
+    (targetCard &&
+      !isEqual(draggableCard, targetCard) &&
+      !isEqual(draggableCard.currentPile, targetCard.currentPile) &&
+      !isEqualsCardColors(draggableCard, targetCard) &&
+      isNextCardRank(draggableCard, targetCard)) ||
+    (!targetCard && isDraggableCardToEmptyPileConditions(draggableCard))
   );
+};
+
+export const isDraggableCardToEmptyPileConditions = (draggableCard?: Card): boolean => {
+  return !!draggableCard && draggableCard.rank === CardRank.KING;
 };
