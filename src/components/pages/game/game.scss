@@ -9,7 +9,7 @@
   position: relative;
   //width: 100%;
   //height: calc(100vh - #{$top-bar-height});
-  width: 1400px;
+  width: 900px;
   height: 690px;
 }
 
@@ -36,5 +36,6 @@
   bottom: 3%;
   left: 3%;
   position: absolute;
+  z-index: 101;
 }
 
