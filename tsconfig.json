@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "target": "es6",
     "module": "commonjs",
     "esModuleInterop": true,
@@ -29,6 +30,6 @@
       "@webpack/*": ["../webpack/*"]
     }
   },
-  "include": ["src/**/*", "src/**/*.spec.ts", "src/custom.d.ts", "webpack/**/*.ts"],
+  "include": ["src/**/*", "src/**/*.spec.ts", "src/custom.d.ts", "webpack/**/*.ts", "postgres/*.ts"],
   "exclude": ["node_modules"]
 }

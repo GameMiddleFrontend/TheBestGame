@@ -30,7 +30,7 @@ const TopBar: FC = (props) => {
       <section className={'top-bar-section'}>
         <Button
           className={'button-icon-only'}
-          icon={'Images/spades.svg'}
+          icon={'/images/spades.svg'}
           onClick={handleNavigate.bind(null, AppRoutes.HOME, undefined)}
         />
       </section>
@@ -47,7 +47,7 @@ const TopBar: FC = (props) => {
         <Popup
           trigger={
             <div>
-              <Button className={'button-icon-only'} icon={'Images/menu.svg'} />
+              <Button className={'button-icon-only'} icon={'/images/menu.svg'} />
             </div>
           }
           position="bottom right"

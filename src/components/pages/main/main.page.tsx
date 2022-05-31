@@ -78,7 +78,7 @@ function MainPage() {
           </ul>
         </article>
         <div className={'background-img-container'}>
-          <img className={'background-img'} src={'Images/ace-of-spades.svg'} />
+          <img className={'background-img'} src={'/images/ace-of-spades.svg'} />
         </div>
       </main>
     </div>

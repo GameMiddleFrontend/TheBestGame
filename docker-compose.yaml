@@ -1,0 +1,55 @@
+version: "3"
+services:
+  game-app:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./environments/dev.env
+    depends_on:
+      - postgres
+    restart: always
+    networks:
+      awesome:
+        ipv4_address: 172.16.1.3
+  postgres:
+    container_name: postgres_base
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgresdata:/var/lib/postgresql/data
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: newPassword
+      POSTGRES_DB: game-base
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    networks:
+      awesome:
+        ipv4_address: 172.16.1.4
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:4.18
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+    networks:
+      awesome:
+        ipv4_address: 172.16.1.5
+
+networks:
+  awesome:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.1.0/24
+          gateway: 172.16.1.1
+
