@@ -30,6 +30,6 @@
       "@webpack/*": ["../webpack/*"]
     }
   },
-  "include": ["src/**/*", "src/**/*.spec.ts", "src/custom.d.ts", "webpack/**/*.ts", "postgres/*.ts"],
+  "include": ["src/**/*", "src/**/*.spec.ts", "src/custom.d.ts", "webpack/**/*.ts", "postgres/**/*.ts"],
   "exclude": ["node_modules"]
 }
