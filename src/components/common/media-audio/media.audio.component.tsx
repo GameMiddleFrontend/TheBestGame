@@ -1,9 +1,11 @@
-import React, {FC, useEffect, useRef} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import MediaAudioTypes from '@common/media-audio/media.audio.types';
+import Button from '@common/button';
 
 import './media.audio.styles.scss';
 
 const MediaAudio: FC<MediaAudioTypes> = ({src, codec}) => {
+  const [isMute, setMute] = useState(true);
   const audio = useRef<HTMLAudioElement>(null);
 
   const onSourceOpen = function () {
@@ -26,7 +28,28 @@ const MediaAudio: FC<MediaAudioTypes> = ({src, codec}) => {
     }
   }, []);
 
-  return <audio className={'media-audio'} muted={true} controls={true} ref={audio} />;
+  const handleClick = () => {
+    if (audio.current) {
+      const muteValue = !isMute;
+
+      if (audio.current.paused && !muteValue) {
+        audio.current.play();
+      }
+
+      setMute(muteValue);
+    }
+  };
+
+  return (
+    <>
+      <Button
+        className={'button-icon-only button-rounded button-media-audio'}
+        icon={isMute ? '/images/mute.svg' : '/images/volume.svg'}
+        onClick={handleClick}
+      />
+      <audio className={'media-audio'} muted={isMute} controls={true} ref={audio} autoPlay={true} loop />
+    </>
+  );
 };
 
 function getBuffer(url: string, cb: (response: Response) => void) {

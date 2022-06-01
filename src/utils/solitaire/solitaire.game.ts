@@ -25,6 +25,7 @@ import {
   getOffsetInPileByHeight,
   getPileMarginByCardHeight,
   HAND_PILES_COUNT,
+  INITIAL_POINTS,
   initialPilesArea,
   initialPilesElement,
   initialPosition,
@@ -83,10 +84,22 @@ class GameEngine {
    * карты, оставшиеся после раскладывания пасьянса */
   private hand: PilesElement = initialPilesElement;
 
-  constructor(gameCanvas: HTMLCanvasElement, animationCanvas: HTMLCanvasElement, canvasContainer: HTMLDivElement) {
+  public points: number = INITIAL_POINTS;
+  public changePoints: (points: number) => void;
+  public gameOverCallBack: (isWin: boolean, points: number) => void;
+
+  constructor(
+    gameCanvas: HTMLCanvasElement,
+    animationCanvas: HTMLCanvasElement,
+    canvasContainer: HTMLDivElement,
+    changePoints: (points: number) => void,
+    gameOverCallBack: (isWin: boolean, points: number) => void,
+  ) {
     this.gameCanvas = gameCanvas;
     this.animationCanvas = animationCanvas;
     this.canvasContainer = canvasContainer;
+    this.changePoints = changePoints;
+    this.gameOverCallBack = gameOverCallBack;
 
     this.resizeCanvas();
 
@@ -127,8 +140,14 @@ class GameEngine {
     }
   }
 
+  private setPoints(points: number) {
+    this.points = points;
+    this.changePoints(this.points);
+  }
+
   public renderStartElements() {
     this.isStarted = false;
+    this.setPoints(INITIAL_POINTS);
 
     getContextCanvas(this.gameCanvas).clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
     getContextCanvas(this.animationCanvas).clearRect(0, 0, this.animationCanvas.width, this.animationCanvas.height);
@@ -648,6 +667,8 @@ class GameEngine {
           card.selected = selected;
         });
     }
+
+    this.checkPoints();
   }
 
   /** HANDLERS */
@@ -697,6 +718,24 @@ class GameEngine {
       x: event.clientX,
       y: event.clientY,
     });
+  }
+
+  /** points */
+  private checkPoints() {
+    let foundationsCardCount = 0;
+    Object.values(this.foundations).forEach((pile) => {
+      foundationsCardCount += pile.cards.length;
+    });
+
+    this.setPoints(foundationsCardCount * 15);
+
+    if (foundationsCardCount === this.cardDeckSorted.length) {
+      this.onGameOver(true);
+    }
+  }
+
+  private onGameOver(isWin: boolean) {
+    this.gameOverCallBack(isWin, this.points);
   }
 }
 

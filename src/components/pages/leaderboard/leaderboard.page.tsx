@@ -21,12 +21,8 @@ const LeaderboardPage = () => {
     dispatch(LeaderboardActions.getLeaders());
   }, []);
 
-  const handler = () => dispatch(LeaderboardActions.addLeader({points: new Date().getTime()}));
-
   return (
     <div className="page-container">
-      {/* TODO временная кнопка */}
-      <Button onClick={handler}>Отправить резаультат</Button>
       <table className="table">
         <thead className="table-header">
           <tr>

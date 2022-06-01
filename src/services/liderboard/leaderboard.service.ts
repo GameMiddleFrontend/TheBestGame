@@ -1,6 +1,6 @@
 import ServiceUtils from '../service.utils';
 import {LeaderboardNewLeaderRequest, LeaderboardRequest, TEAM_NAME} from './leaderboard.helper';
-import {LeaderboardUserDataType, LeaderboardUserType} from '../../components/pages/leaderboard/leaderboard.types';
+import {LeaderboardUserDataType, LeaderboardUserType} from '@pages/leaderboard/leaderboard.types';
 
 const _leaderboardBaseUrl = '/leaderboard';
 
