@@ -35,6 +35,7 @@ const clientConfig: WebpackConfig = {
           from: path.resolve(SRC_DIR, 'sw.js'),
           to: 'sw.js',
         },
+        {from: path.resolve(SRC_DIR, 'styles/images'), to: 'images'},
       ],
     }),
   ],
