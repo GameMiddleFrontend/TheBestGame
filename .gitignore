@@ -106,8 +106,5 @@ dist
 #Webstorm
 /.idea/
 
-#Environmens
-/environments
-
 /pgadmin-data/
 /postgresdata/
