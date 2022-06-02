@@ -26,7 +26,7 @@ const serverConfig: WebpackConfig = {
     publicPath: '/',
   },
   resolve: {
-    modules: ['src', 'node_modules'],
+    modules: ['src', 'node_modules', 'postgres'],
     extensions: ['.ts', '.tsx', '...'],
     plugins: [new TsconfigPathsPlugin({configFile: './tsconfig.json'})],
   },

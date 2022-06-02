@@ -1,4 +1,4 @@
-import React, {StrictMode} from 'react';
+import dbConnect from '../postgres';
 
 class RootComponent extends HTMLElement {}
 

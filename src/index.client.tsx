@@ -41,4 +41,5 @@ class RootComponent extends HTMLElement {
     );
   }
 }
+
 customElements.define('game-app', RootComponent);
