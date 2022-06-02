@@ -30,13 +30,11 @@ const MediaAudio: FC<MediaAudioTypes> = ({src, codec}) => {
 
   const handleClick = () => {
     if (audio.current) {
-      const muteValue = !isMute;
-
-      if (audio.current.paused && !muteValue) {
+      if (audio.current.paused && isMute) {
         audio.current.play();
       }
 
-      setMute(muteValue);
+      setMute(!isMute);
     }
   };
 
