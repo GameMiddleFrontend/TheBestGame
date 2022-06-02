@@ -1,5 +1,7 @@
 import {Area, PilesElement, Position} from './solitaire.types';
 
+export const INITIAL_POINTS = 0;
+
 export const MIN_CARD_HEIGHT = 333;
 export const MIN_CARD_WIDTH = getCardWidthByHeight();
 export const MIN_PILE_MARGIN = getPileMarginByCardHeight();

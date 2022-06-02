@@ -9,7 +9,7 @@
   position: relative;
   //width: 100%;
   //height: calc(100vh - #{$top-bar-height});
-  width: 900px;
+  width: 1400px;
   height: 690px;
 }
 
@@ -31,11 +31,14 @@
   //height: 100%;
 }
 
-.media-audio-wrapper {
-  width: 25%;
-  bottom: 3%;
-  left: 3%;
-  position: absolute;
-  z-index: 101;
+.game-text {
+  color: $font-color;
+  font-weight: 500;
+  line-height: 1;
+
+  font-size: 1.7rem;
+  text-shadow: 0 0 2px $font-alt-color;
+  font-style: italic;
+  margin-bottom: 0.7rem;
 }
 
