@@ -77,7 +77,12 @@ class ServiceUtils {
   async handleResponse(response: Response, data?: any) {
     try {
       if (response && response.status === 200) {
-        return Promise.resolve((await response.json()) ?? this.tryParseJSON(response.response));
+        const contentType = response.headers.get('Content-Type');
+        if (contentType && contentType.includes('application/json')) {
+          return Promise.resolve(this.tryParseJSON(response.response) ?? (await response.json()));
+        } else {
+          return Promise.resolve(await response.text());
+        }
       }
       return this.handleError(response);
     } catch (e) {
