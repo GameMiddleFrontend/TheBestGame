@@ -15,7 +15,9 @@ import '@images/undo.svg';
 
 import './game.scss';
 
-const audioSource = 'https://cdn.pixabay.com/audio/2022/05/17/audio_407815a564.mp3';
+import '../../../styles/sample.mp3';
+
+const audioSource = '/audio/sample.mp3';
 const mimeCodecAudio = 'audio/mpeg';
 
 const GamePage = () => {

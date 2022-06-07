@@ -8,6 +8,7 @@ import {UserService} from '@services/user.service';
 import {Actions as AuthActions} from '@store/reducers/auth/auth.ducks';
 import {BaseActionType, Nullable} from '@store/redux.base.types';
 import AuthService from '@services/auth.service';
+import IConfiguredStore from '@store/reducers/configured-store';
 
 enum ActionTypes {
   SET_USER = `@user/setUser`,

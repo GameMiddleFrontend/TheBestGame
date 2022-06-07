@@ -10,7 +10,7 @@ export default async function dbConnect() {
   try {
     await sequelize.authenticate();
     await sequelize.sync({force: true});
-    databaseTests();
+    //databaseTests();
     console.log('SQL Connection has been established successfully.');
   } catch (error) {
     console.error('SQL Unable to connect to the database:', error);
@@ -18,7 +18,7 @@ export default async function dbConnect() {
 }
 
 const TestUserData: CurrentUserItem = {
-  id: 1,
+  id: 639,
   login: '1',
   email: '1',
   first_name: '1',
@@ -32,13 +32,13 @@ const testTopicData: any = {
   id: 1,
   title: 'Test topic',
   content: 'Test content topic',
-  author: '1',
+  author: 639,
 };
 
 const testCommentData: any = {
   id: 1,
   content: 'Test comment',
-  author: 1,
+  author: 639,
 };
 
 const testRelationsData: any = {

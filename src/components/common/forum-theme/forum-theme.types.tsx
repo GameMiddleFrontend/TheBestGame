@@ -1,16 +1,10 @@
 import {MouseEventHandler} from 'react';
-
-interface IForumTheme {
-  id: number;
-  name: string;
-  lastMessage?: string;
-  lastMessageTime?: string;
-}
+import ForumTopicModel from '@models/forum-topic.model';
 
 interface IForumThemeEvents {
   onCLick: MouseEventHandler<HTMLDivElement>;
 }
 
-type ForumProps = IForumTheme & IForumThemeEvents;
+type ForumProps = ForumTopicModel & IForumThemeEvents;
 
-export {IForumTheme, ForumProps};
+export {ForumProps};

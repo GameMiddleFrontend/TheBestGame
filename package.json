@@ -29,6 +29,8 @@
     "@babel/runtime": "~7.17.8",
     "@babel/runtime-corejs2": "^7.17.11",
     "@reduxjs/toolkit": "~1.8.1",
+    "@types/cookie-parser": "^1.4.3",
+    "cookie-parser": "^1.4.6",
     "express": "~4.17.3",
     "formik": "~2.2.9",
     "lodash.clonedeep": "^4.5.0",

@@ -1,4 +1,4 @@
-import webpack, {Configuration as WebpackConfig, Entry} from 'webpack';
+import {Configuration as WebpackConfig, Entry} from 'webpack';
 import path from 'path';
 import {DIST_DIR, SRC_DIR} from './env';
 
@@ -6,6 +6,7 @@ import fileLoader from './loaders/file';
 import stylesLoader from './loaders/styles';
 import jsLoader from './loaders/ts';
 import videoLoader from './loaders/video';
+import audioLoader from './loaders/audio';
 
 import {TsconfigPathsPlugin} from 'tsconfig-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
@@ -16,7 +17,7 @@ const clientConfig: WebpackConfig = {
   target: 'web',
   entry: [path.join(SRC_DIR, 'index.client')].filter(Boolean) as unknown as Entry,
   module: {
-    rules: [videoLoader.client, fileLoader.client, stylesLoader.client, jsLoader.client],
+    rules: [videoLoader.client, audioLoader.client, fileLoader.client, stylesLoader.client, jsLoader.client],
   },
   output: {
     filename: '[name].js',

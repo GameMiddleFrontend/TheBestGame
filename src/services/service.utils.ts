@@ -21,15 +21,21 @@ class ServiceUtils {
     return this.serviceFetch(url, CallMethodType.GET, data, requestInit);
   }
 
-  post(url: string, data?: unknown, requestInit?: RequestInit) {
-    return this.serviceFetch(url, CallMethodType.POST, data, requestInit);
+  post(url: string, data?: unknown, requestInit?: RequestInit, fullURL?: string) {
+    return this.serviceFetch(url, CallMethodType.POST, data, requestInit, fullURL);
   }
 
   put(url: string, data?: unknown, requestInit?: RequestInit) {
     return this.serviceFetch(url, CallMethodType.PUT, data, requestInit);
   }
 
-  async serviceFetch(url: string, type = CallMethodType.GET, data?: unknown, requestInit?: RequestInit) {
+  async serviceFetch(
+    url: string,
+    type = CallMethodType.GET,
+    data?: unknown,
+    requestInit?: RequestInit,
+    fullURL?: string,
+  ) {
     const params: RequestInit = this.getFetchParams(type, requestInit, data);
 
     if (type === CallMethodType.GET && data) {
@@ -37,7 +43,8 @@ class ServiceUtils {
     }
 
     try {
-      const response = await fetch(this.baseURL.concat(url), params).catch((e) => {
+      const currentURL = fullURL || this.baseURL.concat(url);
+      const response = await fetch(currentURL, params).catch((e) => {
         throw e;
       });
       return await this.handleResponse(response, data);

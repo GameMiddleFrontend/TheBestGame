@@ -56,6 +56,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
+  margin-top: 1%;
 }
 
 .find-theme-item {
@@ -63,19 +65,25 @@
   margin: 3px 15px;
 }
 
+.add-theme-message {
+  width: 100%;
+}
+
 .find-theme-input {
   flex-grow: 2;
 }
 
 .find-theme-button {
-  width: 150px;
+  width: 50%;
 }
 
 .forum-content {
   flex-grow: 2;
   width: 90%;
   margin-top: 1%;
+  margin-bottom: 3%;
   display: flex;
   flex-direction: column;
   background-color: #0004;
+  overflow: auto;
 }

@@ -4,3 +4,10 @@ export enum CallMethodType {
   PUT = 'PUT',
   DELETE = 'DELETE',
 }
+
+export enum HttpStatuses {
+  SUCCESS = 200,
+  EXTERNAL = 400,
+  UNAUTHORIZED = 401,
+  INTERNAL = 500,
+}
