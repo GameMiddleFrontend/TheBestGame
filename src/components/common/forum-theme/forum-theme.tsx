@@ -3,7 +3,7 @@ import './forum-theme.styles.scss';
 import {ForumProps} from './forum-theme.types';
 
 function ForumThemeComponent({id, title, content, onCLick}: ForumProps) {
-  const onClickHandler: MouseEventHandler<HTMLDivElement> = useCallback((event) => onCLick(event), []);
+  const onClickHandler: MouseEventHandler<HTMLDivElement> = useCallback((event) => onCLick && onCLick(event), []);
   return (
     <>
       <div className={'forum-theme'} data-id={id} onClick={onClickHandler}>

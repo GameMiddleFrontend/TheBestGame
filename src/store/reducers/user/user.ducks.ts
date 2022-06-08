@@ -21,6 +21,11 @@ enum ActionTypes {
 type UserActionType = BaseActionType<ActionTypes>;
 
 /////////////////////////////////////
+// SELECTORS
+/////////////////////////////////////
+export const getUserId = (state: IConfiguredStore) => state.user.item?.id;
+
+/////////////////////////////////////
 // ACTIONS
 /////////////////////////////////////
 const getUser = createAction(ActionTypes.GET_USER);

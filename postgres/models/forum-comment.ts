@@ -1,11 +1,11 @@
 import sequelize from '../sequelize';
 import {ModelAttributes, ModelOptions} from 'sequelize';
 import {DataType, Model} from 'sequelize-typescript';
-import User from './user';
 import ForumComment from '@models/forum-comment.model';
-import TopicTable from './forum-topic';
+import TopicTable from '@postgres/models/forum-topic';
+import UserTable from './user';
 
-const ForumCommentDatabaseModel: ModelAttributes<Model, ForumComment> = {
+const ForumCommentDatabaseModel: ModelAttributes<Model, Omit<ForumComment, 'topicId' | 'author'>> = {
   id: {
     type: DataType.INTEGER,
     autoIncrement: true,
@@ -15,13 +15,6 @@ const ForumCommentDatabaseModel: ModelAttributes<Model, ForumComment> = {
   content: {
     type: DataType.STRING,
     allowNull: false,
-  },
-  author: {
-    type: DataType.INTEGER,
-    allowNull: false,
-    references: {
-      model: User,
-    },
   },
 };
 
@@ -41,8 +34,27 @@ const ForumCommentModelOptions: ModelOptions = {
 
 const CommentTable = sequelize.define('Comment', ForumCommentDatabaseModel, ForumCommentModelOptions);
 
+TopicTable.hasMany(CommentTable, {foreignKey: 'topicId', onDelete: 'CASCADE'});
+UserTable.hasMany(CommentTable, {foreignKey: 'authorId'});
+
+CommentTable.belongsTo(UserTable, {as: 'author', foreignKey: 'authorId'});
+
 export const addComment = async (comment: ForumComment) => {
-  await CommentTable.create(comment);
+  return await CommentTable.create(comment);
+};
+
+export const getDBCommentsByTopicId = async (topicId: number, limit?: number, offset?: number) => {
+  return await CommentTable.findAll({
+    limit: limit,
+    offset: offset,
+    where: {
+      topicId: topicId,
+    },
+    include: {model: UserTable, as: 'author', attributes: ['id', 'login', 'display_name', 'avatar']},
+    attributes: {
+      exclude: ['authorId'],
+    },
+  });
 };
 
 export default CommentTable;

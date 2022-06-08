@@ -1,3 +1,11 @@
+export type UserItem = {
+  id: number;
+  login: string;
+  display_name?: string;
+  avatar?: string;
+  email?: string;
+};
+
 export type CurrentUserItem = {
   id: number;
   login: string;

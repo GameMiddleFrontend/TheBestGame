@@ -1,11 +1,11 @@
-import {CurrentUserItem} from '@models/user.model';
+import {UserItem} from '@models/user.model';
 import ForumComment from '@models/forum-comment.model';
 
 type ForumTopicModel = {
   id?: number;
   title: string;
   content: string;
-  author: CurrentUserItem;
+  author: UserItem;
   comments?: Array<ForumComment>;
 };
 

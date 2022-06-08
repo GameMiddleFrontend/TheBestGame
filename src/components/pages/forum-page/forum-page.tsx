@@ -10,7 +10,7 @@ import './forum-page.styles.scss';
 import './forum-page.styles.scss';
 import {useDispatch, useSelector} from 'react-redux';
 import IConfiguredStore from '@store/reducers/configured-store';
-import {ITopicStore, topicActions} from '@store/reducers/topic/topic.ducks';
+import {ITopicStore, topicActions} from '@store/reducers/topic/topic-list.ducks';
 import ForumTopicModel, {ForumTopicDBModel} from '@models/forum-topic.model';
 import FormComponent from '@common/form/form.component';
 import {CreateTheme, CreateThemeDef} from '@pages/forum-page/forum-page.types';
@@ -20,7 +20,7 @@ import {UserState} from '@store/reducers/user/user.ducks';
 //TODO Сделать постраничное отображение
 
 function ForumPage() {
-  const {items: topics} = useSelector<IConfiguredStore, ITopicStore>((state) => state.topics);
+  const {items: topics} = useSelector<IConfiguredStore, ITopicStore>((state) => state.topic.list);
   const {item: currentUser} = useSelector<IConfiguredStore, UserState>((state) => state.user);
   const dispatch = useDispatch();
   const [filterValue, setFilterValue] = useState<string>('');

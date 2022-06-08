@@ -25,8 +25,8 @@ class ServiceUtils {
     return this.serviceFetch(url, CallMethodType.POST, data, requestInit, fullURL);
   }
 
-  put(url: string, data?: unknown, requestInit?: RequestInit) {
-    return this.serviceFetch(url, CallMethodType.PUT, data, requestInit);
+  put(url: string, data?: unknown, requestInit?: RequestInit, fullURL?: string) {
+    return this.serviceFetch(url, CallMethodType.PUT, data, requestInit, fullURL);
   }
 
   async serviceFetch(
@@ -110,7 +110,7 @@ class ServiceUtils {
       }
     } catch (e) {}
 
-    return false;
+    return;
   }
 
   /** deprecated */
