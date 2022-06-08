@@ -2,10 +2,8 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {compose} from 'redux';
 
-import ForumThemeComponent from '@common/forum-theme';
+import ForumThemeComponent from '@components/forum/forum-theme';
 import withAuth from '@hooks/chechAuthHookHOC';
-
-import './forum-page.styles.scss';
 
 import './forum-page.styles.scss';
 import {useDispatch, useSelector} from 'react-redux';
@@ -17,6 +15,8 @@ import {CreateTheme, CreateThemeDef} from '@pages/forum-page/forum-page.types';
 import TopicAPI from '@services/Topic.API';
 import {UserState} from '@store/reducers/user/user.ducks';
 
+import './forum-page.styles.scss';
+
 //TODO Сделать постраничное отображение
 
 function ForumPage() {
@@ -26,11 +26,9 @@ function ForumPage() {
   const [filterValue, setFilterValue] = useState<string>('');
   const navigate = useNavigate();
 
-  const onThemeClick = (event: unknown) => {
-    const target = (event as MouseEvent).target;
-    const id: string | undefined = (target as HTMLDivElement).dataset.id;
-    if (id !== undefined) {
-      navigate(id);
+  const onThemeClick = (themeId?: number) => {
+    if (themeId !== undefined) {
+      navigate(themeId.toString());
     }
   };
 
@@ -42,7 +40,7 @@ function ForumPage() {
     const topicData: ForumTopicDBModel = {
       title: data.title,
       content: data.content,
-      author: currentUser!.id,
+      authorId: currentUser!.id,
     };
     TopicAPI.addTopic(topicData)
       .then(() => {
@@ -57,7 +55,6 @@ function ForumPage() {
 
   return (
     <div className={'page-container forum-page-container'}>
-      <div className={'forum-label'}>Форум</div>
       <div className={'find-theme-container'}>
         <input
           className={'find-theme-item find-theme-input'}
@@ -78,7 +75,7 @@ function ForumPage() {
       <div className={'forum-content'}>
         {topics.map((theme: ForumTopicModel) => {
           if (!filterValue || (filterValue && theme.title.includes(filterValue))) {
-            return <ForumThemeComponent key={theme.id} {...theme} onCLick={onThemeClick} />;
+            return <ForumThemeComponent key={theme.id} {...theme} onCLick={() => onThemeClick(theme.id)} />;
           }
         })}
       </div>

@@ -3,7 +3,7 @@ import {ModelAttributes, ModelOptions} from 'sequelize';
 import {DataType, Model} from 'sequelize-typescript';
 import ForumComment from '@models/forum-comment.model';
 import TopicTable from '@postgres/models/forum-topic';
-import UserTable from './user';
+import UserTable, {includeUser} from './user';
 
 const ForumCommentDatabaseModel: ModelAttributes<Model, Omit<ForumComment, 'topicId' | 'author'>> = {
   id: {
@@ -35,8 +35,8 @@ const ForumCommentModelOptions: ModelOptions = {
 const CommentTable = sequelize.define('Comment', ForumCommentDatabaseModel, ForumCommentModelOptions);
 
 TopicTable.hasMany(CommentTable, {foreignKey: 'topicId', onDelete: 'CASCADE'});
-UserTable.hasMany(CommentTable, {foreignKey: 'authorId'});
 
+UserTable.hasMany(CommentTable, {foreignKey: 'authorId'});
 CommentTable.belongsTo(UserTable, {as: 'author', foreignKey: 'authorId'});
 
 export const addComment = async (comment: ForumComment) => {
@@ -50,7 +50,7 @@ export const getDBCommentsByTopicId = async (topicId: number, limit?: number, of
     where: {
       topicId: topicId,
     },
-    include: {model: UserTable, as: 'author', attributes: ['id', 'login', 'display_name', 'avatar']},
+    include: [includeUser],
     attributes: {
       exclude: ['authorId'],
     },

@@ -6,11 +6,12 @@ type ForumTopicModel = {
   title: string;
   content: string;
   author: UserItem;
+  createdAt: string;
   comments?: Array<ForumComment>;
 };
 
-export type ForumTopicDBModel = Omit<ForumTopicModel, 'author' | 'comments'> & {
-  author: number;
+export type ForumTopicDBModel = Omit<ForumTopicModel, 'author' | 'comments' | 'createdAt'> & {
+  authorId: number;
 };
 
 export default ForumTopicModel;

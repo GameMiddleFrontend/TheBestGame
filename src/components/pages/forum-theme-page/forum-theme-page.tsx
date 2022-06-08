@@ -3,7 +3,7 @@ import withAuth from '@hooks/chechAuthHookHOC';
 import {useDispatch, useSelector} from 'react-redux';
 import {useParams} from 'react-router-dom';
 import {Actions as topicCommentActions, IStore as ITopicCommentStore} from '@store/reducers/topic/topic-comment.ducks';
-import ForumThemeComponent from '@common/forum-theme';
+import ForumThemeComponent from '@components/forum/forum-theme';
 import IConfiguredStore from '@store/reducers/configured-store';
 import ForumCommentItem from '@components/forum/forum-comment-item/forum-comment-item.component';
 
@@ -45,7 +45,7 @@ function ForumThemePage() {
       <ForumThemeComponent {...topic} />
       <div className={'forum-page-comments'}>
         {comments.map((commentItem) => {
-          return <ForumCommentItem {...commentItem} />;
+          return <ForumCommentItem {...commentItem} key={commentItem.id} />;
         })}
       </div>
       <div className={'forum-page-message'}>

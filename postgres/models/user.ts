@@ -55,6 +55,8 @@ const userModelOptions: ModelOptions = {
 
 const UserTable = sequelize.define('User', userDatabaseModel, userModelOptions);
 
+export const includeUser = {model: UserTable, as: 'author', attributes: ['id', 'login', 'display_name', 'avatar']};
+
 export const addUser = async (user: CurrentUserItem) => {
   await UserTable.create(user);
 };

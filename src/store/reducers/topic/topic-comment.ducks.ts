@@ -39,6 +39,7 @@ export const initialState: IStore = {
       id: 0,
       login: '',
     },
+    createdAt: '',
     title: '',
     content: '',
   },

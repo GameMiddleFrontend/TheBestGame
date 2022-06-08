@@ -6,6 +6,7 @@ type ForumComment = {
   content: string;
   author: UserItem;
   topicId: number;
+  createdAt?: string;
 };
 
 export type ForumCommentDBModel = {

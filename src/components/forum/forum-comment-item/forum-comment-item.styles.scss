@@ -33,14 +33,11 @@
     gap: 10px;
 
     .comment-header {
-      .comment-header-user {
-        font-weight: 700;
-        font-size: medium;
-      }
-
-      .comment-header-time {
-        color: $placeholder-color;
-      }
+      flex-direction: row;
+      gap: 0.2rem;
+      width: 100%;
+      padding: 0;
+      justify-content: space-between;
     }
 
     .comment-content {

@@ -5,13 +5,16 @@ import AvatarComponent from '@common/avatar';
 import './forum-comment-item.styles.scss';
 
 const ForumCommentItem: FC<ForumCommentItemProps> = (props) => {
+  const date = props.createdAt ? new Date(props.createdAt) : null;
+  const dateFormat = date?.toLocaleString('ru-RU');
+
   return (
     <div className={'forum-comment-item'}>
       <AvatarComponent className={'avatar-sm'} imgSrc={props.author.avatar} />
       <div className={'comment-body'}>
-        <div className={'comment-header'}>
+        <div className={'theme-data comment-header'}>
           <div className={'comment-header-user'}>{props.author.display_name || props.author.login}</div>
-          {/*<div className={'comment-header-time'}>{'16:21'}</div>*/}
+          {dateFormat && <div className={'comment-header-time'}>{dateFormat}</div>}
         </div>
         <div className={'comment-content'}>{props.content}</div>
       </div>

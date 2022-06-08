@@ -13,6 +13,7 @@ export const topicRoutes = (router: Router) => {
     response.append('Content-Type', 'application/json');
     try {
       const topics = await getDBTopics(limit, offset);
+
       response.status(HttpStatuses.SUCCESS);
       response.send(JSON.stringify(topics));
     } catch (error) {
