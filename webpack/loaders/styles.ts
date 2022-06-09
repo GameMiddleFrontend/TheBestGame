@@ -1,5 +1,3 @@
-import {IS_DEV} from '../env';
-
 export default {
   client: {
     test: /\.(css|scss)$/,

@@ -27,7 +27,7 @@ const userDatabaseModel: ModelAttributes<Model, CurrentUserItem> = {
   },
   display_name: {
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   phone: {
     type: DataType.STRING,
@@ -55,8 +55,19 @@ const userModelOptions: ModelOptions = {
 
 const UserTable = sequelize.define('User', userDatabaseModel, userModelOptions);
 
+export const includeUser = {model: UserTable, as: 'author', attributes: ['id', 'login', 'display_name', 'avatar']};
+
 export const addUser = async (user: CurrentUserItem) => {
   await UserTable.create(user);
+};
+
+export const createUserIfNotExists = async (user: CurrentUserItem) => {
+  return await getUserById(user.id).then((response) => {
+    console.log(response);
+    if (!response) {
+      addUser(user);
+    }
+  });
 };
 
 export const getUserById = async (userId: number) => {
@@ -65,6 +76,10 @@ export const getUserById = async (userId: number) => {
       id: userId,
     },
   });
+};
+
+export const getUsers = async () => {
+  return await UserTable.findAll({});
 };
 
 export default UserTable;

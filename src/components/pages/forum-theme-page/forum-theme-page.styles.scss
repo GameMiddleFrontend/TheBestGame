@@ -1,0 +1,39 @@
+.forum-theme-page {
+  width: 90%;
+  padding: 2rem 0;
+  margin: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-content: stretch;
+  position: relative;
+
+  .forum-theme {
+
+  }
+
+  .forum-page-comments {
+    margin: 1rem 0;
+
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
+
+    overflow: auto;
+  }
+
+  .forum-page-message{
+    & > input {
+      width: 100%;
+      margin: auto;
+    }
+  }
+}
+
+@media screen and (min-width: 1400px) {
+  .forum-theme-page {
+    width: 70%;
+  }
+}

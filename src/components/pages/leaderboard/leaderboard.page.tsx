@@ -2,7 +2,6 @@ import React, {useEffect} from 'react';
 import {compose} from 'redux';
 import {useDispatch, useSelector} from 'react-redux';
 
-import Button from '@common/button';
 import AvatarComponent from '@common/avatar';
 import withAuth from '@hooks/chechAuthHookHOC';
 import {

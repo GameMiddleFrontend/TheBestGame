@@ -1,12 +1,12 @@
 import {createAction, createReducer, PayloadAction, Reducer} from '@reduxjs/toolkit';
 import {call, put, takeEvery, select} from 'typed-redux-saga';
 import {Actions as notificationActions} from '../notification/notification.duck';
-import {getExceptionByError} from '../../../utils/notification';
+import {getExceptionByError} from '@utils/notification';
 import {getUserItem} from '../user/user.ducks';
 import {BaseActionType} from '../../redux.base.types';
 import LeaderboardService from '../../../services/liderboard';
-import {LeaderboardUserDataType, LeaderboardUserType} from '../../../components/pages/leaderboard/leaderboard.types';
-import {AddLeaderType} from '../../../models/leaderboard.model';
+import {LeaderboardUserDataType, LeaderboardUserType} from '@components/pages/leaderboard/leaderboard.types';
+import {AddLeaderType} from '@models/leaderboard.model';
 
 enum ActionTypes {
   GET_LEADERS = `@leaderboard/getLeaders`,

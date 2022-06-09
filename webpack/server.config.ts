@@ -7,6 +7,7 @@ import fileLoader from './loaders/file';
 import stylesLoader from './loaders/styles';
 import jsLoader from './loaders/ts';
 import videoLoader from './loaders/video';
+import audioLoader from './loaders/audio';
 
 import {TsconfigPathsPlugin} from 'tsconfig-paths-webpack-plugin';
 
@@ -17,7 +18,7 @@ const serverConfig: WebpackConfig = {
   node: {__dirname: false},
   entry: path.join(SRC_DIR, 'server/server'),
   module: {
-    rules: [videoLoader.server, fileLoader.server, stylesLoader.server, jsLoader.server],
+    rules: [videoLoader.server, audioLoader.server, fileLoader.server, stylesLoader.server, jsLoader.server],
   },
   output: {
     filename: 'server.js',

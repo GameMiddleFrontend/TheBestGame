@@ -21,15 +21,21 @@ class ServiceUtils {
     return this.serviceFetch(url, CallMethodType.GET, data, requestInit);
   }
 
-  post(url: string, data?: unknown, requestInit?: RequestInit) {
-    return this.serviceFetch(url, CallMethodType.POST, data, requestInit);
+  post(url: string, data?: unknown, requestInit?: RequestInit, fullURL?: string) {
+    return this.serviceFetch(url, CallMethodType.POST, data, requestInit, fullURL);
   }
 
-  put(url: string, data?: unknown, requestInit?: RequestInit) {
-    return this.serviceFetch(url, CallMethodType.PUT, data, requestInit);
+  put(url: string, data?: unknown, requestInit?: RequestInit, fullURL?: string) {
+    return this.serviceFetch(url, CallMethodType.PUT, data, requestInit, fullURL);
   }
 
-  async serviceFetch(url: string, type = CallMethodType.GET, data?: unknown, requestInit?: RequestInit) {
+  async serviceFetch(
+    url: string,
+    type = CallMethodType.GET,
+    data?: unknown,
+    requestInit?: RequestInit,
+    fullURL?: string,
+  ) {
     const params: RequestInit = this.getFetchParams(type, requestInit, data);
 
     if (type === CallMethodType.GET && data) {
@@ -37,7 +43,8 @@ class ServiceUtils {
     }
 
     try {
-      const response = await fetch(this.baseURL.concat(url), params).catch((e) => {
+      const currentURL = fullURL || this.baseURL.concat(url);
+      const response = await fetch(currentURL, params).catch((e) => {
         throw e;
       });
       return await this.handleResponse(response, data);
@@ -70,7 +77,12 @@ class ServiceUtils {
   async handleResponse(response: Response, data?: any) {
     try {
       if (response && response.status === 200) {
-        return Promise.resolve((await response.json()) ?? this.tryParseJSON(response.response));
+        const contentType = response.headers.get('Content-Type');
+        if (contentType && contentType.includes('application/json')) {
+          return Promise.resolve(this.tryParseJSON(response.response) ?? (await response.json()));
+        } else {
+          return Promise.resolve(await response.text());
+        }
       }
       return this.handleError(response);
     } catch (e) {
@@ -98,7 +110,7 @@ class ServiceUtils {
       }
     } catch (e) {}
 
-    return false;
+    return;
   }
 
   /** deprecated */

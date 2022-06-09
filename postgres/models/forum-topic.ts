@@ -1,10 +1,10 @@
 import sequelize from '../sequelize';
 import {ModelAttributes, ModelOptions} from 'sequelize';
 import {DataType, Model} from 'sequelize-typescript';
-import ForumTopicModel from '@models/forum-topic.model';
-import User from './user';
+import {ForumTopicDBModel} from '@models/forum-topic.model';
+import UserTable, {includeUser} from './user';
 
-export const ForumTopicDatabaseModel: ModelAttributes<Model, ForumTopicModel> = {
+export const ForumTopicDatabaseModel: ModelAttributes<Model<ForumTopicDBModel>, Omit<ForumTopicDBModel, 'authorId'>> = {
   id: {
     type: DataType.INTEGER,
     autoIncrement: true,
@@ -18,13 +18,6 @@ export const ForumTopicDatabaseModel: ModelAttributes<Model, ForumTopicModel> = 
   content: {
     type: DataType.STRING,
     allowNull: false,
-  },
-  author: {
-    type: DataType.INTEGER,
-    allowNull: false,
-    references: {
-      model: User,
-    },
   },
 };
 
@@ -44,14 +37,22 @@ const ForumTopicModelOptions: ModelOptions = {
 
 const TopicTable = sequelize.define('Topic', ForumTopicDatabaseModel, ForumTopicModelOptions);
 
-export const addTopic = async (topic: ForumTopicModel) => {
+UserTable.hasMany(TopicTable, {foreignKey: 'authorId'});
+TopicTable.belongsTo(UserTable, {as: 'author', foreignKey: 'authorId'});
+
+export const addTopic = async (topic: ForumTopicDBModel) => {
+  delete topic.id;
   await TopicTable.create(topic);
 };
 
-export const getTopics = async (limit?: number, offset?: number) => {
+export const getDBTopics = async (limit?: number, offset?: number) => {
   return await TopicTable.findAll({
-    limit: limit || -1,
-    offset: offset || -1,
+    limit: limit,
+    offset: offset,
+    include: [includeUser],
+    attributes: {
+      exclude: ['authorId'],
+    },
   });
 };
 
@@ -59,6 +60,10 @@ export const getTopicById = async (topicId: number) => {
   return await TopicTable.findOne({
     where: {
       id: topicId,
+    },
+    include: [includeUser],
+    attributes: {
+      exclude: ['authorId'],
     },
   });
 };
