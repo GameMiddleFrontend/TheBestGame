@@ -7,11 +7,13 @@ type ForumComment = {
   author: UserItem;
   topicId: number;
   createdAt?: string;
+  parentComment?: ForumComment;
 };
 
 export type ForumCommentDBModel = {
   content: ForumComment['content'];
   authorId: number;
+  ForumCommentId: number;
 };
 
 export type ForumCommentResponseModel = {

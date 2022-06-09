@@ -39,6 +39,8 @@ TopicTable.hasMany(CommentTable, {foreignKey: 'topicId', onDelete: 'CASCADE'});
 UserTable.hasMany(CommentTable, {foreignKey: 'authorId'});
 CommentTable.belongsTo(UserTable, {as: 'author', foreignKey: 'authorId'});
 
+CommentTable.belongsTo(CommentTable, {as: 'parentComment', foreignKey: 'parentCommentId'});
+
 export const addComment = async (comment: ForumComment) => {
   return await CommentTable.create(comment);
 };
@@ -50,9 +52,16 @@ export const getDBCommentsByTopicId = async (topicId: number, limit?: number, of
     where: {
       topicId: topicId,
     },
-    include: [includeUser],
+    include: [
+      includeUser,
+      {
+        model: CommentTable,
+        as: 'parentComment',
+        include: [{all: true, nested: true}],
+      },
+    ],
     attributes: {
-      exclude: ['authorId'],
+      exclude: ['authorId', 'parentCommentId'],
     },
   });
 };
