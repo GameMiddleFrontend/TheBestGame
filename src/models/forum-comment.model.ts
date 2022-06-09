@@ -13,7 +13,7 @@ type ForumComment = {
 export type ForumCommentDBModel = {
   content: ForumComment['content'];
   authorId: number;
-  ForumCommentId: number;
+  parentCommentId?: number;
 };
 
 export type ForumCommentResponseModel = {
@@ -22,7 +22,8 @@ export type ForumCommentResponseModel = {
 };
 
 export type IForumCommentAddParams = {
-  content: ForumComment['content'];
+  content: ForumCommentDBModel['content'];
+  parentCommentId?: ForumCommentDBModel['parentCommentId'];
 };
 
 export default ForumComment;
