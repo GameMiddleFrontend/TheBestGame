@@ -1,5 +1,5 @@
 import {createAction, createReducer, PayloadAction, Reducer} from '@reduxjs/toolkit';
-import {call, put, takeEvery} from 'typed-redux-saga';
+import { call, put, select, takeEvery } from "typed-redux-saga";
 
 import {Actions as notificationActions} from '../notification/notification.duck';
 import {getExceptionByError} from '@utils/notification';
@@ -16,6 +16,7 @@ enum ActionTypes {
   UPDATE_INFO = `@user/updateInfo`,
   UPDATE_AVATAR = `@user/updateAvatar`,
   UPDATE_PASSWORD = `@user/updatePassword`,
+  CHANGE_THEME = `@user/changeTheme`,
 }
 
 type UserActionType = BaseActionType<ActionTypes>;
@@ -33,6 +34,7 @@ const setUser = createAction<CurrentUserItem>(ActionTypes.SET_USER);
 const updateInfo = createAction<UpdateUserInfoType<CurrentUserItem>>(ActionTypes.UPDATE_INFO);
 const updateAvatar = createAction<File>(ActionTypes.UPDATE_AVATAR);
 const updatePassword = createAction<UpdateUserInfoType<UserPasswordApiItem>>(ActionTypes.UPDATE_PASSWORD);
+const changeTheme = createAction(ActionTypes.CHANGE_THEME);
 
 export const Actions = {
   getUser,
@@ -40,6 +42,7 @@ export const Actions = {
   updateInfo,
   updateAvatar,
   updatePassword,
+  changeTheme,
 };
 
 export type UserState = {
@@ -128,11 +131,25 @@ function* getUserFlow() {
   } catch (e) {}
 }
 
+function* changeUserTheme() {
+  try {
+    const user = yield* select(getUserId);
+    if (user) {
+      yield* call(AuthService.changeUserTheme, user);
+      const result = yield* call(AuthService.auth);
+      if (result) {
+        yield* put(setUser(result));
+      }
+    }
+  } catch (e) {}
+}
+
 export function* userListFlow() {
   yield* takeEvery(getUser, getUserFlow);
   yield* takeEvery(updateInfo, updateInfoFlow);
   yield* takeEvery(updateAvatar, updateAvatarFlow);
   yield* takeEvery(updatePassword, updatePasswordFlow);
+  yield* takeEvery(changeTheme, changeUserTheme);
 }
 
 export default UserReducer;

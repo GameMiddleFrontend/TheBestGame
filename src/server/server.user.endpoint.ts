@@ -1,7 +1,7 @@
 import express, {Router} from 'express';
 import {HttpStatuses} from '@services/enum/call-method-type.enum';
 import cookieParser from 'cookie-parser';
-import {createUserIfNotExists, getUsers} from '@postgres/models/user';
+import {changeUserTheme, createOrUpdateUserIfNotExists, getUsers} from '@postgres/models/user';
 
 const userRouter = Router();
 
@@ -14,9 +14,9 @@ export const userRoutes = (router: Router) => {
     response.append('Content-Type', 'application/json');
     try {
       const user = request.body;
-      await createUserIfNotExists(user);
+      const result = await createOrUpdateUserIfNotExists(user);
       response.status(HttpStatuses.SUCCESS);
-      response.send(JSON.stringify({message: 'success'}));
+      response.send(JSON.stringify(result));
     } catch (error) {
       response.status(HttpStatuses.INTERNAL);
       response.send(JSON.stringify(error));
@@ -29,6 +29,19 @@ export const userRoutes = (router: Router) => {
       const result = await getUsers();
       response.status(HttpStatuses.SUCCESS);
       response.send(JSON.stringify(result));
+    } catch (error) {
+      response.status(HttpStatuses.INTERNAL);
+      response.send(JSON.stringify(error));
+    }
+  });
+
+  userApi.post('/changeTheme', async (request, response) => {
+    response.append('Content-Type', 'application/json');
+    try {
+      const {userId} = request.body;
+      await changeUserTheme(userId);
+      response.status(HttpStatuses.SUCCESS);
+      response.send(JSON.stringify({message: 'success'}));
     } catch (error) {
       response.status(HttpStatuses.INTERNAL);
       response.send(JSON.stringify(error));

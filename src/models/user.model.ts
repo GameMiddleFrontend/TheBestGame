@@ -15,6 +15,7 @@ export type CurrentUserItem = {
   display_name: string;
   phone: string;
   avatar: string;
+  customTheme?: boolean;
 };
 
 export type CurrentUserPasswordItem = {

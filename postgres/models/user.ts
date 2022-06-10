@@ -37,6 +37,11 @@ const userDatabaseModel: ModelAttributes<Model, CurrentUserItem> = {
     type: DataType.STRING,
     allowNull: true,
   },
+  customTheme: {
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+  },
 };
 
 const userModelOptions: ModelOptions = {
@@ -58,15 +63,31 @@ const UserTable = sequelize.define('User', userDatabaseModel, userModelOptions);
 export const includeUser = {model: UserTable, as: 'author', attributes: ['id', 'login', 'display_name', 'avatar']};
 
 export const addUser = async (user: CurrentUserItem) => {
-  await UserTable.create(user);
+  return await UserTable.create(user);
 };
 
-export const createUserIfNotExists = async (user: CurrentUserItem) => {
-  return await getUserById(user.id).then((response) => {
-    console.log(response);
-    if (!response) {
-      addUser(user);
+export const updateUserInfo = async (user: CurrentUserItem) => {
+  return await getUserById(user.id).then((response: Model<CurrentUserItem, CurrentUserItem> | null) => {
+    if (response) {
+      return response.update({
+        login: user.login,
+        email: user.email,
+        first_name: user.first_name,
+        second_name: user.second_name,
+        display_name: user.display_name,
+        phone: user.phone,
+        avatar: user.avatar,
+      });
     }
+  });
+};
+
+export const createOrUpdateUserIfNotExists = async (user: CurrentUserItem) => {
+  return await getUserById(user.id).then((response) => {
+    if (!response) {
+      return addUser(user);
+    }
+    return updateUserInfo(user);
   });
 };
 
@@ -80,6 +101,20 @@ export const getUserById = async (userId: number) => {
 
 export const getUsers = async () => {
   return await UserTable.findAll({});
+};
+
+export const changeUserTheme = async (userId: number) => {
+  return await UserTable.findOne({
+    where: {
+      id: userId,
+    },
+  }).then((user: Model<CurrentUserItem, CurrentUserItem> | null) => {
+    if (user) {
+      const newValue = user.getDataValue('customTheme') || false;
+      return user.update({customTheme: !newValue});
+    }
+    return;
+  });
 };
 
 export default UserTable;
