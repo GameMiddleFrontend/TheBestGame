@@ -4,13 +4,12 @@ import {renderToString} from 'react-dom/server';
 import {Provider} from 'react-redux';
 import {StaticRouter} from 'react-router-dom/server';
 
-import initStore from '../store';
+import initStore from '@store/index';
 import App from '@components/app';
-import ErrorBoundaryComponent from '@components/common/error-boundary';
-import ErrorFallbackComponent from '@components/common/error-fallback';
+import ErrorBoundaryComponent from '@common/error-boundary';
+import ErrorFallbackComponent from '@common/error-fallback';
 
 export default (req: Request, res: Response) => {
-  const location = req.url;
   const store = initStore();
 
   const jsx = (
