@@ -1,5 +1,3 @@
-@import "../../../styles/style-variables";
-
 .avatar {
   $size: 150px;
 
@@ -8,7 +6,7 @@
 
   border-radius: 50%;
 
-  background-color: $alt-background-color;
+  background-color: var(--alt-background-color);
 
   &.avatar-sm {
     $size: 30px;

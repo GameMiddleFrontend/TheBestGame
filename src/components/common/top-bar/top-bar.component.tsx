@@ -23,9 +23,11 @@ const TopBar: FC = (props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleNavigate = useCallback((route: AppRoutes, closePopup?: () => void) => {
-    navigate(route);
-    closePopup && closePopup();
+  const handleNavigate = useCallback((route?: AppRoutes, closePopup?: () => void) => {
+    if (route) {
+      navigate(route);
+      closePopup && closePopup();
+    }
   }, []);
 
   const changeTheme = useCallback(() => {
@@ -42,12 +44,6 @@ const TopBar: FC = (props) => {
         />
       </section>
       <section className={'top-bar-section'}>
-        {isLoggedIn && (
-          <label>
-            <Toggle defaultChecked={item?.customTheme} onChange={changeTheme} />
-            <span>Тема</span>
-          </label>
-        )}
         {isLoggedIn && (
           <Button
             className={'button-text'}
@@ -86,6 +82,19 @@ const TopBar: FC = (props) => {
                       </Button>
                     </li>
                   ))}
+                <li key={'theme-toggle'} className="menu-item">
+                  {isLoggedIn && (
+                    <label className={'theme-toggle'}>
+                      <span>Темная тема</span>
+                      <Toggle
+                        defaultChecked={!item?.customTheme}
+                        onChange={changeTheme}
+                        icons={false}
+                        className="custom-toggle"
+                      />
+                    </label>
+                  )}
+                </li>
               </ul>
             );
           }}

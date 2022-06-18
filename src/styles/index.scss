@@ -1,13 +1,72 @@
+@import "./style-variables";
+@import "./style-variables-dark";
 @import "./icon";
 @import "./page";
 @import './modal.scss';
+
+:root,
+:root[data-theme="light"] {
+  --primary-color: #{$primary-color};
+  --secondary-color: #{$secondary-color};
+  --alt-color: #{$alt-color};
+  --hover-color: #{$hover-color};
+
+  --main-background-color: var(--primary-color);
+  --alt-background-color: #{$alt-background-color};
+  --top-bar-background-color: var(--secondary-color);
+  --form-background-color: rgba(var(--secondary-color), 0.2);
+
+  --box-shadow: rgba(0, 0, 0, 0.7);
+
+  /** popup */
+  --popup-background-color: var(--alt-color);
+  --popup-font-color: var(--font-alt-color);
+
+  /** buttons */
+  --buttons-main-color: var(--secondary-color);
+  --buttons-accent-color: var(--alt-color);
+  --buttons-disabled-color: var(--alt-color);
+
+  /** text */
+  --font-color: var(--alt-color);
+  --font-alt-color: #{$font-alt-color};
+  --links-font-color: var(--alt-color);
+  --placeholder-color: #{$placeholder-color};
+  --error-color: #{$error-color};
+
+  /** top-bar */
+  --top-bar-height: 52px;
+  --top-bar-gap: 12px;
+
+  --fontSize: 1.45vw;
+
+  --startFormsElementHeight: 32px;
+}
+
+:root[data-theme="dark"] {
+  --primary-color: #{$primary-color-dark};
+  --secondary-color: #{$secondary-color-dark};
+  --alt-color: #{$alt-color-dark};
+  --hover-color: #{$hover-color-dark};
+
+  /** popup */
+  --popup-background-color: var(--primary-color);
+  --popup-font-color: var(--font-color);
+
+  --alt-background-color: #{$alt-background-color-dark};
+  --font-alt-color: #{$font-alt-color-dark};
+  --placeholder-color: #{$placeholder-color-dark};
+  --error-color: #{$error-color-dark};
+
+  --buttons-accent-color: var(--secondary-color);
+}
 
 body {
   margin: 0;
   font-family: Helvetica, sans-serif;
   font-size: 16px;
   box-sizing: border-box;
-  background-color: $primary-color;
+  background-color: var(--primary-color);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

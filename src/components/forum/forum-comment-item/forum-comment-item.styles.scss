@@ -1,11 +1,9 @@
-@import 'src/styles/style-variables';
-
 .forum-comment-item {
 
   padding: 10px;
-  background-color: $secondary-color;
+  background-color: var(--secondary-color);
   border-radius: 20px;
-  color: $font-color;
+  color: var(--font-color);
 
   display: flex;
   flex-direction: row;
@@ -47,7 +45,7 @@
 }
 
 .parent-comment {
-  border-left: 5px solid $alt-color;
+  border-left: 5px solid var(--alt-color);
   margin: 0 0 0 10px;
   border-radius: 2px;
 }

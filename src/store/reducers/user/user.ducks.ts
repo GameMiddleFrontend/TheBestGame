@@ -1,5 +1,5 @@
 import {createAction, createReducer, PayloadAction, Reducer} from '@reduxjs/toolkit';
-import { call, put, select, takeEvery } from "typed-redux-saga";
+import {call, put, select, takeEvery} from 'typed-redux-saga';
 
 import {Actions as notificationActions} from '../notification/notification.duck';
 import {getExceptionByError} from '@utils/notification';
@@ -9,6 +9,7 @@ import {Actions as AuthActions} from '@store/reducers/auth/auth.ducks';
 import {BaseActionType, Nullable} from '@store/redux.base.types';
 import AuthService from '@services/auth.service';
 import IConfiguredStore from '@store/reducers/configured-store';
+import {themes} from '@contexts/theme/theme.context';
 
 enum ActionTypes {
   SET_USER = `@user/setUser`,
@@ -75,6 +76,12 @@ const UserReducer: Reducer<UserState, UserActionType> = createReducer(initialSta
 ///////////////////////////////////
 // SAGAS
 ///////////////////////////////////
+function* setTheme(customTheme?: boolean) {
+  try {
+    document.documentElement.setAttribute('data-theme', customTheme === false ? themes.dark : themes.light);
+  } catch (e) {}
+}
+
 function* updateInfoFlow(action: PayloadAction<UpdateUserInfoType<CurrentUserItem>>) {
   try {
     const {data, callback} = action.payload;
@@ -127,6 +134,7 @@ function* getUserFlow() {
     if (result) {
       yield* put(AuthActions.setLoggedIn(true));
       yield* put(setUser(result));
+      yield* call(setTheme, result?.customTheme);
     }
   } catch (e) {}
 }
@@ -136,10 +144,7 @@ function* changeUserTheme() {
     const user = yield* select(getUserId);
     if (user) {
       yield* call(AuthService.changeUserTheme, user);
-      const result = yield* call(AuthService.auth);
-      if (result) {
-        yield* put(setUser(result));
-      }
+      yield* put(getUser());
     }
   } catch (e) {}
 }
