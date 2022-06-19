@@ -8,25 +8,36 @@ import initStore from '@store/index';
 import App from '@components/app';
 import ErrorBoundaryComponent from '@common/error-boundary';
 import ErrorFallbackComponent from '@common/error-fallback';
+import AuthService from '@services/auth.service';
+import {Actions as UserActions} from '@store/reducers/user/user.ducks';
+import {CurrentUserItem} from '@models/user.model';
 
-export default (req: Request, res: Response) => {
-  const store = initStore();
-
-  const jsx = (
-    <StrictMode>
-      <Provider store={store}>
-        <ErrorBoundaryComponent FallbackComponent={ErrorFallbackComponent}>
-          <StaticRouter location={req.url}>
-            <App />
-          </StaticRouter>
-        </ErrorBoundaryComponent>
-      </Provider>
-    </StrictMode>
-  );
-  const reactHtml = renderToString(jsx);
-  const reduxState = store.getState();
-
-  res.status(200).send(getHtml(reactHtml, reduxState));
+export default async (req: Request, res: Response) => {
+  let store, currentUser: CurrentUserItem;
+  AuthService.auth()
+    .then((user) => {
+      currentUser = user;
+      console.log(JSON.stringify(user));
+    })
+    .catch((error) => console.log(error))
+    .finally(() => {
+      store = initStore();
+      store.dispatch(UserActions.setUser(currentUser));
+      const jsx = (
+        <StrictMode>
+          <Provider store={store}>
+            <ErrorBoundaryComponent FallbackComponent={ErrorFallbackComponent}>
+              <StaticRouter location={req.url}>
+                <App />
+              </StaticRouter>
+            </ErrorBoundaryComponent>
+          </Provider>
+        </StrictMode>
+      );
+      const reactHtml = renderToString(jsx);
+      const reduxState = store.getState();
+      res.status(200).send(getHtml(reactHtml, reduxState));
+    });
 };
 
 function getHtml(reactHtml: string, reduxState = {}) {

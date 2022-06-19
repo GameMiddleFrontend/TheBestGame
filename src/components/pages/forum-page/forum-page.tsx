@@ -73,11 +73,12 @@ function ForumPage() {
         />
       </div>
       <div className={'forum-content'}>
-        {topics.map((theme: ForumTopicModel) => {
-          if (!filterValue || (filterValue && theme.title.includes(filterValue))) {
-            return <ForumThemeComponent key={theme.id} {...theme} onCLick={() => onThemeClick(theme.id)} />;
-          }
-        })}
+        {topics &&
+          topics.map((theme: ForumTopicModel) => {
+            if (!filterValue || (filterValue && theme.title.includes(filterValue))) {
+              return <ForumThemeComponent key={theme.id} {...theme} onCLick={() => onThemeClick(theme.id)} />;
+            }
+          })}
       </div>
     </div>
   );

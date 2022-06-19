@@ -1,21 +1,7 @@
-import {CallMethodType} from './enum/call-method-type.enum';
-
-/** deprecated */
-interface fetchConfig {
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  credentials?: 'include' | 'same-origin' | 'omit';
-  keepalive?: true | false;
-  headers?: Record<string, string>;
-  body?: any;
-}
+import {CallMethodType, defaultHeaders} from './enum/call-method-type.enum';
 
 class ServiceUtils {
   baseURL = 'https://ya-praktikum.tech/api/v2';
-
-  simpleJsonHeader = {
-    'Content-Type': 'application/json; charset=utf-8',
-    'Content-Security-Policy': `default-src 'self'; img-src *; media-src https://ya-praktikum.tech`,
-  };
 
   get(url: string, data?: unknown, requestInit?: RequestInit) {
     return this.serviceFetch(url, CallMethodType.GET, data, requestInit);
@@ -44,6 +30,7 @@ class ServiceUtils {
 
     try {
       const currentURL = fullURL || this.baseURL.concat(url);
+
       const response = await fetch(currentURL, params).catch((e) => {
         throw e;
       });
@@ -68,7 +55,7 @@ class ServiceUtils {
         params.body = data;
       } else if (data) {
         params.body = JSON.stringify(data);
-        params.headers = requestInit?.headers ?? this.simpleJsonHeader;
+        params.headers = requestInit?.headers ?? defaultHeaders;
       }
     }
     return params;
@@ -79,7 +66,7 @@ class ServiceUtils {
       if (response && response.status === 200) {
         const contentType = response.headers.get('Content-Type');
         if (contentType && contentType.includes('application/json')) {
-          return Promise.resolve(this.tryParseJSON(response.response) ?? (await response.json()));
+          return Promise.resolve(this.tryParseJSON((response as any).response) ?? (await response.json()));
         } else {
           return Promise.resolve(await response.text());
         }
@@ -90,7 +77,7 @@ class ServiceUtils {
     }
   }
 
-  async handleError(error) {
+  async handleError(error: any) {
     if (error && error.response) {
       const err = JSON.parse(error.response);
       return Promise.reject(err?.reason || err);
@@ -111,30 +98,6 @@ class ServiceUtils {
     } catch (e) {}
 
     return;
-  }
-
-  /** deprecated */
-  getFetch(config: fetchConfig, endOfURL?: string) {
-    return fetch(this.baseURL + endOfURL, config);
-  }
-
-  /** deprecated */
-  POST(path: string, body?: any, headers?: Record<string, any>): Promise<any> {
-    return fetch(this.baseURL + path, {
-      method: 'POST',
-      headers: headers || this.simpleJsonHeader,
-      body: JSON.stringify(body),
-      keepalive: true,
-      credentials: 'include',
-    });
-  }
-
-  /** deprecated */
-  GET(path: string): Promise<any> {
-    return fetch(this.baseURL + path, {
-      method: 'GET',
-      credentials: 'include',
-    });
   }
 }
 
