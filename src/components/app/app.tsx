@@ -13,7 +13,7 @@ import AppRoutes from '@utils/app-routes';
 import useLayout from '@hooks/withLayout';
 import {useDispatch} from 'react-redux';
 import {Actions as UserActions} from '@store/reducers/user/user.ducks';
-import startServiceWorker from '@serviceWorker/SWStart';
+import ThemeProvider from '../../contexts/theme/theme.provider';
 
 function App() {
   //startServiceWorker();
@@ -27,17 +27,19 @@ function App() {
   const getElement = useLayout();
 
   return (
-    <Routes>
-      <Route path={AppRoutes.HOME} element={getElement(MainPage)} />
-      <Route path={AppRoutes.LOGIN} element={getElement(LoginPage)} />
-      <Route path={AppRoutes.REGISTER} element={getElement(RegisterPage)} />
-      <Route path={AppRoutes.GAME} element={getElement(GamePage)} />
-      <Route path={AppRoutes.SETTINGS} element={getElement(SettingsPage)} />
-      <Route path={AppRoutes.LEADERBOARD} element={getElement(LeaderboardPage)} />
-      <Route path={AppRoutes.FORUM} element={getElement(ForumPage)} />
-      <Route path={`${AppRoutes.FORUM}/:threadId`} element={getElement(ForumThemePage)} />
-      <Route path="/*" element={getElement(NotFoundPage)} />
-    </Routes>
+    <ThemeProvider>
+      <Routes>
+        <Route path={AppRoutes.HOME} element={getElement(MainPage)} />
+        <Route path={AppRoutes.LOGIN} element={getElement(LoginPage)} />
+        <Route path={AppRoutes.REGISTER} element={getElement(RegisterPage)} />
+        <Route path={AppRoutes.GAME} element={getElement(GamePage)} />
+        <Route path={AppRoutes.SETTINGS} element={getElement(SettingsPage)} />
+        <Route path={AppRoutes.LEADERBOARD} element={getElement(LeaderboardPage)} />
+        <Route path={AppRoutes.FORUM} element={getElement(ForumPage)} />
+        <Route path={`${AppRoutes.FORUM}/:threadId`} element={getElement(ForumThemePage)} />
+        <Route path="/*" element={getElement(NotFoundPage)} />
+      </Routes>
+    </ThemeProvider>
   );
 }
 

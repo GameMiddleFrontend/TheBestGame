@@ -1,5 +1,5 @@
 import {createAction, createReducer, PayloadAction, Reducer} from '@reduxjs/toolkit';
-import {call, put, takeEvery} from 'typed-redux-saga';
+import {call, put, select, takeEvery} from 'typed-redux-saga';
 
 import {Actions as notificationActions} from '../notification/notification.duck';
 import {getExceptionByError} from '@utils/notification';
@@ -9,6 +9,7 @@ import {Actions as AuthActions} from '@store/reducers/auth/auth.ducks';
 import {BaseActionType, Nullable} from '@store/redux.base.types';
 import AuthService from '@services/auth.service';
 import IConfiguredStore from '@store/reducers/configured-store';
+import {themes} from '@contexts/theme/theme.context';
 
 enum ActionTypes {
   SET_USER = `@user/setUser`,
@@ -16,6 +17,7 @@ enum ActionTypes {
   UPDATE_INFO = `@user/updateInfo`,
   UPDATE_AVATAR = `@user/updateAvatar`,
   UPDATE_PASSWORD = `@user/updatePassword`,
+  CHANGE_THEME = `@user/changeTheme`,
 }
 
 type UserActionType = BaseActionType<ActionTypes>;
@@ -33,6 +35,7 @@ const setUser = createAction<CurrentUserItem>(ActionTypes.SET_USER);
 const updateInfo = createAction<UpdateUserInfoType<CurrentUserItem>>(ActionTypes.UPDATE_INFO);
 const updateAvatar = createAction<File>(ActionTypes.UPDATE_AVATAR);
 const updatePassword = createAction<UpdateUserInfoType<UserPasswordApiItem>>(ActionTypes.UPDATE_PASSWORD);
+const changeTheme = createAction(ActionTypes.CHANGE_THEME);
 
 export const Actions = {
   getUser,
@@ -40,6 +43,7 @@ export const Actions = {
   updateInfo,
   updateAvatar,
   updatePassword,
+  changeTheme,
 };
 
 export type UserState = {
@@ -72,6 +76,12 @@ const UserReducer: Reducer<UserState, UserActionType> = createReducer(initialSta
 ///////////////////////////////////
 // SAGAS
 ///////////////////////////////////
+function* setTheme(customTheme?: boolean) {
+  try {
+    document.documentElement.setAttribute('data-theme', customTheme === false ? themes.dark : themes.light);
+  } catch (e) {}
+}
+
 function* updateInfoFlow(action: PayloadAction<UpdateUserInfoType<CurrentUserItem>>) {
   try {
     const {data, callback} = action.payload;
@@ -124,6 +134,17 @@ function* getUserFlow() {
     if (result) {
       yield* put(AuthActions.setLoggedIn(true));
       yield* put(setUser(result));
+      yield* call(setTheme, result?.customTheme);
+    }
+  } catch (e) {}
+}
+
+function* changeUserTheme() {
+  try {
+    const user = yield* select(getUserId);
+    if (user) {
+      yield* call(AuthService.changeUserTheme, user);
+      yield* put(getUser());
     }
   } catch (e) {}
 }
@@ -133,6 +154,7 @@ export function* userListFlow() {
   yield* takeEvery(updateInfo, updateInfoFlow);
   yield* takeEvery(updateAvatar, updateAvatarFlow);
   yield* takeEvery(updatePassword, updatePasswordFlow);
+  yield* takeEvery(changeTheme, changeUserTheme);
 }
 
 export default UserReducer;

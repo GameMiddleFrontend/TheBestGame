@@ -18,7 +18,7 @@
   min-width: 250px;
   max-width: 400px;
   border-radius: 10px;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 30px var(--box-shadow);
   display: flex;
   justify-content: center;
   align-items: center;

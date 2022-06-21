@@ -1,5 +1,3 @@
-@import 'src/styles/style-variables';
-
 .main-container{
   display: flex;
   flex-direction: column;
@@ -18,14 +16,14 @@
   .game-name-label {
     margin: 24px 24px 24px 10px;
     font-size: 4rem;
-    color: $font-alt-color;
+    color: var(--font-alt-color);
     font-style: italic;
-    text-shadow: 0 0 2px $alt-color;
+    text-shadow: 0 0 2px var(--alt-color);
   }
 
   .main-page-subtext {
     font-size: 1.7rem;
-    text-shadow: 0 0 2px $font-alt-color;
+    text-shadow: 0 0 2px var(--font-main-color);
   }
 }
 
@@ -49,8 +47,8 @@
 .main-content {
   height: 100%;
   width: 100%;
-  font-size: $fontSize;
-  color: $font-color;
+  font-size: var(--fontSize);
+  color: var(--font-color);
   display: flex;
   justify-content: stretch;
   flex-grow: 3;
