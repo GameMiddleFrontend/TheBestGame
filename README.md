@@ -1,6 +1,6 @@
 # TheBestGame
 
-![CI/CD](https://github.com/GameMiddleFrontend/TheBestGame/actions/workflows/ci-cd/badge.svg)
+[![CI/CD](https://github.com/GameMiddleFrontend/TheBestGame/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GameMiddleFrontend/TheBestGame/actions/workflows/ci-cd.yml)
 
 ## Установка
 - `npm run dev` — запуск версии для разработки
