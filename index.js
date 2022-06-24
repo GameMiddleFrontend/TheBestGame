@@ -12,9 +12,6 @@ if (noDB) {
     .listen(443, 'localhost.ya-praktikum.tech',  () => {
       console.log('SSR HTTPS Application is started on localhost:', port);
     });
-  /*app.listen(devOptions,  () => {
-    console.log('Application is started on localhost:', port);
-  });*/
   return;
 } else {
   dbConnect().finally(() => {

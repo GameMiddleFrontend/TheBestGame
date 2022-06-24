@@ -18,6 +18,7 @@
     "paths": {
       "@images/*": ["styles/images/*"],
       "@styles/*": ["styles/*"],
+      "@contexts/*": ["contexts/*"],
       "@store/*": ["store/*"],
       "@utils/*": ["utils/*"],
       "@components/*": ["components/*"],

@@ -6,23 +6,32 @@ import Button from '../button';
 import '@images/spades.svg';
 import '@images/menu.svg';
 import {topBarMenu} from './top-bar.types';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import IConfiguredStore from '@store/reducers/configured-store';
 import {IStore as IAuthStore} from '@store/reducers/auth/auth.ducks';
 import AvatarComponent from '../avatar';
-import {UserState} from '@store/reducers/user/user.ducks';
+import {UserState, Actions as UserActions} from '@store/reducers/user/user.ducks';
+import Toggle from 'react-toggle';
 
 import './top-bar.scss';
+import 'react-toggle/style.css';
 
 const TopBar: FC = (props) => {
   const {isLoggedIn} = useSelector<IConfiguredStore, IAuthStore>((state) => state.auth);
   const {item} = useSelector<IConfiguredStore, UserState>((state) => state.user);
   const location = useLocation();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleNavigate = useCallback((route: AppRoutes, closePopup?: () => void) => {
-    navigate(route);
-    closePopup && closePopup();
+  const handleNavigate = useCallback((route?: AppRoutes, closePopup?: () => void) => {
+    if (route) {
+      navigate(route);
+      closePopup && closePopup();
+    }
+  }, []);
+
+  const changeTheme = useCallback(() => {
+    dispatch(UserActions.changeTheme());
   }, []);
 
   return (
@@ -73,6 +82,19 @@ const TopBar: FC = (props) => {
                       </Button>
                     </li>
                   ))}
+                <li key={'theme-toggle'} className="menu-item">
+                  {isLoggedIn && (
+                    <label className={'theme-toggle'}>
+                      <span>Темная тема</span>
+                      <Toggle
+                        defaultChecked={!item?.customTheme}
+                        onChange={changeTheme}
+                        icons={false}
+                        className="custom-toggle"
+                      />
+                    </label>
+                  )}
+                </li>
               </ul>
             );
           }}
