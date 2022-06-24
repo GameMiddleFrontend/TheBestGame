@@ -3,7 +3,7 @@ import axios, {AxiosRequestConfig} from 'axios';
 class AxiosUtils {
   get(url: string, data?: unknown, requestInit?: AxiosRequestConfig) {
     return axios
-      .get(url, requestInit)
+      .request({...requestInit, url: url, method: 'get'})
       .then((response) => response)
       .catch((error) => error);
   }
@@ -14,6 +14,6 @@ class AxiosUtils {
       .then((response) => response)
       .catch((error) => error);
   }
-};
+}
 
 export default new AxiosUtils();

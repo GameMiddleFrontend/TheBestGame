@@ -7,9 +7,9 @@
     "dev": "webpack serve --open --mode development",
     "build": "webpack --mode production",
     "start": "npm-run-all --print-label  ssr:prod:*",
-    "ssr:dev": "npm-run-all --print-label  ssr:dev:*",
-    "ssr:dev:webpack": "webpack --mode=development --parallel --watch --config webpack/index.ts ",
-    "ssr:dev:start": "set PORT=3000 && set NODB=true && node index.js ",
+    "ssr:dev": "npm-run-all --print-label --parallel  ssr:dev:*",
+    "ssr:dev:webpack": "webpack --mode=development --config webpack/index.ts ",
+    "ssr:dev:start": "set PORT=80 && set NODB=true && node index.js ",
     "ssr:prod:webpack": "webpack --config webpack/index.ts ",
     "ssr:prod:start": "node index.js",
     "test": "jest"

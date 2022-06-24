@@ -12,8 +12,16 @@ const _baseURL = 'https://ya-praktikum.tech/api/v2';
 
 class AuthService {
   static createUserProcess = false;
-  static async auth(): Promise<CurrentUserItem> {
-    const response = await AxiosUtils.get(_baseURL.concat(`${_authBaseUrl}/user`), undefined, {withCredentials: true});
+  static async auth(cookieHeader?: string): Promise<CurrentUserItem> {
+    const axiosOptions: any = {
+      withCredentials: true,
+    };
+    if (cookieHeader) {
+      axiosOptions.headers = {
+        Cookie: cookieHeader,
+      };
+    }
+    const response = await AxiosUtils.get(_baseURL.concat(`${_authBaseUrl}/user`), undefined, axiosOptions);
     const result = response.data;
     if (response.status !== 200) {
       throw new Error('Ошибка аутентификации');

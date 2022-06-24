@@ -7,14 +7,14 @@ const isProd = process.env.NODE_ENV === 'production';
 const noDB = process.env.NODB;
 
 if (noDB) {
-  /*https
+  https
     .createServer({key: selfSignedCert.key, cert: selfSignedCert.cert}, app)
-    .listen(port, '0.0.0.0',  () => {
+    .listen(443, 'localhost.ya-praktikum.tech',  () => {
       console.log('SSR HTTPS Application is started on localhost:', port);
-    });*/
-  app.listen(port, () => {
+    });
+  /*app.listen(devOptions,  () => {
     console.log('Application is started on localhost:', port);
-  });
+  });*/
   return;
 } else {
   dbConnect().finally(() => {

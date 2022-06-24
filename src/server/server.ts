@@ -7,10 +7,13 @@ import topicRouter from './endpoint/server.topic.endpoints';
 import userRouter from './endpoint/server.user.endpoint';
 import CSPRouter from './middleware/server.middleware.CSP';
 import getWebpackMiddlewares from './middleware/server.middleware.webpack';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
 app.use(express.static(path.resolve(__dirname, '../dist')));
+
+app.use(cookieParser());
 
 app.use(CSPRouter);
 app.get('/*', [...getWebpackMiddlewares(clientConfig)], serverRenderMiddleware);
