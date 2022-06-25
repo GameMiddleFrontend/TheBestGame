@@ -22,10 +22,10 @@ export default async (req: Request, res: Response) => {
     }
     return result;
   }, '');
-  AuthService.auth(cookieString)
+  const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+  AuthService.auth(cookieString, fullUrl)
     .then((user) => {
       currentUser = user;
-      console.log(JSON.stringify(user));
     })
     .catch((error) => error)
     .finally(() => {

@@ -1,8 +1,8 @@
 import express from 'express';
 
-const CSPRouter = express.Router();
+const CSPMiddleware = express.Router();
 
-CSPRouter.use((request, response, next) => {
+CSPMiddleware.use((request, response, next) => {
   response.header(
     'Content-Security-Policy',
     "default-src 'self' https://ya-praktikum.tech; " +
@@ -12,4 +12,4 @@ CSPRouter.use((request, response, next) => {
   next();
 });
 
-export default CSPRouter;
+export default CSPMiddleware;

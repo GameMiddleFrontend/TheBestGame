@@ -1,6 +1,7 @@
 import ServiceUtils from './service.utils';
 import {CurrentUserItem} from '@models/user.model';
 import AxiosUtils from '@services/server.fetch';
+import isServer from '@utils/isServer';
 
 type authError = {
   reason: string;
@@ -12,7 +13,12 @@ const _baseURL = 'https://ya-praktikum.tech/api/v2';
 
 class AuthService {
   static createUserProcess = false;
-  static async auth(cookieHeader?: string): Promise<CurrentUserItem> {
+
+  static userUrl = isServer ? '' : window.location.origin;
+
+  static userAPIUrl = '/api/v1/user';
+
+  static async auth(cookieHeader?: string, url?: string): Promise<CurrentUserItem> {
     const axiosOptions: any = {
       withCredentials: true,
     };
@@ -28,7 +34,7 @@ class AuthService {
     }
     if (!AuthService.createUserProcess) {
       AuthService.createUserProcess = true;
-      await AuthService.createDBUser(result as CurrentUserItem);
+      await AuthService.createDBUser(result as CurrentUserItem, url);
       AuthService.createUserProcess = false;
     }
     return result as CurrentUserItem;
@@ -38,8 +44,14 @@ class AuthService {
     return await ServiceUtils.post(`${_authBaseUrl}/logout`);
   }
 
-  static async createDBUser(user: CurrentUserItem) {
-    return AxiosUtils.post('http://localhost:3000/api/v1/user'.concat('/add'), user, {withCredentials: true});
+  static async createDBUser(user: CurrentUserItem, url?: string) {
+    const tmpUrl = url || AuthService.userUrl;
+    return await ServiceUtils.post('', user, undefined, tmpUrl.concat(AuthService.userAPIUrl, '/add'));
+  }
+
+  static async changeUserTheme(userId: number, url?: string) {
+    const tmpUrl = url || AuthService.userUrl;
+    return await ServiceUtils.post('', {userId}, undefined, tmpUrl.concat(AuthService.userAPIUrl, '/changeTheme'));
   }
 }
 
