@@ -146,6 +146,11 @@ class GameEngine {
   }
 
   public renderStartElements() {
+    this.canvasContainer.removeEventListener('mousedown', this.handleMouseDown.bind(this));
+    this.canvasContainer.removeEventListener('mousemove', this.handleMouseMove.bind(this));
+    this.canvasContainer.removeEventListener('mouseup', this.handleMouseUp.bind(this));
+    this.canvasContainer.removeEventListener('mouseout', this.handleMouseUp.bind(this));
+
     this.isStarted = false;
     this.setPoints(INITIAL_POINTS);
 
@@ -159,6 +164,10 @@ class GameEngine {
     if (!this.isStarted) {
       this.isStarted = true;
 
+      this.cardDeckSorted.map((card) => {
+        closeCard(card);
+        card.currentPosition = this.startPilePosition;
+      });
       this.cardDeck = shuffle(this.cardDeckSorted);
 
       this.fillTableauPile().then(() => {
@@ -169,6 +178,8 @@ class GameEngine {
         this.canvasContainer.addEventListener('mouseup', this.handleMouseUp.bind(this));
         this.canvasContainer.addEventListener('mouseout', this.handleMouseUp.bind(this));
       });
+
+      console.log('hand', this.hand);
     }
   }
 
@@ -229,7 +240,7 @@ class GameEngine {
     const coordY = this.pileMargin;
 
     this.hand = this.getElementPile({...this.hand}, coordX, coordY, HAND_PILES_COUNT);
-    drawElementPile(getContextCanvas(this.gameCanvas), this.hand, this.cardOptions);
+    //drawElementPile(getContextCanvas(this.gameCanvas), this.hand, this.cardOptions);
   }
 
   private renderTableau() {
@@ -237,7 +248,7 @@ class GameEngine {
     const coordY = this.pilesArea.y + this.cardOptions.height + this.cardOptions.height / 2;
 
     this.tableau = this.getElementPile({...this.tableau}, coordX, coordY, TABLEAU_PILES_COUNT);
-    drawElementPile(getContextCanvas(this.gameCanvas), this.tableau, this.cardOptions);
+    //drawElementPile(getContextCanvas(this.gameCanvas), this.tableau, this.cardOptions);
   }
 
   /** Раздаем карты */
@@ -501,7 +512,7 @@ class GameEngine {
   }
 
   private putCardsToInitialPosition(draggableCards: DraggableCards): boolean {
-    console.log('putCardsToInitialPosition');
+    //console.log('putCardsToInitialPosition');
     const firstDraggableCard = draggableCards.cards[0];
     const pile = firstDraggableCard.currentPile;
 
@@ -515,7 +526,7 @@ class GameEngine {
       selected = true;
     }
     this.changeDraggableCardsPosition(draggableCards, cardNewPosition);
-    console.log(draggableCards, cardNewPosition);
+    //console.log(draggableCards, cardNewPosition);
     return selected;
   }
 
@@ -530,6 +541,7 @@ class GameEngine {
   }
 
   private onHandCardClick() {
+    debugger;
     const closedHandPile = this.hand[0];
     const openedHandPile = this.hand[1];
 
@@ -561,6 +573,7 @@ class GameEngine {
 
       this.changeCardsPosition(closedHandPile.cards[0], openedHandPile.rootPosition, closedHandPile.rootPosition);
     }
+    console.log('hand', this.hand);
   }
 
   private checkMovesCardToFoundationPile(draggableCards: DraggableCards, pile: Pile): Pile | undefined {
@@ -639,7 +652,7 @@ class GameEngine {
 
     const foundationPile = targetPile && this.checkMovesCardToFoundationPile(draggableCards, targetPile);
     const tableauPile = targetPile && this.checkMovesCardToTableauPile(draggableCards, targetPile);
-    console.log('moveCardsToPile', foundationPile, tableauPile);
+    //console.log('moveCardsToPile', foundationPile, tableauPile);
     /*TODO много букв, нужен рефакторинг */
     if (foundationPile) {
       draggableCards.cards.forEach((card) => {
@@ -678,7 +691,7 @@ class GameEngine {
     }
 
     event.preventDefault();
-    event.stopPropagation();
+    event.stopImmediatePropagation();
 
     const mousePosition = {x: event.offsetX, y: event.offsetY};
 
@@ -698,7 +711,7 @@ class GameEngine {
     }
 
     event.preventDefault();
-    event.stopPropagation();
+    event.stopImmediatePropagation();
 
     const {offsetX, offsetY} = event;
 
@@ -712,7 +725,7 @@ class GameEngine {
     }
 
     event.preventDefault();
-    event.stopPropagation();
+    event.stopImmediatePropagation();
 
     this.moveCardsAcrossAnimationCanvas(this.draggableCards, {
       x: event.clientX,
