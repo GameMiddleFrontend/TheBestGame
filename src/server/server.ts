@@ -1,27 +1,18 @@
 import path from 'path';
-import express, {RequestHandler} from 'express';
-import serverRenderMiddleware from './server.middleware.render';
-import webpack from 'webpack';
-import devMiddleware from 'webpack-dev-middleware';
+import express from 'express';
+import serverRenderMiddleware from './middleware/server.middleware.render';
 import clientConfig from '@webpack/client.config';
 import dbConnect from '../../postgres';
-import topicRouter from './server.topic.endpoints';
-import userRouter from './server.user.endpoint';
-
-function getWebpackMiddlewares(config: webpack.Configuration): RequestHandler[] {
-  const compiler = webpack({...config, mode: 'development'});
-
-  return [
-    devMiddleware(compiler, {
-      publicPath: config.output!.publicPath!,
-    }),
-  ];
-}
+import topicRouter from './endpoint/server.topic.endpoints';
+import userRouter from './endpoint/server.user.endpoint';
+import CSPRouter from './middleware/server.middleware.CSP';
+import getWebpackMiddlewares from './middleware/server.middleware.webpack';
 
 const app = express();
 
 app.use(express.static(path.resolve(__dirname, '../dist')));
 
+app.use(CSPRouter);
 app.get('/*', [...getWebpackMiddlewares(clientConfig)], serverRenderMiddleware);
 
 app.use(topicRouter);
