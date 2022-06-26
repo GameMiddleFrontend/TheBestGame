@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button ButtonIconOnly Snapshot 1`] = `
+<button
+  className="button button button-icon-only"
+  onClick={[Function]}
+>
+  <img
+    role="img"
+    src="test-file-stub"
+  />
+</button>
+`;
+
+exports[`Button ButtonText Snapshot 1`] = `
+<button
+  className="button button button-text"
+  onClick={[Function]}
+>
+  TextButton
+</button>
+`;
