@@ -31,6 +31,15 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: "Clear dir"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
+          script: |
+            sudo rm -r /www/game/TheBestGame/*
+
       - name: Deploy to Staging server
         uses: easingthemes/ssh-deploy@main
         env:
