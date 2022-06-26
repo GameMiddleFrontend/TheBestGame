@@ -13,6 +13,8 @@ import AvatarComponent from '../avatar';
 import {UserState, Actions as UserActions} from '@store/reducers/user/user.ducks';
 import Toggle from 'react-toggle';
 
+import '@images/user.svg';
+
 import './top-bar.scss';
 import 'react-toggle/style.css';
 
