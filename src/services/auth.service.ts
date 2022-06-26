@@ -1,5 +1,6 @@
 import ServiceUtils from './service.utils';
 import {CurrentUserItem} from '@models/user.model';
+import AxiosUtils from '@services/server.fetch';
 
 type authError = {
   reason: string;
@@ -7,17 +8,27 @@ type authError = {
 
 const _authBaseUrl = '/auth';
 
+const _baseURL = 'https://ya-praktikum.tech/api/v2';
+
 class AuthService {
   static createUserProcess = false;
-  static async auth(): Promise<CurrentUserItem> {
-    const response = await ServiceUtils.GET(`${_authBaseUrl}/user`);
-    let result: authError | CurrentUserItem = await response.json();
-    if (!response.ok) {
-      throw new Error((result as authError).reason || 'Ошибка аутентификации');
+  static async auth(cookieHeader?: string): Promise<CurrentUserItem> {
+    const axiosOptions: any = {
+      withCredentials: true,
+    };
+    if (cookieHeader) {
+      axiosOptions.headers = {
+        Cookie: cookieHeader,
+      };
+    }
+    const response = await AxiosUtils.get(_baseURL.concat(`${_authBaseUrl}/user`), undefined, axiosOptions);
+    const result = response.data;
+    if (response.status !== 200) {
+      throw new Error('Ошибка аутентификации');
     }
     if (!AuthService.createUserProcess) {
       AuthService.createUserProcess = true;
-      result = await AuthService.createDBUser(result as CurrentUserItem);
+      await AuthService.createDBUser(result as CurrentUserItem);
       AuthService.createUserProcess = false;
     }
     return result as CurrentUserItem;
@@ -28,11 +39,7 @@ class AuthService {
   }
 
   static async createDBUser(user: CurrentUserItem) {
-    return await ServiceUtils.post('', user, undefined, 'http://localhost:3000/api/v1/user'.concat('/add'));
-  }
-
-  static async changeUserTheme(userId: number) {
-    return await ServiceUtils.post('', {userId}, undefined, 'http://localhost:3000/api/v1/user'.concat('/changeTheme'));
+    return AxiosUtils.post('http://localhost:3000/api/v1/user'.concat('/add'), user, {withCredentials: true});
   }
 }
 

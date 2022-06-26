@@ -8,25 +8,48 @@ import initStore from '@store/index';
 import App from '@components/app';
 import ErrorBoundaryComponent from '@common/error-boundary';
 import ErrorFallbackComponent from '@common/error-fallback';
+import AuthService from '@services/auth.service';
+import {Actions as AuthActions} from '@store/reducers/user/user.ducks';
+import {Actions as UserActions} from '@store/reducers/auth/auth.ducks';
+import {CurrentUserItem} from '@models/user.model';
 
-export default (req: Request, res: Response) => {
-  const store = initStore();
-
-  const jsx = (
-    <StrictMode>
-      <Provider store={store}>
-        <ErrorBoundaryComponent FallbackComponent={ErrorFallbackComponent}>
-          <StaticRouter location={req.url}>
-            <App />
-          </StaticRouter>
-        </ErrorBoundaryComponent>
-      </Provider>
-    </StrictMode>
-  );
-  const reactHtml = renderToString(jsx);
-  const reduxState = store.getState();
-
-  res.status(200).send(getHtml(reactHtml, reduxState));
+export default async (req: Request, res: Response) => {
+  let store, currentUser: CurrentUserItem;
+  const yaCookies = ['authCookie', 'uuid'];
+  const cookieString = yaCookies.reduce((result: string, current: string) => {
+    if (req.cookies[current]) {
+      result += ` ${current}=${req.cookies[current]};`;
+    }
+    return result;
+  }, '');
+  AuthService.auth(cookieString)
+    .then((user) => {
+      currentUser = user;
+      console.log(JSON.stringify(user));
+    })
+    .catch((error) => error)
+    .finally(() => {
+      store = initStore();
+      if (currentUser) {
+        store.dispatch(AuthActions.setUser(currentUser));
+        store.dispatch(UserActions.setLoggedIn(true));
+        store.dispatch(UserActions.setLoading(false));
+      }
+      const jsx = (
+        <StrictMode>
+          <Provider store={store}>
+            <ErrorBoundaryComponent FallbackComponent={ErrorFallbackComponent}>
+              <StaticRouter location={req.url}>
+                <App />
+              </StaticRouter>
+            </ErrorBoundaryComponent>
+          </Provider>
+        </StrictMode>
+      );
+      const reactHtml = renderToString(jsx);
+      const reduxState = store.getState();
+      res.status(200).send(getHtml(reactHtml, reduxState));
+    });
 };
 
 function getHtml(reactHtml: string, reduxState = {}) {
