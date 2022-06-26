@@ -6,8 +6,6 @@ import MediaAudio from '@common/media-audio';
 import Popup from 'reactjs-popup';
 import {Actions as LeaderboardActions} from '@store/reducers/leaderboard/leaderboard.ducks';
 import {useDispatch, useSelector} from 'react-redux';
-import IConfiguredStore from '@store/reducers/configured-store';
-import {IStore as IAuthStore} from '@store/reducers/auth/auth.ducks';
 
 import '@images/play.svg';
 import '@images/restart.svg';
@@ -23,23 +21,27 @@ const mimeCodecAudio = 'audio/mpeg';
 const GamePage = () => {
   let gameEngine: GameEngine;
 
-  const {isLoggedIn} = useSelector<IConfiguredStore, IAuthStore>((state) => state.auth);
   const dispatch = useDispatch();
 
   const [points, setPoints] = useState(0);
   const [isOpenPopup, setOpenPopup] = useState(false);
 
-  useFullscreenTrigger();
-  const handleStartGame = useCallback(() => {
-    gameEngine && gameEngine.startGame();
-  }, []);
+  const {FullScreenButton} = useFullscreenTrigger();
 
   const staticCanvas = useRef(null);
   const dynamicCanvas = useRef(null);
   const canvasContainer = useRef(null);
 
+  const startGame = (isShuffle = true) => {
+    gameEngine && gameEngine.startGame(isShuffle);
+  };
+
+  const handleStartGame = useCallback(() => {
+    startGame(true);
+  }, []);
+
   const handleReplayGame = useCallback(() => {
-    gameEngine && gameEngine.renderStartElements();
+    startGame(false);
   }, []);
 
   const handleUndo = useCallback(() => {
@@ -48,8 +50,12 @@ const GamePage = () => {
 
   const gameOverCallBack = (isWin: boolean, points: number) => {
     if (isWin) {
-      setOpenPopup(true);
-      dispatch(LeaderboardActions.addLeader({points}));
+      const callBackAddLeader = (sumPoints: number) => {
+        setPoints(sumPoints);
+        setOpenPopup(true);
+      };
+
+      dispatch(LeaderboardActions.addLeader({points, callBack: callBackAddLeader}));
     }
   };
 
@@ -86,6 +92,7 @@ const GamePage = () => {
             />
             <Button className={'button-icon-only button-rounded'} icon={'/images/undo.svg'} onClick={handleUndo} />
             <MediaAudio src={audioSource} codec={mimeCodecAudio} />
+            <FullScreenButton />
           </div>
           <canvas ref={staticCanvas} className={'game'} />
           <canvas ref={dynamicCanvas} className={'game-animation'} />
