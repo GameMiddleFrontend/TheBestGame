@@ -23,23 +23,27 @@ const mimeCodecAudio = 'audio/mpeg';
 const GamePage = () => {
   let gameEngine: GameEngine;
 
-  const {isLoggedIn} = useSelector<IConfiguredStore, IAuthStore>((state) => state.auth);
   const dispatch = useDispatch();
 
   const [points, setPoints] = useState(0);
   const [isOpenPopup, setOpenPopup] = useState(false);
 
   const {FullScreenButton} = useFullscreenTrigger();
-  const handleStartGame = useCallback(() => {
-    gameEngine && gameEngine.startGame();
-  }, []);
 
   const staticCanvas = useRef(null);
   const dynamicCanvas = useRef(null);
   const canvasContainer = useRef(null);
 
+  const startGame = (isShuffle = true) => {
+    gameEngine && gameEngine.startGame(isShuffle);
+  };
+
+  const handleStartGame = useCallback(() => {
+    startGame(true);
+  }, []);
+
   const handleReplayGame = useCallback(() => {
-    gameEngine && gameEngine.renderStartElements();
+    startGame(false);
   }, []);
 
   const handleUndo = useCallback(() => {

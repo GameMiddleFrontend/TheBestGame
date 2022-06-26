@@ -39,7 +39,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
-          EXCLUDE: "/dist/, /node_modules/, /coverage/, /.git/"
+          EXCLUDE: "/dist/, /node_modules/, /coverage/, /.postgres/, /.git/, /.github/"
 
       - name: "Run deploy on server"
         uses: appleboy/ssh-action@master

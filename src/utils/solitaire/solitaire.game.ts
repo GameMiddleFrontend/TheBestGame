@@ -55,6 +55,7 @@ class GameEngine {
   /** основная колода */
   private readonly cardDeckSorted: Array<Card> = [];
   private cardDeck: Array<Card> = [];
+  private cardDeckOld: Array<Card> = [];
 
   private startPilePosition: Position = initialPosition;
 
@@ -146,41 +147,42 @@ class GameEngine {
   }
 
   public renderStartElements() {
-    this.canvasContainer.removeEventListener('mousedown', this.handleMouseDown.bind(this));
-    this.canvasContainer.removeEventListener('mousemove', this.handleMouseMove.bind(this));
-    this.canvasContainer.removeEventListener('mouseup', this.handleMouseUp.bind(this));
-    this.canvasContainer.removeEventListener('mouseout', this.handleMouseUp.bind(this));
-
     this.isStarted = false;
+
     this.setPoints(INITIAL_POINTS);
 
     getContextCanvas(this.gameCanvas).clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
     getContextCanvas(this.animationCanvas).clearRect(0, 0, this.animationCanvas.width, this.animationCanvas.height);
 
     this.renderStartGamePosition();
+
+    this.canvasContainer.removeEventListener('mousedown', this.handleMouseDown.bind(this));
+    this.canvasContainer.removeEventListener('mousemove', this.handleMouseMove.bind(this));
+    this.canvasContainer.removeEventListener('mouseup', this.handleMouseUp.bind(this));
+    this.canvasContainer.removeEventListener('mouseout', this.handleMouseUp.bind(this));
   }
 
-  public startGame() {
-    if (!this.isStarted) {
-      this.isStarted = true;
+  public startGame(isShuffle = true) {
+    this.renderStartElements();
 
-      this.cardDeckSorted.map((card) => {
-        closeCard(card);
-        card.currentPosition = this.startPilePosition;
-      });
-      this.cardDeck = shuffle(this.cardDeckSorted);
+    this.isStarted = true;
 
-      this.fillTableauPile().then(() => {
-        this.changeRemainStackPosition();
+    this.cardDeckSorted.map((card) => {
+      closeCard(card);
+      card.currentPosition = this.startPilePosition;
+    });
 
-        this.canvasContainer.addEventListener('mousedown', this.handleMouseDown.bind(this));
-        this.canvasContainer.addEventListener('mousemove', this.handleMouseMove.bind(this));
-        this.canvasContainer.addEventListener('mouseup', this.handleMouseUp.bind(this));
-        this.canvasContainer.addEventListener('mouseout', this.handleMouseUp.bind(this));
-      });
+    this.cardDeck = isShuffle ? shuffle(this.cardDeckSorted) : this.cardDeckOld;
+    this.cardDeckOld = this.cardDeck.slice();
 
-      console.log('hand', this.hand);
-    }
+    this.fillTableauPile().then(() => {
+      this.changeRemainStackPosition();
+
+      this.canvasContainer.addEventListener('mousedown', this.handleMouseDown.bind(this));
+      this.canvasContainer.addEventListener('mousemove', this.handleMouseMove.bind(this));
+      this.canvasContainer.addEventListener('mouseup', this.handleMouseUp.bind(this));
+      this.canvasContainer.addEventListener('mouseout', this.handleMouseUp.bind(this));
+    });
   }
 
   renderStartGamePosition() {
@@ -194,7 +196,7 @@ class GameEngine {
 
     this.startPilePosition = {
       x: this.pilesArea.x + this.pilesArea.width / 2 - this.cardOptions.width / 2,
-      y: this.pilesArea.y + this.pilesArea.height - this.cardOptions.height,
+      y: this.pilesArea.y + this.pilesArea.height - this.cardOptions.height / 2,
     };
 
     const firstCard = {...this.cardDeckSorted[0], opened: false};
