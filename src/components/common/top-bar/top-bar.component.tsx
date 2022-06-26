@@ -5,6 +5,7 @@ import Popup from 'reactjs-popup';
 import Button from '../button';
 import '@images/spades.svg';
 import '@images/menu.svg';
+import '@images/userImg.svg';
 import {topBarMenu} from './top-bar.types';
 import {useDispatch, useSelector} from 'react-redux';
 import IConfiguredStore from '@store/reducers/configured-store';

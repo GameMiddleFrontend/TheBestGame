@@ -51,3 +51,4 @@ jobs:
             cd /www/game/TheBestGame/
             sudo docker-compose stop -t 0
             sudo docker-compose up -d --build
+            sudo docker system prune

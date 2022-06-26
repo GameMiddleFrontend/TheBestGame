@@ -1,6 +1,6 @@
 import React, {ChangeEvent, FC, MouseEvent} from 'react';
 import addImage from '@styles/images/add-image.svg';
-import '@images/user.svg';
+import '@images/userImg.svg';
 
 import './avatar.scss';
 
@@ -16,7 +16,7 @@ interface IHandlers {
 
 const avatarUrl = `https://ya-praktikum.tech/api/v2/resources`;
 
-const defaultUserSrc = '/image/user.svg';
+const defaultUserSrc = '/image/userImg.svg';
 
 const AvatarComponent: FC<IProps & IHandlers> = (props: IProps & IHandlers) => {
   const imgSrc = props.imgSrc ? avatarUrl.concat(props.imgSrc) : defaultUserSrc;
