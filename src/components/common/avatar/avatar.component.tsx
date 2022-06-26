@@ -16,7 +16,7 @@ interface IHandlers {
 
 const avatarUrl = `https://ya-praktikum.tech/api/v2/resources`;
 
-const defaultUserSrc = 'image/user.svg';
+const defaultUserSrc = '/image/user.svg';
 
 const AvatarComponent: FC<IProps & IHandlers> = (props: IProps & IHandlers) => {
   const imgSrc = props.imgSrc ? avatarUrl.concat(props.imgSrc) : defaultUserSrc;
