@@ -44,6 +44,7 @@ const logout = createAction(ActionTypes.LOGOUT);
 
 export const Actions = {
   setLoggedIn,
+  setLoading,
   login,
   logout,
 };

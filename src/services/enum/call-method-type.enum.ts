@@ -11,3 +11,8 @@ export enum HttpStatuses {
   UNAUTHORIZED = 401,
   INTERNAL = 500,
 }
+
+export const defaultHeaders = {
+  'content-type': 'application/json; charset=utf-8',
+  'content-security-policy': `default-src 'self'; img-src *; media-src https://ya-praktikum.tech`,
+};

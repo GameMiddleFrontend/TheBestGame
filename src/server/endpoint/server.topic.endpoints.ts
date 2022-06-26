@@ -79,11 +79,10 @@ export const topicRoutes = (router: Router) => {
 
   router.use(express.json());
   router.use('/api/v1/topic/*', (request, response, next) => {
-    if (!request.cookies) {
+    if (!request.cookies || !request.cookies['authCookie'] || !request.cookies['uuid']) {
       response.status(HttpStatuses.UNAUTHORIZED);
       response.send(JSON.stringify({reason: 'unauthorized'}));
     }
-    console.log(request.cookies);
     next();
   });
   router.use('/api/v1/topic', topicAPI);
