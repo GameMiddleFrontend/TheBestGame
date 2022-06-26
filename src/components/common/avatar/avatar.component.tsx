@@ -16,7 +16,7 @@ interface IHandlers {
 
 const avatarUrl = `https://ya-praktikum.tech/api/v2/resources`;
 
-const defaultUserSrc = '/image/userImg.svg';
+const defaultUserSrc = '/images/userImg.svg';
 
 const AvatarComponent: FC<IProps & IHandlers> = (props: IProps & IHandlers) => {
   const imgSrc = props.imgSrc ? avatarUrl.concat(props.imgSrc) : defaultUserSrc;
@@ -38,7 +38,7 @@ const AvatarComponent: FC<IProps & IHandlers> = (props: IProps & IHandlers) => {
 
   return (
     <div className={className} onClick={handleClickAvatar}>
-      <img className={'avatar-img'} src={imgSrc} alt={'аватар'} />
+      <img crossOrigin="use-credentials" className={'avatar-img'} src={imgSrc} alt={'аватар'} />
       {props.isEditMode && (
         <>
           <input name="avatar-input" type="file" accept=".jpg, .jpeg, .png" onChange={handleInputChange} />
