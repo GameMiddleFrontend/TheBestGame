@@ -29,7 +29,8 @@
       "@pages/*": ["components/pages/*"],
       "@serviceWorker/*": ["serviceWorker/*"],
       "@webpack/*": ["../webpack/*"],
-      "@postgres/*": ["../postgres/*"]
+      "@postgres/*": ["../postgres/*"],
+      "@resources/*": ["resources/*"]
     }
   },
   "include": ["src/**/*", "src/**/*.spec.ts", "src/custom.d.ts", "webpack/**/*.ts", "postgres/**/*.ts"],
