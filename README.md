@@ -2,6 +2,10 @@
 
 [![CI/CD](https://github.com/GameMiddleFrontend/TheBestGame/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GameMiddleFrontend/TheBestGame/actions/workflows/ci-cd.yml)
 
+
+### Когорта 12
+### Команда 8 "Стокгольм"
+
 ## Установка
 - `npm run dev` — запуск версии для разработки
 - `npm run build` — сборка стабильной версии
