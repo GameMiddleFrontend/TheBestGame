@@ -1,9 +1,7 @@
-@import "../../../styles/style-variables";
-
 .button {
-  $button-border: $buttons-main-color;
-  $button-bg: $buttons-main-color;
-  $button-text: $buttons-accent-color;
+  $button-border: var(--buttons-main-color);
+  $button-bg: var(--buttons-main-color);
+  $button-text: var(--buttons-accent-color);
 
   display: inline-block;
   cursor: pointer;

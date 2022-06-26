@@ -1,13 +1,11 @@
-@import '../../../styles/style-variables';
-
 $forumTextMargin: 5px 10px;
 
 .forum-theme {
   min-height: 15%;
 
-  background-color: $secondary-color;
+  background-color: var(--secondary-color);
   border-radius: 20px;
-  color: $font-color;
+  color: var(--font-color);
 
   display: flex;
   flex-direction: row;
@@ -39,7 +37,7 @@ $forumTextMargin: 5px 10px;
   align-items: flex-start;
   gap: 0.2rem;
 
-  color: $placeholder-color;
+  color: var(--placeholder-color);
   font-size: small;
   align-self: end;
 }
@@ -52,7 +50,7 @@ $forumTextMargin: 5px 10px;
 
 .theme-name {
   flex-grow: 2;
-  margin: $forumTextMargin;
+  margin: var(--forumTextMargin);
   margin-left: 0;
 
   &:hover {
@@ -63,9 +61,9 @@ $forumTextMargin: 5px 10px;
 
 .theme-message {
   align-self: flex-start;
-  margin: $forumTextMargin;
+  margin: var(--forumTextMargin);
 }
 
 .theme-time {
-  margin: $forumTextMargin;
+  margin: var(--forumTextMargin);
 }
