@@ -63,7 +63,7 @@ function* getLeadersFlow() {
 
 function* addLeaderFlow(action: PayloadAction<AddLeaderType>) {
   try {
-    const {points} = action.payload;
+    const {points, callBack} = action.payload;
     const userData = yield* select(getUserItem);
 
     if (userData && points) {
@@ -72,7 +72,19 @@ function* addLeaderFlow(action: PayloadAction<AddLeaderType>) {
         points,
       };
 
+      const leadersResult = yield* call(LeaderboardService.getLeaders);
+      if (leadersResult) {
+        const previousUserResult = leadersResult.find((item) => item.data.user.id === userData.id);
+        if (!!previousUserResult?.data?.points) {
+          data.points += previousUserResult.data.points;
+        }
+      }
+
       const result = yield* call(LeaderboardService.addLeaderboardItem, data);
+
+      if (callBack) {
+        callBack(data.points);
+      }
     }
   } catch (e) {
     yield* put(notificationActions.setNotification(getExceptionByError(e as Error)));

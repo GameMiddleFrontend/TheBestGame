@@ -15,7 +15,7 @@ import '@images/undo.svg';
 
 import './game.scss';
 
-import '../../../styles/sample.mp3';
+import '../../../resources/sample.mp3';
 
 const audioSource = '/audio/sample.mp3';
 const mimeCodecAudio = 'audio/mpeg';
@@ -48,8 +48,12 @@ const GamePage = () => {
 
   const gameOverCallBack = (isWin: boolean, points: number) => {
     if (isWin) {
-      setOpenPopup(true);
-      dispatch(LeaderboardActions.addLeader({points}));
+      const callBackAddLeader = (sumPoints: number) => {
+        setPoints(sumPoints);
+        setOpenPopup(true);
+      };
+
+      dispatch(LeaderboardActions.addLeader({points, callBack: callBackAddLeader}));
     }
   };
 
