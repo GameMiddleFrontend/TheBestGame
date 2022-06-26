@@ -29,7 +29,7 @@ const GamePage = () => {
   const [points, setPoints] = useState(0);
   const [isOpenPopup, setOpenPopup] = useState(false);
 
-  useFullscreenTrigger();
+  const {FullScreenButton} = useFullscreenTrigger();
   const handleStartGame = useCallback(() => {
     gameEngine && gameEngine.startGame();
   }, []);
@@ -86,6 +86,7 @@ const GamePage = () => {
             />
             <Button className={'button-icon-only button-rounded'} icon={'/images/undo.svg'} onClick={handleUndo} />
             <MediaAudio src={audioSource} codec={mimeCodecAudio} />
+            <FullScreenButton />
           </div>
           <canvas ref={staticCanvas} className={'game'} />
           <canvas ref={dynamicCanvas} className={'game-animation'} />
