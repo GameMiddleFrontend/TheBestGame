@@ -28,13 +28,13 @@ class AuthService {
       };
     }
     const response = await AxiosUtils.get(_baseURL.concat(`${_authBaseUrl}/user`), undefined, axiosOptions);
-    const result = response.data;
+    let result = response.data;
     if (response.status !== 200) {
       throw new Error('Ошибка аутентификации');
     }
     if (!AuthService.createUserProcess) {
       AuthService.createUserProcess = true;
-      await AuthService.createDBUser(result as CurrentUserItem, url);
+      result = await AuthService.createDBUser(result as CurrentUserItem, url);
       AuthService.createUserProcess = false;
     }
     return result as CurrentUserItem;

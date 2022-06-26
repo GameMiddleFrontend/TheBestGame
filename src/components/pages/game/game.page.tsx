@@ -15,7 +15,7 @@ import '@images/undo.svg';
 
 import './game.scss';
 
-import '../../../styles/sample.mp3';
+import '@styles/sample.mp3';
 
 const audioSource = '/audio/sample.mp3';
 const mimeCodecAudio = 'audio/mpeg';

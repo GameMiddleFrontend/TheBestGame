@@ -1,6 +1,6 @@
 import React, {ChangeEvent, FC, MouseEvent} from 'react';
 import addImage from '@styles/images/add-image.svg';
-import userImage from '@styles/images/user.svg';
+import '@images/user.svg';
 
 import './avatar.scss';
 
@@ -16,8 +16,10 @@ interface IHandlers {
 
 const avatarUrl = `https://ya-praktikum.tech/api/v2/resources`;
 
+const defaultUserSrc = 'image/user.svg';
+
 const AvatarComponent: FC<IProps & IHandlers> = (props: IProps & IHandlers) => {
-  const imgSrc = props.imgSrc ? avatarUrl.concat(props.imgSrc) : userImage;
+  const imgSrc = props.imgSrc ? avatarUrl.concat(props.imgSrc) : defaultUserSrc;
   const className = `avatar ${props.className ? props.className : ''}${props.isEditMode ? ' avatar-upload' : ''}`;
 
   const handleClickAvatar = (event: MouseEvent<HTMLElement>) => {

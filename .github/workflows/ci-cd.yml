@@ -48,4 +48,6 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
           script: |
-            sudo docker-compose -f /www/game/TheBestGame/docker-compose.yaml up -d --build
+            cd /www/game/TheBestGame/
+            sudo docker-compose stop -t 0
+            sudo docker-compose up -d --build

@@ -2,6 +2,9 @@ import React, {FC, useEffect, useRef, useState} from 'react';
 import MediaAudioTypes from '@common/media-audio/media.audio.types';
 import Button from '@common/button';
 
+import '@images/volume.svg';
+import '@images/mute.svg';
+
 import './media.audio.styles.scss';
 
 const MediaAudio: FC<MediaAudioTypes> = ({src, codec}) => {
