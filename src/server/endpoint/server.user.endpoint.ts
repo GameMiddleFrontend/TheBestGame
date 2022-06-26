@@ -56,7 +56,6 @@ export const userRoutes = (router: Router) => {
       response.status(HttpStatuses.UNAUTHORIZED);
       response.send(JSON.stringify({reason: 'unauthorized'}));
     }
-    console.log(request.cookies);
     next();
   });
   router.use(baseUserURL, userApi);

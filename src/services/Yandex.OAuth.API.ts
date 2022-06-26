@@ -7,7 +7,7 @@ type YandexServiceIdResponse = {
 };
 
 class YandexOAuthAPI {
-  private static redirectUri = 'http://localhost:3000';
+  private static redirectUri = IsServer ? '' : window.location.origin;
 
   public static async auth() {
     return await YandexOAuthAPI.getServiceId(YandexOAuthAPI.redirectUri)
