@@ -106,11 +106,12 @@ class GameEngine {
 
     this.cardDeckSorted = getCardDeck(this.cardOptions, this.startPilePosition);
 
-    if (GameEngine._instance) {
+    /*if (GameEngine._instance) {
       return GameEngine._instance;
     }
 
-    GameEngine._instance = this;
+    GameEngine._instance = this;*/
+    return this;
   }
 
   private resizeCanvas() {

@@ -17,8 +17,10 @@ export function drawElementPile(
       height: cardOptions.height,
     };
 
+    ctx.beginPath();
     ctx.clearRect(pileArea.x, pileArea.y, pileArea.width, pileArea.height);
     ctx.strokeRect(pileArea.x, pileArea.y, pileArea.width, pileArea.height);
+    ctx.closePath();
   };
 
   if (isPile(element)) {
