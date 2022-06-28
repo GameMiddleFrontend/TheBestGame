@@ -7,6 +7,15 @@ export function getPileStyle(ctx: CanvasRenderingContext2D): CanvasRenderingCont
   return ctx;
 }
 
+export function getTextStyle(ctx: CanvasRenderingContext2D): CanvasRenderingContext2D {
+  ctx.font = '20px Georgia';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#fff';
+
+  return ctx;
+}
+
 export function getSelectedCardsStyle(ctx: CanvasRenderingContext2D): CanvasRenderingContext2D {
   ctx.strokeStyle = 'blue';
   ctx.lineWidth = 5;

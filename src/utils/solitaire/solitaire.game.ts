@@ -15,7 +15,7 @@ import {
   moveCards,
   openCard,
 } from './card';
-import {drawElementPile} from './solitaire.draw-elements';
+import {drawCollectButton, drawElementPile} from './solitaire.draw-elements';
 import {checkPilePosition, checkPosition, getCardDeck} from './solitaire.utils';
 import shuffle from '../helpers/shuffle';
 import isEqual from 'lodash.isequal';
@@ -88,6 +88,8 @@ class GameEngine {
   public points: number = INITIAL_POINTS;
   public changePoints: (points: number) => void;
   public gameOverCallBack: (isWin: boolean, points: number) => void;
+
+  private isVisibleButtonCollect = false;
 
   constructor(
     gameCanvas: HTMLCanvasElement,
@@ -173,7 +175,7 @@ class GameEngine {
       card.currentPosition = this.startPilePosition;
     });
 
-    this.cardDeck = isShuffle ? shuffle(this.cardDeckSorted) : this.cardDeckOld;
+    this.cardDeck = isShuffle || this.cardDeckOld.length === 0 ? shuffle(this.cardDeckSorted) : this.cardDeckOld;
     this.cardDeckOld = this.cardDeck.slice();
 
     this.fillTableauPile().then(() => {
@@ -243,7 +245,7 @@ class GameEngine {
     const coordY = this.pileMargin;
 
     this.hand = this.getElementPile({...this.hand}, coordX, coordY, HAND_PILES_COUNT);
-    //drawElementPile(getContextCanvas(this.gameCanvas), this.hand, this.cardOptions);
+    drawElementPile(getContextCanvas(this.gameCanvas), this.hand, this.cardOptions);
   }
 
   private renderTableau() {
@@ -251,7 +253,7 @@ class GameEngine {
     const coordY = this.pilesArea.y + this.cardOptions.height + this.cardOptions.height / 2;
 
     this.tableau = this.getElementPile({...this.tableau}, coordX, coordY, TABLEAU_PILES_COUNT);
-    //drawElementPile(getContextCanvas(this.gameCanvas), this.tableau, this.cardOptions);
+    drawElementPile(getContextCanvas(this.gameCanvas), this.tableau, this.cardOptions);
   }
 
   /** Раздаем карты */
@@ -280,6 +282,49 @@ class GameEngine {
         this.changeCardsPosition(currentCard, this.startPilePosition, currentCard.currentPosition, daftNewCard);
     });
   }
+
+  /** Раздаем карты */
+  private collectTableauPile = () => {
+    if (!Object.values(this.tableau).find((pile) => pile.cards.length > 0)) {
+      this.checkPoints();
+      return;
+    }
+
+    const daftNewCard = (pilePosition: Position) => {
+      this.collectTableauPile();
+    };
+
+    let isChangeCard = false;
+    let foundationIndex = 0;
+
+    while (!isChangeCard) {
+      const foundation = this.foundations[foundationIndex];
+
+      const desiredCard = foundation?.cards?.at(-1)?.next;
+      if (desiredCard) {
+        const currentPile = Object.values(this.tableau).find((pile) => {
+          const card = pile.cards.at(-1);
+          return card && card.rank === desiredCard.rank && card.suit === desiredCard.suit;
+        });
+
+        if (currentPile) {
+          const currentCard = currentPile.cards.pop();
+          if (currentCard) {
+            foundation.cards.push(currentCard);
+
+            clearDrawingCards(getContextCanvas(this.gameCanvas), [currentCard]);
+            this.deleteCardsFromPile([currentCard]);
+
+            this.changeCardsPosition(currentCard, currentPile.rootPosition, foundation.rootPosition, daftNewCard);
+            currentCard.currentPile = foundation;
+            isChangeCard = true;
+          }
+        }
+      }
+
+      foundationIndex = foundationIndex === Object.keys(this.foundations).length - 1 ? 0 : ++foundationIndex;
+    }
+  };
 
   private rerenderPile(pile: Pile) {
     const ctx = getContextCanvas(this.gameCanvas);
@@ -544,7 +589,6 @@ class GameEngine {
   }
 
   private onHandCardClick() {
-    debugger;
     const closedHandPile = this.hand[0];
     const openedHandPile = this.hand[1];
 
@@ -685,6 +729,7 @@ class GameEngine {
     }
 
     this.checkPoints();
+    this.checkLayout();
   }
 
   /** HANDLERS */
@@ -733,6 +778,32 @@ class GameEngine {
     this.moveCardsAcrossAnimationCanvas(this.draggableCards, {
       x: event.clientX,
       y: event.clientY,
+    });
+  }
+
+  private checkLayout() {
+    if (
+      this.isVisibleButtonCollect ||
+      !!Object.values(this.hand).find((handPile) => handPile.cards.length !== 0) ||
+      !!Object.values(this.tableau).find((tableauPile) => tableauPile.cards.find((card) => card.opened === false))
+    ) {
+      return;
+    }
+
+    this.isVisibleButtonCollect = true;
+
+    const gameContext = getContextCanvas(this.gameCanvas);
+    const button = drawCollectButton(gameContext, this.hand[1].rootPosition, this.pileMargin, this.cardOptions);
+
+    this.canvasContainer.addEventListener('click', (event) => {
+      if (event.target !== this.gameCanvas && !gameContext.isPointInPath(button, event.offsetX, event.offsetY)) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      this.collectTableauPile();
     });
   }
 

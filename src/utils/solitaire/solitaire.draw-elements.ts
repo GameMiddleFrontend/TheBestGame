@@ -1,5 +1,5 @@
-import {Area, isPile, Options, Pile} from './solitaire.types';
-import {getPileStyle, getSelectedCardsStyle} from './canvas';
+import {Area, isPile, Options, Pile, Position} from './solitaire.types';
+import {getPileStyle, getSelectedCardsStyle, getTextStyle} from './canvas';
 import {Card, drawCard} from './card';
 
 export function drawElementPile(
@@ -30,6 +30,40 @@ export function drawElementPile(
       drawPile(pile);
     }
   }
+}
+
+export function drawCollectButton(
+  ctx: CanvasRenderingContext2D,
+  pilePosition: Position,
+  pileMargin: number,
+  cardOptions: Options,
+) {
+  const buttonPadding = 5;
+
+  const width = cardOptions.width - buttonPadding;
+  const height = cardOptions.height / 4;
+
+  const buttonArea: Area = {
+    x: pilePosition.x + cardOptions.width + pileMargin + (cardOptions.width - width) / 2,
+    y: pilePosition.y + (cardOptions.height - height) / 2,
+    width: width,
+    height: height,
+  };
+
+  const button = new Path2D();
+  button.rect(buttonArea.x, buttonArea.y, buttonArea.width, buttonArea.height);
+
+  ctx = getTextStyle(ctx);
+
+  ctx.stroke(button);
+  ctx.fillText(
+    'Собрать',
+    buttonArea.x + buttonArea.width / 2,
+    buttonArea.y + buttonArea.height / 2,
+    buttonArea.width - buttonPadding * 2,
+  );
+
+  return button;
 }
 
 export function drawSelectedCards(ctx: CanvasRenderingContext2D, cards: Card | Card[], offsetInPile: number) {

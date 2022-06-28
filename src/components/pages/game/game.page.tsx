@@ -90,7 +90,7 @@ const GamePage = () => {
               icon={'/images/restart.svg'}
               onClick={handleReplayGame}
             />
-            <Button className={'button-icon-only button-rounded'} icon={'/images/undo.svg'} onClick={handleUndo} />
+            {/*<Button className={'button-icon-only button-rounded'} icon={'/images/undo.svg'} onClick={handleUndo} />*/}
             <MediaAudio src={audioSource} codec={mimeCodecAudio} />
             <FullScreenButton />
           </div>
