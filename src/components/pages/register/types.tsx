@@ -1,6 +1,6 @@
-import {FormElementsDef} from '../../common/form/types';
-import {UserRegisterItem} from '../../../models/user.model';
-import {FORM_VALIDATE_PATTERNS} from '../../../utils/validation';
+import {FormElementsDef, IInputType} from '@common/form/types';
+import {UserRegisterItem} from '@models/user.model';
+import {FORM_VALIDATE_PATTERNS} from '@utils/validation';
 
 const RegisterFormElementsDef: FormElementsDef<UserRegisterItem>[] = [
   {
@@ -8,6 +8,7 @@ const RegisterFormElementsDef: FormElementsDef<UserRegisterItem>[] = [
     label: 'email',
     defaultValue: '',
     validatePattern: FORM_VALIDATE_PATTERNS.EMAIL,
+    type: IInputType.text,
   },
   {
     name: 'login',
@@ -38,6 +39,7 @@ const RegisterFormElementsDef: FormElementsDef<UserRegisterItem>[] = [
     label: 'Пароль',
     defaultValue: '',
     validatePattern: FORM_VALIDATE_PATTERNS.PASSWORD,
+    type: IInputType.password,
   },
 ];
 

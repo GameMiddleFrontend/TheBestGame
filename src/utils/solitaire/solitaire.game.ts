@@ -795,7 +795,7 @@ class GameEngine {
     const gameContext = getContextCanvas(this.gameCanvas);
     const button = drawCollectButton(gameContext, this.hand[1].rootPosition, this.pileMargin, this.cardOptions);
 
-    this.canvasContainer.addEventListener('click', (event) => {
+    const listener = (event: MouseEvent) => {
       if (event.target !== this.gameCanvas && !gameContext.isPointInPath(button, event.offsetX, event.offsetY)) {
         return;
       }
@@ -804,7 +804,11 @@ class GameEngine {
       event.stopImmediatePropagation();
 
       this.collectTableauPile();
-    });
+
+      this.canvasContainer.removeEventListener('click', listener);
+    };
+
+    this.canvasContainer.addEventListener('click', listener);
   }
 
   /** points */
